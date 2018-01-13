@@ -7,6 +7,11 @@ import com.zootcat.scene.ZootScene;
 
 public class DynamicBodyController extends PhysicsBodyController 
 {
+	public DynamicBodyController(ZootActor actor, ZootScene scene)
+	{
+		this(1.0f, actor, scene);
+	}
+	
 	public DynamicBodyController(float density, ZootActor actor, ZootScene scene) 
 	{
 		this(density, ZootPhysicsBodyShape.RECTANGLE.toString(), actor, scene);

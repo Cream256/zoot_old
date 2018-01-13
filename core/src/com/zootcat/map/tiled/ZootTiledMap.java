@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -15,12 +16,12 @@ import com.zootcat.map.ZootMap;
 
 public class ZootTiledMap implements ZootMap
 {	
-	private static final String COLLISION_LAYER_NAME = "Collision";
-	private static final String COLLIDABLE_PROPERTY = "collidable";
+	public static final String COLLISION_LAYER_NAME = "Collision";
+	public static final String COLLIDABLE_PROPERTY = "collidable";
 	
-	private final TiledMap tiledMap;
+	private TiledMap tiledMap;
 	
-	public ZootTiledMap(TiledMap tiledMap)
+	public ZootTiledMap(final TiledMap tiledMap)
 	{
 		this.tiledMap = tiledMap;
 	}
@@ -37,7 +38,8 @@ public class ZootTiledMap implements ZootMap
 		{
 			for(MapObject obj : layer.getObjects())
 			{
-				result.add(obj);
+				MapObject objectWithProperties = createMapObjectWithProperties(obj, layer);
+				result.add(objectWithProperties);
 			}
 		}
 		return result;
@@ -81,5 +83,25 @@ public class ZootTiledMap implements ZootMap
 	public void dispose() 
 	{
 		tiledMap.dispose();
+		tiledMap = null;
 	}
+	
+	private MapObject createMapObjectWithProperties(final MapObject obj, final MapLayer layer) 
+	{
+		MapObject result = new MapObject();
+		result.setName(obj.getName());
+		result.setColor(obj.getColor());
+		result.setOpacity(obj.getOpacity());
+		result.setVisible(obj.isVisible());
+		
+		int gid = obj.getProperties().get("gid", -1, Integer.class);
+		TiledMapTile tile = tiledMap.getTileSets().getTile(gid);
+		if(tile != null)
+		{
+			result.getProperties().putAll(tile.getProperties());	
+		}
+		result.getProperties().putAll(obj.getProperties());		
+		return result;
+	}
+	
 }

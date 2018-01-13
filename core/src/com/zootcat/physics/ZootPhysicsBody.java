@@ -9,4 +9,7 @@ public interface ZootPhysicsBody extends Disposable
 	float getAngle();
 	float getWidth();
 	float getHeight();
+	
+	boolean canRotate();
+	void setCanRotate(boolean value);	
 }

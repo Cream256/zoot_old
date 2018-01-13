@@ -4,6 +4,11 @@ sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.test.java.srcDirs = [ "test/", "test/testResources" ]
+
+dependencies {
+    testCompile 'junit:junit:4.10'
+}
 
 eclipse.project {
     name = appName + "-core"

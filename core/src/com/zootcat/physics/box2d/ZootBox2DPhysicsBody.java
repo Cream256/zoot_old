@@ -66,4 +66,16 @@ public class ZootBox2DPhysicsBody implements ZootPhysicsBody
 	{
 		return body.getAngle();
 	}
+
+	@Override
+	public void setCanRotate(boolean value)
+	{
+		body.setFixedRotation(value);
+	}
+
+	@Override
+	public boolean canRotate() 
+	{
+		return body.isFixedRotation();
+	}
 }

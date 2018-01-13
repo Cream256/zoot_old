@@ -3,6 +3,7 @@ package com.zootcat.scene.tiled;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -30,15 +31,12 @@ public class ZootTiledScene implements ZootScene
 	private ZootBox2DPhysics physics;	
 	private ZootInputProcessor inputProcessor;
 	private float timeAccumulator = 0.0f;
+	
 	private boolean isDebugMode = false;
 	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
 	
 	public ZootTiledScene(String tiledMapPath, ZootInputProcessor inputProcessor)
-	{
-		//input
-		this.inputProcessor = inputProcessor;
-		Gdx.input.setInputProcessor(inputProcessor);
-		
+	{		
 		//camera
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -56,7 +54,7 @@ public class ZootTiledScene implements ZootScene
 		render = new ZootTiledMapRender(map, renderConfig);
 		
 		//stage
-		this.stage = new Stage(new ScreenViewport(camera));
+		stage = new Stage(new ScreenViewport(camera));		
 				
 		//actors
     	ZootTiledSceneActorFactory actorFactory = new ZootTiledSceneActorFactory(this);
@@ -65,6 +63,11 @@ public class ZootTiledScene implements ZootScene
 		
 		cellActors.forEach(cellActor -> stage.addActor(cellActor));
 		actors.forEach(actor -> stage.addActor(actor));
+		
+		//input
+		InputMultiplexer inputMultiplexer = new InputMultiplexer(inputProcessor, stage);
+		Gdx.input.setInputProcessor(inputMultiplexer);
+		this.inputProcessor = inputProcessor;
 	}
 	
 	@Override
