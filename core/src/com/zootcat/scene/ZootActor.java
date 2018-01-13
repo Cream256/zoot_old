@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.zootcat.controllers.Controller;
+import com.zootcat.controllers.gfx.RenderController;
 import com.zootcat.controllers.ChangeListenerController;
-import com.zootcat.controllers.RenderController;
 import com.zootcat.exceptions.RuntimeZootException;
 
 public final class ZootActor extends Actor

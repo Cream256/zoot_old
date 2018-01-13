@@ -3,7 +3,6 @@ package com.zootcat.controllers.gfx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.zootcat.controllers.RenderController;
 import com.zootcat.scene.ZootActor;
 
 public class SpriteController implements RenderController

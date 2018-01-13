@@ -1,6 +1,8 @@
-package com.zootcat.controllers;
+package com.zootcat.controllers.gfx;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.zootcat.controllers.ChangeListenerController;
+import com.zootcat.controllers.Controller;
 import com.zootcat.scene.ZootActor;
 
 public interface RenderController extends Controller, ChangeListenerController

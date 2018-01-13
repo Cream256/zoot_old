@@ -1,6 +1,7 @@
 package com.zootcat.controllers;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.zootcat.controllers.gfx.RenderController;
 import com.zootcat.scene.ZootActor;
 
 public class ControllerAdapter implements Controller, ChangeListenerController, RenderController 

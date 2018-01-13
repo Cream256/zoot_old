@@ -4,15 +4,13 @@ import java.util.function.Supplier;
 
 public class LambdaInputCommand implements ZootInputCommand 
 {
-	private static final Supplier<Boolean> FALSE_SUPPLIER = () -> { return false; };
-	
 	private Supplier<Boolean> onDown;
 	private Supplier<Boolean> onPress;	
 	private Supplier<Boolean> onRelease;
 	
 	public LambdaInputCommand(Supplier<Boolean> down)
 	{
-		this(down, FALSE_SUPPLIER, FALSE_SUPPLIER);
+		this(down, () -> false, () -> false);
 	}
 	
 	public LambdaInputCommand(Supplier<Boolean> down, Supplier<Boolean> release, Supplier<Boolean> press)

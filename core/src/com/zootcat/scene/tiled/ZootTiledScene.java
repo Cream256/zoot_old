@@ -1,6 +1,9 @@
 package com.zootcat.scene.tiled;
 
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -8,6 +11,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.zootcat.input.ZootInputProcessor;
@@ -101,6 +105,21 @@ public class ZootTiledScene implements ZootScene
 		{
 			actor.remove();
 		}
+	}
+
+	@Override
+	public List<ZootActor> getActors() 
+	{		
+		return getActors((act) -> true);
+	}
+	
+	@Override
+	public List<ZootActor> getActors(Predicate<Actor> filter) 
+	{		
+		return StreamSupport.stream(stage.getActors().spliterator(), false)
+				.filter(filter)
+				.map((act) -> (ZootActor)act)
+				.collect(Collectors.toList());
 	}
 	
 	@Override

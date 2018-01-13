@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.badlogic.gdx.InputAdapter;
+import com.zootcat.exceptions.RuntimeZootException;
 
 public class ZootBindableInputProcessor extends InputAdapter implements ZootInputProcessor
 {
@@ -53,7 +55,30 @@ public class ZootBindableInputProcessor extends InputAdapter implements ZootInpu
 	
 	public void bindCommand(int keycode, ZootInputCommand command)
 	{
+		validateNewBinding(keycode);
 		bindings.put(keycode, command);
 	}
 	
+	public void bindDown(int keycode, Supplier<Boolean> downCommand)
+	{
+		bindCommand(keycode, new LambdaInputCommand(downCommand));
+	}
+	
+	public void bindUp(int keycode, Supplier<Boolean> upCommand)
+	{
+		bindCommand(keycode, new LambdaInputCommand(() -> false, upCommand, () -> false));
+	}
+	
+	public boolean hasBinding(int keycode)
+	{
+		return bindings.containsKey(keycode);
+	}
+	
+	private void validateNewBinding(int keycode)
+	{
+		if(hasBinding(keycode))
+		{
+			throw new RuntimeZootException("Binding already present for keycode " + keycode);
+		}
+	}
 }

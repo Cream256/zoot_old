@@ -23,7 +23,7 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.zootcat.controllers.ChangeListenerController;
 import com.zootcat.controllers.Controller;
-import com.zootcat.controllers.RenderController;
+import com.zootcat.controllers.gfx.RenderController;
 
 public class ZootActorTest 
 {	
