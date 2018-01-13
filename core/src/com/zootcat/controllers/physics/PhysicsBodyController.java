@@ -56,6 +56,11 @@ public abstract class PhysicsBodyController implements Controller
 		actor.setPosition(body.getX(), body.getY());
 	}
 	
+	public void applyImpulse(float fx, float fy, float fz)
+	{
+		body.applyImpulse(fx, fy, fz);
+	}
+	
 	protected ZootPhysicsBody getPhysicsBody()
 	{
 		return body;

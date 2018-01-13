@@ -1,12 +1,12 @@
 package com.zootcat.game;
 
-import java.util.function.Supplier;
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.zootcat.input.LambdaInputCommand;
+import com.zootcat.controllers.input.InputProcessorController;
+import com.zootcat.controllers.physics.PhysicsBodyController;
 import com.zootcat.input.ZootBindableInputProcessor;
+import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.tiled.ZootTiledScene;
 
 public class ZootGame extends ApplicationAdapter
@@ -17,23 +17,31 @@ public class ZootGame extends ApplicationAdapter
     public void create()
     {                
     	//create input
-    	ZootBindableInputProcessor inputProcessor = new ZootBindableInputProcessor();
+    	ZootBindableInputProcessor globalInputProcessor = new ZootBindableInputProcessor();
     	
     	//create scene
-    	scene = new ZootTiledScene("data/TestBed.tmx", inputProcessor);
+    	scene = new ZootTiledScene("data/TestBed.tmx", globalInputProcessor);
     	
-    	//configure input
-        Supplier<Boolean> noImpl = () -> { return false; };
-        Supplier<Boolean> moveCameraUp = () -> { scene.getCamera().translate(0, 10, 0); return true; };
-    	Supplier<Boolean> moveCameraDown = () -> { scene.getCamera().translate(0, -10, 0); return true; };
-    	Supplier<Boolean> moveCameraLeft = () -> { scene.getCamera().translate(-10, 0, 0); return true; };
-    	Supplier<Boolean> moveCameraRight = () -> { scene.getCamera().translate(10, 0, 0); return true; };
-    	Supplier<Boolean> switchDebugMode = () -> { scene.setDebugMode(!scene.isDebugMode()); return true; };
-    	inputProcessor.bindCommand(Input.Keys.UP, new LambdaInputCommand(moveCameraUp));
-    	inputProcessor.bindCommand(Input.Keys.DOWN, new LambdaInputCommand(moveCameraDown));
-    	inputProcessor.bindCommand(Input.Keys.LEFT, new LambdaInputCommand(moveCameraLeft));
-    	inputProcessor.bindCommand(Input.Keys.RIGHT, new LambdaInputCommand(moveCameraRight));
-    	inputProcessor.bindCommand(Input.Keys.F9, new LambdaInputCommand(noImpl, noImpl, switchDebugMode));
+    	//configure global input
+    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_8, () -> { scene.getCamera().translate(0, 10, 0); return true; });
+    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_2, () -> { scene.getCamera().translate(0, -10, 0); return true; });
+    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_4, () -> { scene.getCamera().translate(-10, 0, 0); return true; });
+    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_6, () -> { scene.getCamera().translate(10, 0, 0); return true; });
+    	globalInputProcessor.bindUp(Input.Keys.F9, () -> { scene.setDebugMode(!scene.isDebugMode()); return true; });
+    	
+    	//configure character input    	
+    	ZootActor player = scene.getActors((act) -> act.getName().equalsIgnoreCase("Frisker")).get(0);
+    	
+    	ZootBindableInputProcessor characterInputProcessor = new ZootBindableInputProcessor(); 
+    	characterInputProcessor.bindDown(Input.Keys.RIGHT, () -> 
+    	{ 
+    		PhysicsBodyController ctrl = player.getController(PhysicsBodyController.class);
+    		ctrl.applyImpulse(10000.0f, 0.0f, 0.0f);
+    		return true;
+    	});
+    	
+    	player.addController(new InputProcessorController(characterInputProcessor));
+    	scene.setFocusedActor(player);
     }
 
     @Override

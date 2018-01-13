@@ -78,4 +78,10 @@ public class ZootBox2DPhysicsBody implements ZootPhysicsBody
 	{
 		return body.isFixedRotation();
 	}
+
+	@Override
+	public void applyImpulse(float fx, float fy, float fz) 
+	{
+		body.applyLinearImpulse(fx, fy, body.getPosition().x, body.getPosition().y, true);
+	}
 }

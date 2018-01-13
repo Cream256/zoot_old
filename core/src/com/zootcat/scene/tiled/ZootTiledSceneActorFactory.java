@@ -43,6 +43,7 @@ public class ZootTiledSceneActorFactory
 	public ZootActor createFromMapCell(final ZootTiledMapCell cell)
 	{
 		ZootActor cellActor = new ZootActor();
+		cellActor.setName("Cell " + cell.x + "x" + cell.y);
 		cellActor.setBounds(cell.x * cell.width, cell.y * cell.height, cell.width, cell.height);
 		if(cell.collidable > 0)
 		{

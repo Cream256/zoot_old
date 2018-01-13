@@ -11,5 +11,7 @@ public interface ZootPhysicsBody extends Disposable
 	float getHeight();
 	
 	boolean canRotate();
-	void setCanRotate(boolean value);	
+	void setCanRotate(boolean value);
+	
+	void applyImpulse(float fx, float fy, float fz);	
 }

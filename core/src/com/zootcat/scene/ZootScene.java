@@ -15,7 +15,7 @@ public interface ZootScene extends Disposable
 	void render(float delta);
 	
 	void addActor(ZootActor actor);
-	void removeActor(ZootActor actor);
+	void removeActor(ZootActor actor);	
 	List<ZootActor> getActors();
 	List<ZootActor> getActors(Predicate<Actor> filter);
 	
@@ -23,5 +23,8 @@ public interface ZootScene extends Disposable
 	ZootPhysics getPhysics();
 	ZootRender getRender();
 	
-	boolean isDebugMode();	
+	boolean isDebugMode();
+	void setDebugMode(boolean debug);
+	
+	void setFocusedActor(ZootActor actor);
 }

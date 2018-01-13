@@ -9,9 +9,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.zootcat.controllers.ChangeListenerController;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.gfx.RenderController;
-import com.zootcat.controllers.ChangeListenerController;
 import com.zootcat.exceptions.RuntimeZootException;
 
 public final class ZootActor extends Actor
@@ -19,10 +19,14 @@ public final class ZootActor extends Actor
 	private List<Controller> controllers = new ArrayList<Controller>();
 	private List<Controller> controllersToAdd = new ArrayList<Controller>();
 	private List<Controller> controllersToRemove = new ArrayList<Controller>();
-	private Set<String> types = new HashSet<String>();
-	
+	private Set<String> types = new HashSet<String>();	
 	private float opacity = 1.0f;
 			
+	public ZootActor()
+	{
+		setName("Unnamed Actor");
+	}
+	
 	@Override
 	public void act(float delta)
 	{		
@@ -135,4 +139,10 @@ public final class ZootActor extends Actor
     {
         return types.contains(type.toLowerCase());
     }	
+    
+    @Override
+    public String toString()
+    {
+    	return getName();
+    }
 }

@@ -115,16 +115,16 @@ public class ZootTiledScene implements ZootScene
 	
 	@Override
 	public List<ZootActor> getActors(Predicate<Actor> filter) 
-	{		
+	{				
 		return StreamSupport.stream(stage.getActors().spliterator(), false)
-				.filter(filter)
-				.map((act) -> (ZootActor)act)
-				.collect(Collectors.toList());
+							 .filter(filter)
+							 .map((act) -> (ZootActor)act)
+							 .collect(Collectors.toList());
 	}
 	
 	@Override
 	public void update(float delta)
-	{
+	{		
 		timeAccumulator += Math.min(MIN_TIME_STEP, delta);       
 		while(timeAccumulator >= FIXED_TIME_STEP)
 		{
@@ -172,8 +172,15 @@ public class ZootTiledScene implements ZootScene
 		return isDebugMode;
 	}
 	
-	public void setDebugMode(boolean isDebug)
+	@Override
+	public void setDebugMode(boolean debug)
 	{
-		this.isDebugMode = isDebug;
+		isDebugMode = debug;
+	}
+
+	@Override
+	public void setFocusedActor(ZootActor actor)
+	{
+		stage.setKeyboardFocus(actor);	
 	}
 }
