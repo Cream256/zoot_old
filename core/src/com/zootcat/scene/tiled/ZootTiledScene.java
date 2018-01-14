@@ -13,7 +13,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.zootcat.input.ZootInputProcessor;
 import com.zootcat.map.tiled.ZootTiledMap;
 import com.zootcat.map.tiled.ZootTiledMapRender;
@@ -28,23 +29,17 @@ public class ZootTiledScene implements ZootScene
 {
 	private static final float FIXED_TIME_STEP = 1.0f / 60.0f;
 	private static final float MIN_TIME_STEP = 1.0f / 4.0f;
-	
+		
 	private Stage stage;
-	private OrthographicCamera camera;	
 	private ZootTiledMapRender render;
 	private ZootBox2DPhysics physics;	
 	private ZootInputProcessor inputProcessor;
-	private float timeAccumulator = 0.0f;
-	
+	private float timeAccumulator = 0.0f;	
 	private boolean isDebugMode = false;
 	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
 	
-	public ZootTiledScene(String tiledMapPath, ZootInputProcessor inputProcessor)
-	{		
-		//camera
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		
+	public ZootTiledScene(String tiledMapPath, ZootInputProcessor inputProcessor, float viewportWidth, float viewportHeight, float worldUnitPerTile)
+	{				
 		//map    	
     	ZootTiledMap map = new ZootTiledMap(new TmxMapLoader().load(tiledMapPath));
 		
@@ -54,12 +49,14 @@ public class ZootTiledScene implements ZootScene
 		//render
     	ZootTiledMapRenderConfig renderConfig = new ZootTiledMapRenderConfig();
 		renderConfig.renderRectangleObjects = false;
-		renderConfig.renderTextureObjects = false;		
+		renderConfig.renderTextureObjects = false;	
+		renderConfig.tilesPerWorldUnit = worldUnitPerTile;
 		render = new ZootTiledMapRender(map, renderConfig);
-		
-		//stage
-		stage = new Stage(new ScreenViewport(camera));		
 				
+		//stage
+		Viewport viewport = new StretchViewport(viewportWidth, viewportHeight);
+		stage = new Stage(viewport);
+		
 		//actors
     	ZootTiledSceneActorFactory actorFactory = new ZootTiledSceneActorFactory(this);
 		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
@@ -77,7 +74,7 @@ public class ZootTiledScene implements ZootScene
 	@Override
 	public Camera getCamera()
 	{
-		return camera;
+		return stage.getViewport().getCamera();
 	}
 	
 	@Override
@@ -129,7 +126,6 @@ public class ZootTiledScene implements ZootScene
 		while(timeAccumulator >= FIXED_TIME_STEP)
 		{
 			inputProcessor.processPressedKeys();
-			camera.update();
 			stage.act(FIXED_TIME_STEP);
 			physics.step(FIXED_TIME_STEP);
 			timeAccumulator -= FIXED_TIME_STEP;
@@ -139,7 +135,7 @@ public class ZootTiledScene implements ZootScene
 	@Override
 	public void render(float delta)
 	{	
-		render.setView(camera);
+		render.setView((OrthographicCamera)getCamera());
 		render.render(delta);
 		stage.draw();
 		
@@ -149,7 +145,7 @@ public class ZootTiledScene implements ZootScene
 			debugRender.setDrawBodies(true);
 			debugRender.setDrawInactiveBodies(true);
 			debugRender.setDrawJoints(true);
-			debugRender.render(physics.getWorld(), camera.combined);
+			debugRender.render(physics.getWorld(), getCamera().combined);
 		}
 	}
 
@@ -182,5 +178,11 @@ public class ZootTiledScene implements ZootScene
 	public void setFocusedActor(ZootActor actor)
 	{
 		stage.setKeyboardFocus(actor);	
+	}
+
+	@Override
+	public void resize(int width, int height) 
+	{		
+		//noop
 	}
 }

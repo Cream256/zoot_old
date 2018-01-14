@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -16,14 +17,32 @@ import com.zootcat.map.ZootMap;
 
 public class ZootTiledMap implements ZootMap
 {	
+	public static final String BACKGROUND_COLOR_PROPERTY = "backgroundcolor";
 	public static final String COLLISION_LAYER_NAME = "Collision";
 	public static final String COLLIDABLE_PROPERTY = "collidable";
+	public static final String TILE_WIDTH_PROPERTY = "tilewidth";
+	public static final String TILE_HEIGHT_PROPERTY = "tilewidth";
 	
 	private TiledMap tiledMap;
 	
 	public ZootTiledMap(final TiledMap tiledMap)
 	{
 		this.tiledMap = tiledMap;
+	}
+	
+	public int getTileWidth()
+	{
+		return tiledMap.getProperties().get(TILE_WIDTH_PROPERTY, Integer.class);
+	}
+	
+	public int getTileHeight()
+	{
+		return tiledMap.getProperties().get(TILE_HEIGHT_PROPERTY, Integer.class);
+	}
+	
+	public Color getBackgroundColor() 
+	{
+		return Color.valueOf(tiledMap.getProperties().get(BACKGROUND_COLOR_PROPERTY, String.class));
 	}
 	
 	public TiledMap getTiledMap()
@@ -102,6 +121,5 @@ public class ZootTiledMap implements ZootMap
 		}
 		result.getProperties().putAll(obj.getProperties());		
 		return result;
-	}
-	
+	}	
 }

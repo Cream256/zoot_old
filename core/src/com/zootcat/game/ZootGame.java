@@ -11,8 +11,12 @@ import com.zootcat.scene.tiled.ZootTiledScene;
 
 public class ZootGame extends ApplicationAdapter
 {	
-	private ZootTiledScene scene;
+	private static final float VIEWPORT_WIDTH = 7.0f;
+	private static final float VIEWPORT_HEIGHT = 4.0f;
+	private static final float UNIT_PER_TILE = 0.17f;	//1 tile = 17cm
 	
+	private ZootTiledScene scene;
+		
     @Override
     public void create()
     {                
@@ -20,13 +24,14 @@ public class ZootGame extends ApplicationAdapter
     	ZootBindableInputProcessor globalInputProcessor = new ZootBindableInputProcessor();
     	
     	//create scene
-    	scene = new ZootTiledScene("data/TestBed.tmx", globalInputProcessor);
+    	scene = new ZootTiledScene("data/TestBed.tmx", globalInputProcessor, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, UNIT_PER_TILE);
     	
     	//configure global input
-    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_8, () -> { scene.getCamera().translate(0, 10, 0); return true; });
-    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_2, () -> { scene.getCamera().translate(0, -10, 0); return true; });
-    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_4, () -> { scene.getCamera().translate(-10, 0, 0); return true; });
-    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_6, () -> { scene.getCamera().translate(10, 0, 0); return true; });
+    	final float camMove = 0.1f;
+    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_8, () -> { scene.getCamera().translate(0, camMove, 0); return true; });
+    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_2, () -> { scene.getCamera().translate(0, -camMove, 0); return true; });
+    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_4, () -> { scene.getCamera().translate(-camMove, 0, 0); return true; });
+    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_6, () -> { scene.getCamera().translate(camMove, 0, 0); return true; });
     	globalInputProcessor.bindUp(Input.Keys.F9, () -> { scene.setDebugMode(!scene.isDebugMode()); return true; });
     	
     	//configure character input    	
@@ -52,6 +57,12 @@ public class ZootGame extends ApplicationAdapter
     	scene.render(delta);
     }
 
+	@Override
+	public void resize (int width, int height) 
+	{
+		scene.resize(width, height);
+	}
+    
 	@Override
 	public void dispose() 
 	{
