@@ -25,9 +25,17 @@ public class ZootTiledSceneActorFactory
 	private ZootTiledScene scene;
 	private ClassContainer controllers = new ClassContainer();
 		
+	private float scale;
+	
 	public ZootTiledSceneActorFactory(ZootTiledScene scene)
 	{
+		this(scene, 1.0f);
+	}
+	
+	public ZootTiledSceneActorFactory(ZootTiledScene scene, float scale)
+	{
 		this.scene = scene;
+		this.scale = scale;
 		controllers.addGlobalParameter(scene);
 		addControllersFromPackage("com.zootcat.controllers", true);
 	}
@@ -44,7 +52,7 @@ public class ZootTiledSceneActorFactory
 	{
 		ZootActor cellActor = new ZootActor();
 		cellActor.setName("Cell " + cell.x + "x" + cell.y);
-		cellActor.setBounds(cell.x * cell.width, cell.y * cell.height, cell.width, cell.height);
+		cellActor.setBounds(cell.x * cell.width * scale, cell.y * cell.height * scale, cell.width * scale, cell.height * scale);
 		if(cell.collidable > 0)
 		{
 			cellActor.addController(new StaticBodyController(cellActor, scene));
@@ -85,10 +93,10 @@ public class ZootTiledSceneActorFactory
 		actor.setVisible(mapObject.isVisible());
 		actor.setOpacity(mapObject.getOpacity());
 		
-		float x = Float.valueOf(getPropertyOrThrow(mapObject, "x"));
-		float y = Float.valueOf(getPropertyOrThrow(mapObject, "y"));
-		float width = Float.valueOf(getPropertyOrThrow(mapObject, "width"));
-		float height = Float.valueOf(getPropertyOrThrow(mapObject, "height")); 		
+		float x = Float.valueOf(getPropertyOrThrow(mapObject, "x")) * scale;
+		float y = Float.valueOf(getPropertyOrThrow(mapObject, "y")) * scale;
+		float width = Float.valueOf(getPropertyOrThrow(mapObject, "width")) * scale;
+		float height = Float.valueOf(getPropertyOrThrow(mapObject, "height")) * scale; 		
 		float rotation = Float.valueOf(getPropertyOrDefault(mapObject, "rotation", "0.0f"));
 		actor.setBounds(x, y, width, height);
 		actor.setRotation(rotation);

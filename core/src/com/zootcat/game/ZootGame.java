@@ -41,7 +41,7 @@ public class ZootGame extends ApplicationAdapter
     	characterInputProcessor.bindDown(Input.Keys.RIGHT, () -> 
     	{ 
     		PhysicsBodyController ctrl = player.getController(PhysicsBodyController.class);
-    		ctrl.applyImpulse(10000.0f, 0.0f, 0.0f);
+    		ctrl.applyImpulse(1.0f, 0.0f, 0.0f);
     		return true;
     	});
     	

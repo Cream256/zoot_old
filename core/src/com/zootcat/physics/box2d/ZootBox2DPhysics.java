@@ -20,7 +20,7 @@ import com.zootcat.physics.ZootPhysics;
 
 public class ZootBox2DPhysics implements ZootPhysics
 {
-	private static final Vector2 DEFAULT_GRAVITY = new Vector2(0.0f, -100.0f);
+	private static final Vector2 DEFAULT_GRAVITY = new Vector2(0.0f, -9.80f);
 	private World world;
 	
 	public ZootBox2DPhysics()

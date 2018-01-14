@@ -28,13 +28,9 @@ public class ZootTiledMapRender extends OrthogonalTiledMapRenderer implements Zo
 	
 	public ZootTiledMapRender(ZootTiledMap map, ZootTiledMapRenderConfig config)
 	{
-		super(map.getTiledMap());
-		
+		super(map.getTiledMap(), config.unitScale);		
 		this.config = config;
-		this.backgroundColor = map.getBackgroundColor();		
-		
-		float singleTileScale = 1.0f / map.getTileWidth();
-		this.unitScale = singleTileScale * config.tilesPerWorldUnit;
+		this.backgroundColor = map.getBackgroundColor();
 	}
 	
 	@Override

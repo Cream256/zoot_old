@@ -19,6 +19,7 @@ import com.zootcat.input.ZootInputProcessor;
 import com.zootcat.map.tiled.ZootTiledMap;
 import com.zootcat.map.tiled.ZootTiledMapRender;
 import com.zootcat.map.tiled.ZootTiledMapRenderConfig;
+import com.zootcat.map.tiled.ZootTiledWorldScaleCalculator;
 import com.zootcat.physics.ZootPhysics;
 import com.zootcat.physics.box2d.ZootBox2DPhysics;
 import com.zootcat.render.ZootRender;
@@ -31,7 +32,7 @@ public class ZootTiledScene implements ZootScene
 	private static final float MIN_TIME_STEP = 1.0f / 4.0f;
 		
 	private Stage stage;
-	private ZootTiledMapRender render;
+	private ZootTiledMapRender mapRender;
 	private ZootBox2DPhysics physics;	
 	private ZootInputProcessor inputProcessor;
 	private float timeAccumulator = 0.0f;	
@@ -43,6 +44,9 @@ public class ZootTiledScene implements ZootScene
 		//map    	
     	ZootTiledMap map = new ZootTiledMap(new TmxMapLoader().load(tiledMapPath));
 		
+    	//scale
+    	float unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
+    	
     	//physics
     	physics = new ZootBox2DPhysics();
     	
@@ -50,15 +54,15 @@ public class ZootTiledScene implements ZootScene
     	ZootTiledMapRenderConfig renderConfig = new ZootTiledMapRenderConfig();
 		renderConfig.renderRectangleObjects = false;
 		renderConfig.renderTextureObjects = false;	
-		renderConfig.tilesPerWorldUnit = worldUnitPerTile;
-		render = new ZootTiledMapRender(map, renderConfig);
+		renderConfig.unitScale = unitScale;
+		mapRender = new ZootTiledMapRender(map, renderConfig);
 				
 		//stage
 		Viewport viewport = new StretchViewport(viewportWidth, viewportHeight);
 		stage = new Stage(viewport);
 		
 		//actors
-    	ZootTiledSceneActorFactory actorFactory = new ZootTiledSceneActorFactory(this);
+    	ZootTiledSceneActorFactory actorFactory = new ZootTiledSceneActorFactory(this, unitScale);
 		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
 		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getCollidableCells());
 		
@@ -86,7 +90,7 @@ public class ZootTiledScene implements ZootScene
 	@Override
 	public ZootRender getRender() 
 	{
-		return render;
+		return mapRender;
 	}
 	
 	@Override
@@ -134,9 +138,9 @@ public class ZootTiledScene implements ZootScene
 	
 	@Override
 	public void render(float delta)
-	{	
-		render.setView((OrthographicCamera)getCamera());
-		render.render(delta);
+	{			
+		mapRender.setView((OrthographicCamera)getCamera());
+		mapRender.render(delta);
 		stage.draw();
 		
 		if(isDebugMode())
@@ -152,8 +156,8 @@ public class ZootTiledScene implements ZootScene
 	@Override
 	public void dispose() 
 	{
-		render.dispose();
-		render = null;
+		mapRender.dispose();
+		mapRender = null;
 		
 		stage.dispose();
 		stage = null;
