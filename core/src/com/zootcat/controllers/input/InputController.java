@@ -7,6 +7,12 @@ import com.zootcat.scene.ZootActor;
 public class InputController extends InputListener implements Controller
 {	
 	@Override
+	public void init()
+	{
+		//noop
+	}
+	
+	@Override
 	public void onAdd(ZootActor actor) 
 	{
 		actor.addListener(this);

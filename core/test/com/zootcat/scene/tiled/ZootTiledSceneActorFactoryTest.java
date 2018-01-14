@@ -108,7 +108,7 @@ public class ZootTiledSceneActorFactoryTest
 		//given
 		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
 		MapObject mapObject = createDefaultMapObject();
-		mapObject.getProperties().put("Mock2Controller", "1, 2.2f, string");
+		mapObject.getProperties().put("Mock2Controller", "a=1, b=2.2f, c=string");
 		
 		//when
 		ZootActor actor = factory.createFromMapObject(mapObject);
@@ -123,12 +123,12 @@ public class ZootTiledSceneActorFactoryTest
 	}
 	
 	@Test
-	public void createFromMapObjectShouldAddControllerWithGlobalParamTest()
+	public void createFromMapObjectShouldAddControllerWithSceneGlobalParamTest()
 	{
 		//given
 		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
 		MapObject mapObject = createDefaultMapObject();
-		mapObject.getProperties().put("Mock3Controller", "100");
+		mapObject.getProperties().put("Mock3Controller", "param = 100");
 		
 		//then
 		ZootActor actor = factory.createFromMapObject(mapObject);
@@ -137,26 +137,9 @@ public class ZootTiledSceneActorFactoryTest
 		//then
 		Mock3Controller ctrl = actor.getController(Mock3Controller.class);
 		assertNotNull(ctrl);
-		assertEquals(Mock3Controller.INVOKED_SECOND_CTOR, ctrl.ctorInvoked, 0.0f);
+		assertEquals(100, ctrl.param);
+		assertEquals(sceneMock, ctrl.scene);
 	}
-
-	@Test
-	public void createFromMapObjectShouldAddControllerWithTwoDefaultParamsTest()
-	{
-		//given
-		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
-		MapObject mapObject = createDefaultMapObject();
-		mapObject.getProperties().put("Mock3Controller", "100, 200");
-		
-		//then
-		ZootActor actor = factory.createFromMapObject(mapObject);
-		actor.act(0.0f);
-		
-		//then
-		Mock3Controller ctrl = actor.getController(Mock3Controller.class);
-		assertNotNull(ctrl);
-		assertEquals(Mock3Controller.INVOKED_THIRD_CTOR, ctrl.ctorInvoked, 0.0f);
-	}	
 	
 	@Test(expected = RuntimeZootException.class)
 	public void createFromMapObjectShouldThrowWhenControllerParamsAreWrongTest()

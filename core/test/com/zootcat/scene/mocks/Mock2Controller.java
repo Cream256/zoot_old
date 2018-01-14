@@ -1,17 +1,11 @@
 package com.zootcat.scene.mocks;
 
 import com.zootcat.controllers.ControllerAdapter;
+import com.zootcat.controllers.factory.CtrlParam;
 
 public class Mock2Controller extends ControllerAdapter 
 {
-	public int a;
-	public float b;
-	public String c;
-	
-	public Mock2Controller(int a, float b, String c)
-	{
-		this.a = a;
-		this.b = b;
-		this.c = c;
-	}
+	@CtrlParam public int a;
+	@CtrlParam public float b;
+	@CtrlParam public String c;
 }

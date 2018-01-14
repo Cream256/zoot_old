@@ -3,25 +3,9 @@ package com.zootcat.controllers.physics;
 import com.zootcat.physics.ZootPhysicsBodyType;
 import com.zootcat.physics.ZootPhysicsFixture;
 import com.zootcat.scene.ZootActor;
-import com.zootcat.scene.ZootScene;
 
 public class CharacterBodyController extends PhysicsBodyController
-{
-	public CharacterBodyController(ZootActor actor, ZootScene scene)
-	{
-		this(1.0f, actor, scene);
-	}
-	
-	public CharacterBodyController(float density, ZootActor actor, ZootScene scene)
-	{
-		this(density, 0.0f, 0.0f, actor, scene);
-	}
-	
-	public CharacterBodyController(float density, float friction, float restitution, ZootActor actor, ZootScene scene) 
-	{
-		super(density, friction, restitution, actor, scene);
-	}
-	
+{	
 	@Override
 	public void onAdd(ZootActor actor) 
 	{

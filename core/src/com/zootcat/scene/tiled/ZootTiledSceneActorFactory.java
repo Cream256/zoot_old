@@ -2,14 +2,15 @@ package com.zootcat.scene.tiled;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.zootcat.classcontainer.ClassContainer;
-import com.zootcat.classcontainer.ClassContainerException;
 import com.zootcat.controllers.Controller;
+import com.zootcat.controllers.factory.ControllerFactory;
+import com.zootcat.controllers.factory.ControllerFactoryException;
 import com.zootcat.controllers.physics.StaticBodyController;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.map.tiled.ZootTiledMapCell;
@@ -20,13 +21,14 @@ import com.zootcat.utils.ClassFinder;
 
 public class ZootTiledSceneActorFactory 
 {
+	private static final String ACTOR_GLOBAL_PARAM = "actor";
+	private static final String SCENE_GLOBAL_PARAM = "scene";	
 	private static final String CONTROLLER_SUFFIX = "Controller";
-	
-	private ZootTiledScene scene;
-	private ClassContainer controllers = new ClassContainer();
-		
+
 	private float scale;
-	
+	private ZootTiledScene scene;
+	private ControllerFactory controllerFactory = new ControllerFactory();		
+		
 	public ZootTiledSceneActorFactory(ZootTiledScene scene)
 	{
 		this(scene, 1.0f);
@@ -36,7 +38,7 @@ public class ZootTiledSceneActorFactory
 	{
 		this.scene = scene;
 		this.scale = scale;
-		controllers.addGlobalParameter(scene);
+		controllerFactory.addGlobalParameter(SCENE_GLOBAL_PARAM, scene);
 		addControllersFromPackage("com.zootcat.controllers", true);
 	}
 	
@@ -55,7 +57,7 @@ public class ZootTiledSceneActorFactory
 		cellActor.setBounds(cell.x * cell.width * scale, cell.y * cell.height * scale, cell.width * scale, cell.height * scale);
 		if(cell.collidable > 0)
 		{
-			cellActor.addController(new StaticBodyController(cellActor, scene));
+			cellActor.addController(new StaticBodyController(scene));
 		}
 		return cellActor;
 	}
@@ -82,7 +84,7 @@ public class ZootTiledSceneActorFactory
 									   .filter(filterByName)
 									   .collect(Collectors.toList());
 		
-		filtered.forEach(cls -> controllers.add(cls));
+		filtered.forEach(cls -> controllerFactory.add(cls));
 		return filtered.size();
 	}
 	
@@ -104,26 +106,26 @@ public class ZootTiledSceneActorFactory
 
 	protected void setActorControllers(final MapObject mapObject, ZootActor actor)
 	{
-		controllers.addGlobalParameter(actor);		
+		controllerFactory.addGlobalParameter(ACTOR_GLOBAL_PARAM, actor);		
 		mapObject.getProperties().getKeys().forEachRemaining(ctrlName ->
 		{
 			String normalizedCtrlName = normalizeControllerName(ctrlName); 
-			if(controllers.contains(normalizedCtrlName))
+			if(controllerFactory.contains(normalizedCtrlName))
 			{
 				try 
 				{									
 					String[] controllerArguments = mapObject.getProperties().get(ctrlName, String.class).split(",");
-					List<Object> arguments = ArgumentParser.parse(controllerArguments, actor);
-					Controller controller = (Controller) controllers.create(normalizedCtrlName, arguments);
+					Map<String, Object> arguments = ArgumentParser.parse(controllerArguments);
+					Controller controller = (Controller) controllerFactory.create(normalizedCtrlName, arguments);
 					actor.addController(controller);
 				}
-				catch(ArgumentParserException | ClassContainerException e)
+				catch(ArgumentParserException | ControllerFactoryException e)
                 {
                     throw new RuntimeZootException("Error while trying to create " + ctrlName, e);
                 }
 			}
 		});
-		controllers.removeGlobalParameter(actor);
+		controllerFactory.removeGlobalParameter(ACTOR_GLOBAL_PARAM);
 	}
 	
 	protected String normalizeControllerName(String controllerName)

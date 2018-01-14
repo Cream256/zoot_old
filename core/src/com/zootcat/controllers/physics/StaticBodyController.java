@@ -6,10 +6,10 @@ import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
 public class StaticBodyController extends PhysicsBodyController 
-{
-	public StaticBodyController(ZootActor actor, ZootScene scene) 
+{		
+	public StaticBodyController(ZootScene scene)
 	{
-		super(actor, scene);
+		super.scene = scene;
 	}
 	
 	@Override

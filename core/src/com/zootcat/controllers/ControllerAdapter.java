@@ -6,6 +6,11 @@ import com.zootcat.scene.ZootActor;
 
 public class ControllerAdapter implements Controller, ChangeListenerController, RenderController 
 {
+	@Override
+	public void init() 
+	{
+		//noop
+	}
 
 	@Override
 	public void onRender(Batch batch, float parentAlpha, ZootActor actor, float delta) 

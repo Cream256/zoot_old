@@ -3,17 +3,20 @@ package com.zootcat.controllers.gfx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.scene.ZootActor;
 
 public class SpriteController implements RenderController
 {
 	private Sprite sprite;
+	@CtrlParam(required = true) private String fileName;
 	
-	public SpriteController(String spriteFileName)
+	@Override
+	public void init() 
 	{
-		sprite = new Sprite(new Texture(spriteFileName));
+		sprite = new Sprite(new Texture(fileName));
 	}
-
+	
 	@Override
 	public void onAdd(ZootActor actor) 
 	{

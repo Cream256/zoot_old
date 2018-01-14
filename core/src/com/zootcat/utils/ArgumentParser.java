@@ -1,15 +1,13 @@
 package com.zootcat.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.zootcat.scene.ZootActor;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ArgumentParser
 {        
-    public static List<Object> parse(String[] arguments, ZootActor thisActor) throws ArgumentParserException
+    public static Map<String, Object> parse(String[] arguments) throws ArgumentParserException
     {
-        List<Object> result = new ArrayList<Object>();
+        Map<String, Object> result = new HashMap<String, Object>();
         
         if(arguments.length == 1 && arguments[0].length() == 0)
         {
@@ -18,51 +16,59 @@ public class ArgumentParser
         
         for(String arg : arguments)
         {
-            String trimmedArg = arg.trim();
-            if(trimmedArg.isEmpty())
+            if(arg.trim().isEmpty())
             {
-                throw new ArgumentParserException("Empty argument!");
+            	continue;
+            }
+        	
+        	String[] splittedArg = arg.split("="); 
+        	if(splittedArg.length != 2)
+        	{
+        		throw new ArgumentParserException("Invalid argument: " + arg);
+        	}
+        	
+        	String argName = splittedArg[0].trim();
+        	String argValue = splittedArg[1].trim();
+            
+            if(argName.isEmpty())
+            {
+                throw new ArgumentParserException("Empty argument name!");
+            }
+            
+            if(argValue.isEmpty())
+            {
+            	throw new ArgumentParserException("Empty argument value for: " + argName);
             }
                       
             //Integer argument
-            if(trimmedArg.matches("[-+]?[0-9]+"))
+            if(argValue.matches("[-+]?[0-9]+"))
             {
-                result.add(Integer.valueOf(trimmedArg));
+                result.put(argName, Integer.valueOf(argValue));
             }
             
             //Float argument
-            else if(trimmedArg.matches("[-+]?[0-9]*\\.[0-9]+f"))
+            else if(argValue.matches("[-+]?[0-9]*\\.[0-9]+f"))
             { 
-                result.add(Float.valueOf(trimmedArg));
+                result.put(argName, Float.valueOf(argValue));
             }
             
             //Double argument
-            else if(trimmedArg.matches("[-+]?[0-9]*\\.[0-9]+d"))
+            else if(argValue.matches("[-+]?[0-9]*\\.[0-9]+d"))
             { 
-                result.add(Double.valueOf(trimmedArg));
+                result.put(argName, Double.valueOf(argValue));
             }
             
             //Boolean
-            else if(trimmedArg.equalsIgnoreCase("true") || trimmedArg.equalsIgnoreCase("false"))
+            else if(argValue.equalsIgnoreCase("true") || argValue.equalsIgnoreCase("false"))
             {
-            	result.add(Boolean.valueOf(trimmedArg));
+            	result.put(argName, Boolean.valueOf(argValue));
             }
-                        
-            //This ZootActor
-            else if(trimmedArg.equalsIgnoreCase("%this"))
-            {
-                if(thisActor == null)
-                {
-                    throw new ArgumentParserException("No 'this' pointer have been assigned.");
-                }
-                result.add(thisActor);
-            }
-            
+                                    
             //else treat as string argument
             else
             {
-                result.add(new String(ZootUtils.unquoteString(trimmedArg)));
-            } 
+                result.put(argName, new String(ZootUtils.unquoteString(argValue)));
+            }
         }
 
         return result;

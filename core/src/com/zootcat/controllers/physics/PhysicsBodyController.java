@@ -2,6 +2,7 @@ package com.zootcat.controllers.physics;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.zootcat.controllers.Controller;
+import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.physics.ZootPhysicsBody;
 import com.zootcat.physics.ZootPhysicsBodyDef;
 import com.zootcat.physics.ZootPhysicsBodyType;
@@ -11,25 +12,19 @@ import com.zootcat.scene.ZootScene;
 
 public abstract class PhysicsBodyController implements Controller
 {
-	private float density;
-	private float friction;
-	private float restitution;
-	private ZootScene scene;
+	@CtrlParam protected float density = 1.0f;
+	@CtrlParam protected float friction = 0.0f;
+	@CtrlParam protected float restitution = 0.0f;
+	@CtrlParam(global = true, required = true) protected ZootScene scene;	
+	
 	private ZootPhysicsBody body;
-		
-	public PhysicsBodyController(ZootActor actor, ZootScene scene)
+			
+	@Override
+	public void init()
 	{
-		this(1.0f, 0.0f, 0.0f, actor, scene);
+		//noop
 	}
 	
-	public PhysicsBodyController(float density, float friction, float restitution, ZootActor actor, ZootScene scene)
-	{
-		this.scene = scene;
-		this.density = density;
-		this.friction = friction;
-		this.restitution = restitution;
-	}
-
 	@Override
 	public void onAdd(ZootActor actor) 
 	{
