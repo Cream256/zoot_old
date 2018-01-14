@@ -1,5 +1,8 @@
 package com.zootcat.physics.box2d;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -13,14 +16,18 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.zootcat.physics.ZootPhysics;
 import com.zootcat.physics.ZootPhysicsBody;
 import com.zootcat.physics.ZootPhysicsBodyDef;
 import com.zootcat.physics.ZootPhysicsBodyType;
-import com.zootcat.physics.ZootPhysics;
+import com.zootcat.physics.ZootPhysicsFixture;
 
 public class ZootBox2DPhysics implements ZootPhysics
 {
+	private static final int POSITION_ITERATIONS = 2;
+	private static final int VELOCITY_ITERATIONS = 6;
 	private static final Vector2 DEFAULT_GRAVITY = new Vector2(0.0f, -9.80f);
+	
 	private World world;
 	
 	public ZootBox2DPhysics()
@@ -38,20 +45,22 @@ public class ZootBox2DPhysics implements ZootPhysics
 	@Override
 	public ZootPhysicsBody createBody(ZootPhysicsBodyDef bodyDefinition)
 	{
-		//create box2d entities
-		Shape shape = createBox2DShape(bodyDefinition);
-		BodyDef bodyDef = createBox2DBodyDef(bodyDefinition); 			
-		FixtureDef fixtureDef = createBox2DFixtureDef(bodyDefinition, shape);		
+		//create box2d entities		
+		BodyDef bodyDef = createBox2DBodyDef(bodyDefinition);
 		Body body = createBox2DBody(bodyDef, bodyDefinition);		
-		Fixture fixture = body.createFixture(fixtureDef);		
+		
+		List<Fixture> fixtures = new ArrayList<Fixture>(bodyDefinition.fixtures.length);
+		for(ZootPhysicsFixture fixture : bodyDefinition.fixtures)
+		{
+			Shape fixtureShape = createBox2DShape(fixture);
+			FixtureDef fixtureDef = createBox2DFixtureDef(bodyDefinition, fixtureShape);		
+			fixtures.add(body.createFixture(fixtureDef));
+			fixtureShape.dispose();
+		}
 		
 		//create physics body
-		ZootBox2DPhysicsBody physicsBody = new ZootBox2DPhysicsBody(body, fixture, bodyDefinition.width, bodyDefinition.height);
-		
-		//dispose
-		shape.dispose();
-		shape = null;
-		
+		ZootBox2DPhysicsBody physicsBody = new ZootBox2DPhysicsBody(body, fixtures, bodyDefinition.width, bodyDefinition.height);
+						
 		//result
 		return physicsBody;
 	}
@@ -68,7 +77,7 @@ public class ZootBox2DPhysics implements ZootPhysics
 	@Override
 	public void step(float delta)
 	{
-		world.step(1/60f, 6, 2);
+		world.step(delta, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 	}
 	
 	@Override
@@ -99,19 +108,19 @@ public class ZootBox2DPhysics implements ZootPhysics
 		}
 	}
 	
-	private Shape createBox2DShape(ZootPhysicsBodyDef bodyDefinition) 
+	private Shape createBox2DShape(ZootPhysicsFixture fixtureDefinition) 
 	{
-		switch(bodyDefinition.shape)
+		switch(fixtureDefinition.type)
 		{
 		case CIRCLE:
 			CircleShape circle = new CircleShape();
-			circle.setRadius(bodyDefinition.width);
+			circle.setRadius(fixtureDefinition.width);
 			return circle;
 			
-		case RECTANGLE:
+		case BOX:
 		default:
 			PolygonShape rect = new PolygonShape();
-			rect.setAsBox(bodyDefinition.width / 2, bodyDefinition.height / 2);
+			rect.setAsBox(fixtureDefinition.width / 2, fixtureDefinition.height / 2);
 			return rect;
 		}
 	}

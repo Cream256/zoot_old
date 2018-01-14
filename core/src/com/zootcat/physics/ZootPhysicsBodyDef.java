@@ -11,6 +11,6 @@ public class ZootPhysicsBodyDef
 	public float friction = 0.0f;
 	public float restitution = 0.0f;	
 	public float rotation = 0.0f;
+	public ZootPhysicsFixture[] fixtures = null;
 	public ZootPhysicsBodyType type = ZootPhysicsBodyType.DYNAMIC;
-	public ZootPhysicsBodyShape shape = ZootPhysicsBodyShape.CIRCLE;
 }

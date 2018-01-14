@@ -35,13 +35,25 @@ public class ZootGame extends ApplicationAdapter
     	globalInputProcessor.bindUp(Input.Keys.F9, () -> { scene.setDebugMode(!scene.isDebugMode()); return true; });
     	
     	//configure character input    	
+    	final float charMove = 0.1f;
     	ZootActor player = scene.getActors((act) -> act.getName().equalsIgnoreCase("Frisker")).get(0);
-    	
     	ZootBindableInputProcessor characterInputProcessor = new ZootBindableInputProcessor(); 
     	characterInputProcessor.bindDown(Input.Keys.RIGHT, () -> 
     	{ 
     		PhysicsBodyController ctrl = player.getController(PhysicsBodyController.class);
-    		ctrl.applyImpulse(1.0f, 0.0f, 0.0f);
+    		ctrl.applyImpulse(charMove, 0.0f, 0.0f);
+    		return true;
+    	});
+    	characterInputProcessor.bindDown(Input.Keys.LEFT, () -> 
+    	{ 
+    		PhysicsBodyController ctrl = player.getController(PhysicsBodyController.class);
+    		ctrl.applyImpulse(-charMove, 0.0f, 0.0f);
+    		return true;
+    	});
+    	characterInputProcessor.bindDown(Input.Keys.UP, () -> 
+    	{ 
+    		PhysicsBodyController ctrl = player.getController(PhysicsBodyController.class);
+    		ctrl.applyImpulse(0.0f, charMove * 5, 0.0f);
     		return true;
     	});
     	

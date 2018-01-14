@@ -1,7 +1,7 @@
 package com.zootcat.controllers.physics;
 
-import com.zootcat.physics.ZootPhysicsBodyShape;
 import com.zootcat.physics.ZootPhysicsBodyType;
+import com.zootcat.physics.ZootPhysicsFixture;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
@@ -9,11 +9,20 @@ public class StaticBodyController extends PhysicsBodyController
 {
 	public StaticBodyController(ZootActor actor, ZootScene scene) 
 	{
-		this(ZootPhysicsBodyShape.RECTANGLE.toString(), actor, scene);
+		super(actor, scene);
 	}
 	
-	public StaticBodyController(String shape, ZootActor actor, ZootScene scene) 
+	@Override
+	protected ZootPhysicsBodyType getBodyType() 
 	{
-		super(1.0f, shape, ZootPhysicsBodyType.STATIC.toString(), actor, scene);
+		return ZootPhysicsBodyType.STATIC;
+	}
+
+	@Override
+	protected ZootPhysicsFixture[] createFixtures(ZootActor actor)
+	{
+		ZootPhysicsFixture[] fixtures = new ZootPhysicsFixture[1];
+		fixtures[0] = ZootPhysicsFixture.createBox(actor.getX(), actor.getY(), actor.getWidth(), actor.getHeight());
+		return fixtures;
 	}
 }

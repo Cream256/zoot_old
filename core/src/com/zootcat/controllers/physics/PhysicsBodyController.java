@@ -4,42 +4,36 @@ import com.badlogic.gdx.math.MathUtils;
 import com.zootcat.controllers.Controller;
 import com.zootcat.physics.ZootPhysicsBody;
 import com.zootcat.physics.ZootPhysicsBodyDef;
-import com.zootcat.physics.ZootPhysicsBodyShape;
 import com.zootcat.physics.ZootPhysicsBodyType;
+import com.zootcat.physics.ZootPhysicsFixture;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
-import com.zootcat.utils.ZootUtils;
 
 public abstract class PhysicsBodyController implements Controller
 {
+	private float density;
+	private float friction;
+	private float restitution;
 	private ZootScene scene;
 	private ZootPhysicsBody body;
-	private ZootPhysicsBodyDef bodyDef;
-	
-	public PhysicsBodyController(String type, ZootActor actor, ZootScene scene)
+		
+	public PhysicsBodyController(ZootActor actor, ZootScene scene)
 	{
-		this(1.0f, ZootPhysicsBodyShape.RECTANGLE.toString(), type, actor, scene);
+		this(1.0f, 0.0f, 0.0f, actor, scene);
 	}
 	
-	public PhysicsBodyController(float density, String shape, String type, ZootActor actor, ZootScene scene)
+	public PhysicsBodyController(float density, float friction, float restitution, ZootActor actor, ZootScene scene)
 	{
-		bodyDef = new ZootPhysicsBodyDef();
-		bodyDef.x = actor.getX();
-		bodyDef.y = actor.getY();
-		bodyDef.width = actor.getWidth();
-		bodyDef.height = actor.getHeight();
-		bodyDef.rotation = actor.getRotation();
-		bodyDef.density = density;		
-		bodyDef.type = ZootUtils.searchEnum(ZootPhysicsBodyType.class, type);
-		bodyDef.shape = ZootUtils.searchEnum(ZootPhysicsBodyShape.class, shape);		
-		this.scene = scene;	
+		this.scene = scene;
+		this.density = density;
+		this.friction = friction;
+		this.restitution = restitution;
 	}
 
 	@Override
 	public void onAdd(ZootActor actor) 
 	{
-		body = scene.getPhysics().createBody(bodyDef);
-		bodyDef = null;
+		body = scene.getPhysics().createBody(createBodyDefinition(actor));
 	}
 
 	@Override
@@ -66,4 +60,24 @@ public abstract class PhysicsBodyController implements Controller
 		return body;
 	}
 	
+	protected ZootPhysicsBodyDef createBodyDefinition(ZootActor actor) 
+	{
+		ZootPhysicsBodyDef bodyDef = new ZootPhysicsBodyDef();
+		bodyDef.x = actor.getX();
+		bodyDef.y = actor.getY();
+		bodyDef.width = actor.getWidth();
+		bodyDef.height = actor.getHeight();
+		bodyDef.rotation = actor.getRotation();
+		bodyDef.density = density;
+		bodyDef.friction = friction;
+		bodyDef.restitution = restitution;
+		
+		bodyDef.type = getBodyType();		
+		bodyDef.fixtures = createFixtures(actor);
+		return bodyDef;
+	}
+	
+	protected abstract ZootPhysicsFixture[] createFixtures(ZootActor actor);	
+	
+	protected abstract ZootPhysicsBodyType getBodyType();	
 }
