@@ -29,7 +29,7 @@ public class Mock3Controller implements Controller
 	}
 
 	@Override
-	public void init() 
+	public void init(ZootActor actor) 
 	{
 		//noop
 	}

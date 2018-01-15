@@ -7,7 +7,7 @@ import com.zootcat.scene.ZootActor;
 public class ControllerAdapter implements Controller, ChangeListenerController, RenderController 
 {
 	@Override
-	public void init() 
+	public void init(ZootActor actor) 
 	{
 		//noop
 	}

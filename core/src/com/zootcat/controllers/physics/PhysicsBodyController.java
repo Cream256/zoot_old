@@ -20,15 +20,16 @@ public abstract class PhysicsBodyController implements Controller
 	private ZootPhysicsBody body;
 			
 	@Override
-	public void init()
+	public void init(ZootActor actor)
 	{
-		//noop
+		body = scene.getPhysics().createBody(createBodyDefinition(actor));
+		body.setActive(false);
 	}
 	
 	@Override
 	public void onAdd(ZootActor actor) 
 	{
-		body = scene.getPhysics().createBody(createBodyDefinition(actor));
+		body.setActive(true);
 	}
 
 	@Override
@@ -55,7 +56,7 @@ public abstract class PhysicsBodyController implements Controller
 		body.setVelocity(vx, vy, vz);
 	}
 	
-	protected ZootPhysicsBody getPhysicsBody()
+	public ZootPhysicsBody getPhysicsBody()
 	{
 		return body;
 	}

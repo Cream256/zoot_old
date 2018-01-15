@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.zootcat.controllers.input.InputProcessorController;
 import com.zootcat.input.ZootBindableInputProcessor;
-import com.zootcat.input.ZootCharacterInputProcessor;
+import com.zootcat.input.GameCharacterInputProcessor;
 import com.zootcat.input.ZootInputManager;
 import com.zootcat.input.ZootInputProcessorListener;
 import com.zootcat.scene.ZootActor;
@@ -38,8 +38,9 @@ public class ZootGame extends ApplicationAdapter
     	
     	//character input    	
     	ZootActor player = scene.getActors((act) -> act.getName().equalsIgnoreCase("Frisker")).get(0);
-    	ZootCharacterInputProcessor characterInputProcessor = new ZootCharacterInputProcessor(player);
-    	characterInputProcessor.setMovementVelocity(1.0f);    	
+    	GameCharacterInputProcessor characterInputProcessor = new GameCharacterInputProcessor(player);
+    	characterInputProcessor.setMovementVelocity(1.0f);
+    	characterInputProcessor.setJumpVelocity(5.0f);    	
     	player.addController(new InputProcessorController(characterInputProcessor));
     	scene.setFocusedActor(player);
     	

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.zootcat.physics.ZootPhysicsBody;
 
@@ -99,5 +100,35 @@ public class ZootBox2DPhysicsBody implements ZootPhysicsBody
 	public void setVelocity(float vx, float vy, float vz) 
 	{
 		body.setLinearVelocity(vx, vy);
+	}
+
+	@Override
+	public void setVelocityX(float vx) 
+	{
+		body.setLinearVelocity(vx, body.getLinearVelocity().y);
+	}
+
+	@Override
+	public void setVelocityY(float vy) 
+	{
+		body.setLinearVelocity(body.getLinearVelocity().x, vy);	
+	}
+
+	@Override
+	public void setVelocityZ(float vz) 
+	{
+		//noop
+	}
+
+	@Override
+	public void setCollisionFilter(Filter collisionFilter)
+	{
+		fixtures.forEach((fixture) -> fixture.setFilterData(collisionFilter));
+	}
+
+	@Override
+	public void setActive(boolean active) 
+	{
+		body.setActive(active);
 	}
 }

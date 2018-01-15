@@ -1,6 +1,7 @@
 package com.zootcat.scene;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,8 +18,6 @@ import com.zootcat.exceptions.RuntimeZootException;
 public final class ZootActor extends Actor
 {
 	private List<Controller> controllers = new ArrayList<Controller>();
-	private List<Controller> controllersToAdd = new ArrayList<Controller>();
-	private List<Controller> controllersToRemove = new ArrayList<Controller>();
 	private Set<String> types = new HashSet<String>();	
 	private float opacity = 1.0f;
 			
@@ -29,17 +28,7 @@ public final class ZootActor extends Actor
 	
 	@Override
 	public void act(float delta)
-	{		
-		//remove controllers
-		controllersToRemove.forEach(ctrl -> ctrl.onRemove(this));
-		controllers.removeAll(controllersToRemove);
-		controllersToRemove.clear();
-		
-		//add controllers		
-		controllersToAdd.forEach(ctrl -> ctrl.onAdd(this));
-		controllers.addAll(controllersToAdd);
-		controllersToAdd.clear();
-		
+	{				
 		//update
 		controllers.forEach(ctrl -> ctrl.onUpdate(delta, this));
 				
@@ -82,12 +71,14 @@ public final class ZootActor extends Actor
 
 	public void addController(Controller controller)
 	{
-		controllersToAdd.add(controller);
+		controllers.add(controller);
+		controller.onAdd(this);		
 	}
 	
 	public void removeController(Controller controller)
 	{
-		controllersToRemove.add(controller);
+		controller.onRemove(this);
+		controllers.removeAll(Arrays.asList(controller));
 	}
 	
 	public List<Controller> getControllers()

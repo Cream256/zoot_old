@@ -57,7 +57,9 @@ public class ZootTiledSceneActorFactory
 		cellActor.setBounds(cell.x * cell.width * scale, cell.y * cell.height * scale, cell.width * scale, cell.height * scale);
 		if(cell.collidable > 0)
 		{
-			cellActor.addController(new StaticBodyController(scene));
+			StaticBodyController staticBodyCtrl = new StaticBodyController(scene);
+			staticBodyCtrl.init(cellActor);
+			cellActor.addController(staticBodyCtrl);
 		}
 		return cellActor;
 	}
@@ -116,8 +118,10 @@ public class ZootTiledSceneActorFactory
 				{									
 					String[] controllerArguments = mapObject.getProperties().get(ctrlName, String.class).split(",");
 					Map<String, Object> arguments = ArgumentParser.parse(controllerArguments);
-					Controller controller = (Controller) controllerFactory.create(normalizedCtrlName, arguments);
-					actor.addController(controller);
+					
+					Controller controller = (Controller) controllerFactory.create(normalizedCtrlName, arguments);										
+					controller.init(actor);		//initialize first, then assign
+					actor.addController(controller);	
 				}
 				catch(ArgumentParserException | ControllerFactoryException e)
                 {

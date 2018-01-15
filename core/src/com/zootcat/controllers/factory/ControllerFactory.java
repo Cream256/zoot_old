@@ -70,7 +70,6 @@ public class ControllerFactory
         {
 			Controller createdController = (Controller) classToCreate.newInstance();
 			assignParamsToClassFields(createdController, params);
-			createdController.init();
 			return createdController;
 			
 		}

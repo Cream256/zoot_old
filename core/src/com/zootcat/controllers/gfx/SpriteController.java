@@ -12,7 +12,7 @@ public class SpriteController implements RenderController
 	@CtrlParam(required = true) private String fileName;
 	
 	@Override
-	public void init() 
+	public void init(ZootActor actor)
 	{
 		sprite = new Sprite(new Texture(fileName));
 	}

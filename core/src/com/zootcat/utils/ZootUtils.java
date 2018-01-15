@@ -13,6 +13,11 @@ public class ZootUtils
         return (int)f;
     }
     
+    public static double trunc(double d)
+    {
+    	return (int)d;
+    }
+    
     public static float lerp(float time, float start, float finish)
     {
         float timeNormalized = clipToRange(time, 0.0f, 1.0f);

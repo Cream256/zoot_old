@@ -126,6 +126,7 @@ public class ZootTiledScene implements ZootScene
 			physics.step(FIXED_TIME_STEP);
 			timeAccumulator -= FIXED_TIME_STEP;
 		}
+		stage.getCamera().update();
 	}
 	
 	@Override
