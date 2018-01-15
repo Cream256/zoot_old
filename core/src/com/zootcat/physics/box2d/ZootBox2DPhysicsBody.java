@@ -28,7 +28,7 @@ public class ZootBox2DPhysicsBody implements ZootPhysicsBody
 		//noop
 	}
 	
-	public Body getBody()
+	public Body getBox2DBody()
 	{
 		return body;
 	}
@@ -69,6 +69,12 @@ public class ZootBox2DPhysicsBody implements ZootPhysicsBody
 	{
 		return body.getAngle();
 	}
+	
+	@Override
+	public void setAngle(float angle)
+	{
+		body.setTransform(body.getPosition(), angle);
+	}
 
 	@Override
 	public void setCanRotate(boolean canRotate)
@@ -87,5 +93,11 @@ public class ZootBox2DPhysicsBody implements ZootPhysicsBody
 	{
 		Vector2 bodyCenter = body.getPosition();
 		body.applyLinearImpulse(fx, fy, bodyCenter.x, bodyCenter.y, true);
+	}
+
+	@Override
+	public void setVelocity(float vx, float vy, float vz) 
+	{
+		body.setLinearVelocity(vx, vy);
 	}
 }

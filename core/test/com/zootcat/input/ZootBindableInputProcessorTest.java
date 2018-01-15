@@ -1,129 +1,121 @@
 package com.zootcat.input;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.zootcat.exceptions.RuntimeZootException;
 
 public class ZootBindableInputProcessorTest 
 {
-	@Test
-	public void hasBindingTest()
+	private int upEvents;
+	private int downEvents;	
+	ZootBindableInputProcessor processor;
+	
+	@Before
+	public void setup()
 	{
-		//given
-		ZootInputCommand mockCommand = mock(ZootInputCommand.class);		
-		ZootBindableInputProcessor processor = new ZootBindableInputProcessor();
-		
+		upEvents = 0;
+		downEvents = 0;
+		processor = new ZootBindableInputProcessor();
+	}
+	
+	@Test
+	public void hasDownBindingTest()
+	{
 		//then
-		assertFalse(processor.hasBinding(0));
-		assertFalse(processor.hasBinding(1));
+		assertFalse(processor.hasDownBinding(0));
+		assertFalse(processor.hasDownBinding(1));
 		
 		//when
-		processor.bindCommand(0, mockCommand);
+		processor.bindDown(0, () -> true);
 		
 		//then
-		assertTrue(processor.hasBinding(0));
-		assertFalse(processor.hasBinding(1));
+		assertTrue(processor.hasDownBinding(0));
+		assertFalse(processor.hasDownBinding(1));
+	}
+	
+	@Test
+	public void hasUpBindingTest()
+	{		
+		//then
+		assertFalse(processor.hasUpBinding(0));
+		assertFalse(processor.hasUpBinding(1));
+		
+		//when
+		processor.bindUp(0, () -> true);
+		
+		//then
+		assertTrue(processor.hasUpBinding(0));
+		assertFalse(processor.hasUpBinding(1));
 	}
 	
 	@Test
 	public void processorShouldProperlyHandleAllCommandMethodsTest()
-	{
-		//given
-		ZootInputCommand mockCommand = mock(ZootInputCommand.class);		
-		ZootBindableInputProcessor processor = new ZootBindableInputProcessor();
-		
+	{		
 		//when
-		processor.bindCommand(0, mockCommand);		
+		processor.bindUp(0, () -> { ++upEvents; return true; } );
+		processor.bindDown(0, () -> { ++downEvents; return true; } );		
 		
 		//then
-		verify(mockCommand, times(0)).executeOnDown();
-		verify(mockCommand, times(0)).executeOnRelease();
-		verify(mockCommand, times(0)).executeOnPress();
+		assertEquals("Down event should not execute right after binding", 0, downEvents);
+		assertEquals("Up event should not execute right after binding", 0, upEvents);
 		
 		//when
 		processor.keyDown(0);
 		
 		//then
-		verify(mockCommand, times(1)).executeOnDown();
-		verify(mockCommand, times(0)).executeOnRelease();
-		verify(mockCommand, times(0)).executeOnPress();
+		assertEquals(1, downEvents);
+		assertEquals(0, upEvents);
 		
 		//when
 		processor.keyUp(0);
 		
 		//then
-		verify(mockCommand, times(1)).executeOnDown();
-		verify(mockCommand, times(1)).executeOnRelease();
-		verify(mockCommand, times(1)).executeOnPress();
+		assertEquals(1, downEvents);
+		assertEquals(1, upEvents);
 		
 		//when
 		processor.keyDown(1);
 		processor.keyUp(1);
 		
 		//then nothing changes
-		verify(mockCommand, times(1)).executeOnDown();
-		verify(mockCommand, times(1)).executeOnRelease();
-		verify(mockCommand, times(1)).executeOnPress();
-	}
-	
-	@Test
-	public void processPressedKeysTest()
-	{
-		//given
-		ZootInputCommand mockCommand1 = mock(ZootInputCommand.class);
-		ZootInputCommand mockCommand2 = mock(ZootInputCommand.class);
-		ZootBindableInputProcessor processor = new ZootBindableInputProcessor();
-		
-		//when
-		processor.bindCommand(1, mockCommand1);
-		processor.bindCommand(2, mockCommand2);
-		processor.processPressedKeys();
-		
-		//then
-		verify(mockCommand1, times(0)).executeOnDown();
-		verify(mockCommand2, times(0)).executeOnDown();
-		
-		//when
-		processor.keyDown(1);
-		processor.keyDown(2);
-		processor.processPressedKeys();
-		
-		//then
-		verify(mockCommand1, times(2)).executeOnDown();
-		verify(mockCommand2, times(2)).executeOnDown();
-		
-		//when
-		processor.keyUp(1);
-		processor.processPressedKeys();
-		
-		//then
-		verify(mockCommand1, times(2)).executeOnDown();
-		verify(mockCommand2, times(3)).executeOnDown();
+		assertEquals(1, downEvents);
+		assertEquals(1, upEvents);
 	}
 	
 	@Test(expected = RuntimeZootException.class)
-	public void bindCommandShouldThrowIfKeycodeAlreadyBindedTest()
-	{
-		//given
-		ZootBindableInputProcessor processor = new ZootBindableInputProcessor();
-		processor.bindCommand(0, mock(ZootInputCommand.class));
+	public void bindDownShouldThrowIfKeycodeAlreadyBindedTest()
+	{		
+		//when
+		processor.bindDown(0, () -> true);
 		
 		//then
-		processor.hasBinding(0);
+		assertTrue(processor.hasDownBinding(0));
 		
 		//when
-		processor.bindCommand(0, mock(ZootInputCommand.class));
+		processor.bindDown(0, () -> true);
+	}
+	
+	@Test(expected = RuntimeZootException.class)
+	public void bindUpShouldThrowIfKeycodeAlreadyBindedTest()
+	{		
+		//when
+		processor.bindUp(0, () -> true);
+		
+		//then
+		assertTrue(processor.hasUpBinding(0));
+		
+		//when
+		processor.bindUp(0, () -> true);
 	}
 	
 	@Test
 	public void bindDownCommandTest()
-	{
-		//given		
-		ZootBindableInputProcessor processor = new ZootBindableInputProcessor();
-		
+	{	
 		//when
 		processor.bindDown(0, () -> true);
 		
@@ -132,29 +124,10 @@ public class ZootBindableInputProcessorTest
 		assertFalse(processor.keyUp(0));
 		assertFalse(processor.keyTyped('0'));
 	}
-	
-	@Test(expected = RuntimeZootException.class)
-	public void bindDownShouldThrowIfKeycodeAlreadyBindedTest()
-	{
-		//given		
-		ZootBindableInputProcessor processor = new ZootBindableInputProcessor();
 		
-		//when
-		processor.bindDown(0, () -> true);
-		
-		//then
-		processor.hasBinding(0);
-		
-		//when
-		processor.bindDown(0, () -> true);
-	}
-	
 	@Test
 	public void bindUpCommandTest()
-	{
-		//given		
-		ZootBindableInputProcessor processor = new ZootBindableInputProcessor();
-		
+	{		
 		//when
 		processor.bindUp(0, () -> true);
 		
@@ -162,22 +135,6 @@ public class ZootBindableInputProcessorTest
 		assertTrue(processor.keyUp(0));
 		assertFalse(processor.keyDown(0));
 		assertFalse(processor.keyTyped('0'));
-	}
-	
-	@Test(expected = RuntimeZootException.class)
-	public void bindUpShouldThrowIfKeycodeAlreadyBindedTest()
-	{
-		//given		
-		ZootBindableInputProcessor processor = new ZootBindableInputProcessor();
-		
-		//when
-		processor.bindUp(0, () -> true);
-		
-		//then
-		processor.hasBinding(0);
-		
-		//when
-		processor.bindUp(0, () -> true);
 	}
 	
 }

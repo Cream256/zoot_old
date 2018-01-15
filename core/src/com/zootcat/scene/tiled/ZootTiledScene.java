@@ -5,17 +5,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.zootcat.input.ZootInputProcessor;
 import com.zootcat.map.tiled.ZootTiledMap;
 import com.zootcat.map.tiled.ZootTiledMapRender;
 import com.zootcat.map.tiled.ZootTiledMapRenderConfig;
@@ -34,12 +33,11 @@ public class ZootTiledScene implements ZootScene
 	private Stage stage;
 	private ZootTiledMapRender mapRender;
 	private ZootBox2DPhysics physics;	
-	private ZootInputProcessor inputProcessor;
 	private float timeAccumulator = 0.0f;	
 	private boolean isDebugMode = false;
 	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
 	
-	public ZootTiledScene(String tiledMapPath, ZootInputProcessor inputProcessor, float viewportWidth, float viewportHeight, float worldUnitPerTile)
+	public ZootTiledScene(String tiledMapPath, float viewportWidth, float viewportHeight, float worldUnitPerTile)
 	{				
 		//map    	
     	ZootTiledMap map = new ZootTiledMap(new TmxMapLoader().load(tiledMapPath));
@@ -68,11 +66,6 @@ public class ZootTiledScene implements ZootScene
 		
 		cellActors.forEach(cellActor -> stage.addActor(cellActor));
 		actors.forEach(actor -> stage.addActor(actor));
-		
-		//input
-		InputMultiplexer inputMultiplexer = new InputMultiplexer(inputProcessor, stage);
-		Gdx.input.setInputProcessor(inputMultiplexer);
-		this.inputProcessor = inputProcessor;
 	}
 	
 	@Override
@@ -129,7 +122,6 @@ public class ZootTiledScene implements ZootScene
 		timeAccumulator += Math.min(MIN_TIME_STEP, delta);       
 		while(timeAccumulator >= FIXED_TIME_STEP)
 		{
-			inputProcessor.processPressedKeys();
 			stage.act(FIXED_TIME_STEP);
 			physics.step(FIXED_TIME_STEP);
 			timeAccumulator -= FIXED_TIME_STEP;
@@ -181,12 +173,30 @@ public class ZootTiledScene implements ZootScene
 	@Override
 	public void setFocusedActor(ZootActor actor)
 	{
-		stage.setKeyboardFocus(actor);	
+		stage.setKeyboardFocus(actor);
 	}
 
 	@Override
 	public void resize(int width, int height) 
 	{		
 		//noop
+	}
+
+	@Override
+	public void addListener(EventListener listener) 
+	{
+		stage.addListener(listener);
+	}
+
+	@Override
+	public void removeListener(EventListener listener) 
+	{
+		stage.removeListener(listener);
+	}
+
+	@Override
+	public InputProcessor getInputProcessor() 
+	{
+		return stage;
 	}
 }

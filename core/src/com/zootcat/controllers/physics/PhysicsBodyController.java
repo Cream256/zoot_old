@@ -50,6 +50,11 @@ public abstract class PhysicsBodyController implements Controller
 		body.applyImpulse(fx, fy, fz);
 	}
 	
+	public void setVelocity(float vx, float vy, float vz)
+	{
+		body.setVelocity(vx, vy, vz);
+	}
+	
 	protected ZootPhysicsBody getPhysicsBody()
 	{
 		return body;

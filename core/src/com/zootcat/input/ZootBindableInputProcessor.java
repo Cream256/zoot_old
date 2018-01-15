@@ -1,82 +1,63 @@
 package com.zootcat.input;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import com.badlogic.gdx.InputAdapter;
 import com.zootcat.exceptions.RuntimeZootException;
 
-public class ZootBindableInputProcessor extends InputAdapter implements ZootInputProcessor
+public class ZootBindableInputProcessor extends InputAdapter
 {
-	private Map<Integer, ZootInputCommand> bindings = new HashMap<Integer, ZootInputCommand>();
-	private Set<Integer> pressedKeys = new HashSet<Integer>();
-	
+	private Map<Integer, Supplier<Boolean>> bindingsUp = new HashMap<Integer, Supplier<Boolean>>();
+	private Map<Integer, Supplier<Boolean>> bindingsDown = new HashMap<Integer, Supplier<Boolean>>();
+		
 	@Override
 	public boolean keyDown (int keycode) 
 	{
-		pressedKeys.add(keycode);
-		if(bindings.containsKey(keycode))
+		if(bindingsDown.containsKey(keycode))
 		{
-			return bindings.get(keycode).executeOnDown();
+			return bindingsDown.get(keycode).get();
 		}		
 		return false;
 	}
 	
 	@Override
 	public boolean keyUp (int keycode) 
-	{
-		if(pressedKeys.contains(keycode))
+	{		
+		if(bindingsUp.containsKey(keycode))
 		{
-			if(bindings.containsKey(keycode))
-			{
-				bindings.get(keycode).executeOnPress();
-			}
-			pressedKeys.remove(keycode);
-		}
-		
-		if(bindings.containsKey(keycode))
-		{
-			return bindings.get(keycode).executeOnRelease();
+			return bindingsUp.get(keycode).get();
 		}
 		return false;
 	}
-		
-	@Override
-	public void processPressedKeys()
+				
+	public void bindDown(int keycode, Supplier<Boolean> command)
 	{
-		for(int keycode : pressedKeys)
-		{
-			keyDown(keycode);
-		}
+		validateNewBinding(keycode, true);
+		bindingsDown.put(keycode, command);
 	}
 	
-	public void bindCommand(int keycode, ZootInputCommand command)
+	public void bindUp(int keycode, Supplier<Boolean> command)
 	{
-		validateNewBinding(keycode);
-		bindings.put(keycode, command);
+		validateNewBinding(keycode, false);
+		bindingsUp.put(keycode, command);
 	}
 	
-	public void bindDown(int keycode, Supplier<Boolean> downCommand)
+	public boolean hasDownBinding(int keycode)
 	{
-		bindCommand(keycode, new LambdaInputCommand(downCommand));
+		return bindingsDown.containsKey(keycode);
 	}
 	
-	public void bindUp(int keycode, Supplier<Boolean> upCommand)
+	public boolean hasUpBinding(int keycode)
 	{
-		bindCommand(keycode, new LambdaInputCommand(() -> false, upCommand, () -> false));
+		return bindingsUp.containsKey(keycode);
 	}
 	
-	public boolean hasBinding(int keycode)
+	private void validateNewBinding(int keycode, boolean validateDownBinding)
 	{
-		return bindings.containsKey(keycode);
-	}
-	
-	private void validateNewBinding(int keycode)
-	{
-		if(hasBinding(keycode))
+		boolean hasBinding = validateDownBinding ? hasDownBinding(keycode) : hasUpBinding(keycode);
+		if(hasBinding)
 		{
 			throw new RuntimeZootException("Binding already present for keycode " + keycode);
 		}

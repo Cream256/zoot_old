@@ -4,8 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.zootcat.controllers.input.InputProcessorController;
-import com.zootcat.controllers.physics.PhysicsBodyController;
 import com.zootcat.input.ZootBindableInputProcessor;
+import com.zootcat.input.ZootCharacterInputProcessor;
+import com.zootcat.input.ZootInputManager;
+import com.zootcat.input.ZootInputProcessorListener;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.tiled.ZootTiledScene;
 
@@ -16,56 +18,49 @@ public class ZootGame extends ApplicationAdapter
 	private static final float UNIT_PER_TILE = 0.17f;	//1 tile = 17cm
 	
 	private ZootTiledScene scene;
+	private ZootInputManager inputManager;
 		
     @Override
     public void create()
-    {                
-    	//create input
-    	ZootBindableInputProcessor globalInputProcessor = new ZootBindableInputProcessor();
-    	
+    {                    	
     	//create scene
-    	scene = new ZootTiledScene("data/TestBed.tmx", globalInputProcessor, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, UNIT_PER_TILE);
+    	scene = new ZootTiledScene("data/TestBed.tmx", VIEWPORT_WIDTH, VIEWPORT_HEIGHT, UNIT_PER_TILE);
     	
-    	//configure global input
+    	//debug input
     	final float camMove = 0.1f;
-    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_8, () -> { scene.getCamera().translate(0, camMove, 0); return true; });
-    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_2, () -> { scene.getCamera().translate(0, -camMove, 0); return true; });
-    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_4, () -> { scene.getCamera().translate(-camMove, 0, 0); return true; });
-    	globalInputProcessor.bindDown(Input.Keys.NUMPAD_6, () -> { scene.getCamera().translate(camMove, 0, 0); return true; });
-    	globalInputProcessor.bindUp(Input.Keys.F9, () -> { scene.setDebugMode(!scene.isDebugMode()); return true; });
+    	ZootBindableInputProcessor debugInputProcessor = new ZootBindableInputProcessor();
+    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_8, () -> { scene.getCamera().translate(0, camMove, 0); return true; });
+    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_2, () -> { scene.getCamera().translate(0, -camMove, 0); return true; });
+    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_4, () -> { scene.getCamera().translate(-camMove, 0, 0); return true; });
+    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_6, () -> { scene.getCamera().translate(camMove, 0, 0); return true; });
+    	debugInputProcessor.bindUp(Input.Keys.F9, () -> { scene.setDebugMode(!scene.isDebugMode()); return true; });
+    	scene.addListener(new ZootInputProcessorListener(debugInputProcessor));
     	
-    	//configure character input    	
-    	final float charMove = 0.1f;
+    	//character input    	
     	ZootActor player = scene.getActors((act) -> act.getName().equalsIgnoreCase("Frisker")).get(0);
-    	ZootBindableInputProcessor characterInputProcessor = new ZootBindableInputProcessor(); 
-    	characterInputProcessor.bindDown(Input.Keys.RIGHT, () -> 
-    	{ 
-    		PhysicsBodyController ctrl = player.getController(PhysicsBodyController.class);
-    		ctrl.applyImpulse(charMove, 0.0f, 0.0f);
-    		return true;
-    	});
-    	characterInputProcessor.bindDown(Input.Keys.LEFT, () -> 
-    	{ 
-    		PhysicsBodyController ctrl = player.getController(PhysicsBodyController.class);
-    		ctrl.applyImpulse(-charMove, 0.0f, 0.0f);
-    		return true;
-    	});
-    	characterInputProcessor.bindDown(Input.Keys.UP, () -> 
-    	{ 
-    		PhysicsBodyController ctrl = player.getController(PhysicsBodyController.class);
-    		ctrl.applyImpulse(0.0f, charMove * 5, 0.0f);
-    		return true;
-    	});
-    	
+    	ZootCharacterInputProcessor characterInputProcessor = new ZootCharacterInputProcessor(player);
+    	characterInputProcessor.setMovementVelocity(1.0f);    	
     	player.addController(new InputProcessorController(characterInputProcessor));
     	scene.setFocusedActor(player);
+    	
+    	//input    	
+    	inputManager = new ZootInputManager();    	
+    	inputManager.addProcessor(debugInputProcessor);
+    	inputManager.addProcessor(characterInputProcessor);
+    	inputManager.addProcessor(scene.getInputProcessor());
+    	Gdx.input.setInputProcessor(inputManager);
     }
 
     @Override
     public void render()
     {        
         float delta = Gdx.graphics.getDeltaTime();
-    	scene.update(delta);
+    	
+        //update
+        inputManager.processPressedKeys(delta);
+        scene.update(delta);
+    	
+    	//render
     	scene.render(delta);
     }
 

@@ -70,7 +70,7 @@ public class ZootBox2DPhysics implements ZootPhysics
 	{
 		if(ClassReflection.isInstance(ZootBox2DPhysicsBody.class, body))
 		{
-			world.destroyBody(((ZootBox2DPhysicsBody)body).getBody());
+			world.destroyBody(((ZootBox2DPhysicsBody)body).getBox2DBody());
 		}
 	}
 	
