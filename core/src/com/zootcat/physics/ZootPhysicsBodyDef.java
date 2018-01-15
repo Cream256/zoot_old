@@ -13,4 +13,5 @@ public class ZootPhysicsBodyDef
 	public float rotation = 0.0f;
 	public ZootPhysicsFixture[] fixtures = null;
 	public ZootPhysicsBodyType type = ZootPhysicsBodyType.DYNAMIC;
+	public boolean sensor = false;
 }

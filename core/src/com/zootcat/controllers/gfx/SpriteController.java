@@ -8,13 +8,14 @@ import com.zootcat.scene.ZootActor;
 
 public class SpriteController implements RenderController
 {
+	@CtrlParam(required = true) private String file;
+	
 	private Sprite sprite;
-	@CtrlParam(required = true) private String fileName;
 	
 	@Override
 	public void init(ZootActor actor)
 	{
-		sprite = new Sprite(new Texture(fileName));
+		sprite = new Sprite(new Texture(file));
 	}
 	
 	@Override

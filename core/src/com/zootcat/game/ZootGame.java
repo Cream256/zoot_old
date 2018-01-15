@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.zootcat.controllers.input.InputProcessorController;
 import com.zootcat.input.ZootBindableInputProcessor;
-import com.zootcat.input.GameCharacterInputProcessor;
 import com.zootcat.input.ZootInputManager;
 import com.zootcat.input.ZootInputProcessorListener;
 import com.zootcat.scene.ZootActor;

@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -29,11 +30,15 @@ public class ZootBox2DPhysics implements ZootPhysics
 	private static final Vector2 DEFAULT_GRAVITY = new Vector2(0.0f, -9.80f);
 	
 	private World world;
+	private ContactListener contactListener;
 	
 	public ZootBox2DPhysics()
 	{
 		Box2D.init();
 		world = new World(DEFAULT_GRAVITY, true);
+	
+		contactListener = new ZootBox2DContactListener();
+		world.setContactListener(contactListener);
 	}
 	
 	@Override
@@ -133,6 +138,7 @@ public class ZootBox2DPhysics implements ZootPhysics
 		Body body = world.createBody(box2dBodyDef);
 		Vector2 bottomLeft = calculateBodyBottomLeftPosition(bodyDefinition);
 		body.setTransform(bottomLeft.x, bottomLeft.y, bodyDefinition.rotation * MathUtils.degreesToRadians);
+		body.setGravityScale(bodyDefinition.sensor ? 0.0f : 1.0f);
 		return body;
 	}
 	
@@ -143,6 +149,7 @@ public class ZootBox2DPhysics implements ZootPhysics
 		fixtureDef.density = bodyDefinition.density; 
 		fixtureDef.friction = bodyDefinition.friction;
 		fixtureDef.restitution = bodyDefinition.restitution;
+		fixtureDef.isSensor = bodyDefinition.sensor;
 		return fixtureDef;
 	}
 	

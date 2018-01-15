@@ -1,7 +1,8 @@
-package com.zootcat.input;
+package com.zootcat.game;
 
 import com.badlogic.gdx.Input;
 import com.zootcat.controllers.physics.PhysicsBodyController;
+import com.zootcat.input.ZootBindableInputProcessor;
 import com.zootcat.scene.ZootActor;
 
 public class GameCharacterInputProcessor extends ZootBindableInputProcessor

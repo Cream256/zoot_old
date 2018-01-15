@@ -15,6 +15,7 @@ public abstract class PhysicsBodyController implements Controller
 	@CtrlParam protected float density = 1.0f;
 	@CtrlParam protected float friction = 0.0f;
 	@CtrlParam protected float restitution = 0.0f;
+	@CtrlParam protected boolean sensor = false;
 	@CtrlParam(global = true, required = true) protected ZootScene scene;	
 	
 	private ZootPhysicsBody body;
@@ -72,6 +73,7 @@ public abstract class PhysicsBodyController implements Controller
 		bodyDef.density = density;
 		bodyDef.friction = friction;
 		bodyDef.restitution = restitution;
+		bodyDef.sensor = sensor;
 		
 		bodyDef.type = getBodyType();		
 		bodyDef.fixtures = createFixtures(actor);
