@@ -3,15 +3,9 @@ package com.zootcat.controllers.physics;
 import com.zootcat.physics.ZootPhysicsBodyType;
 import com.zootcat.physics.ZootPhysicsFixture;
 import com.zootcat.scene.ZootActor;
-import com.zootcat.scene.ZootScene;
 
 public class StaticBodyController extends PhysicsBodyController 
-{		
-	public StaticBodyController(ZootScene scene)
-	{
-		super.scene = scene;
-	}
-	
+{	
 	@Override
 	protected ZootPhysicsBodyType getBodyType() 
 	{

@@ -8,15 +8,18 @@ import com.zootcat.utils.BitMaskConverter;
 
 public class CollisionFilterController implements Controller 
 {
+	private static final int MASK_COLLIDE_WITH_ALL = -1;
+	private static final int MASK_COLLIDE_WITH_NONE = 0;
+
 	private static final BitMaskConverter bitMaskConverter = new BitMaskConverter();
 	
-	@CtrlParam(required = true) private String category;
-	@CtrlParam(required = true) private String mask;
+	@CtrlParam(required = true) private String category = "";
+	@CtrlParam private String mask = "";
 		
 	@Override
 	public void init(ZootActor actor)
 	{
-		
+		//noop
 	}
 
 	@Override
@@ -41,9 +44,14 @@ public class CollisionFilterController implements Controller
 	}
 
 	private short convertMaskBits(String mask) 
-	{
-		short bitMask = 0;				
-		for(String category : mask.split("|"))
+	{		
+		if(mask.isEmpty())
+		{
+			return MASK_COLLIDE_WITH_ALL;
+		}
+		
+		short bitMask = MASK_COLLIDE_WITH_NONE;			
+		for(String category : mask.split("\\|"))
 		{
 			short categoryBit = bitMaskConverter.fromString(category.trim());
 			bitMask |= categoryBit;

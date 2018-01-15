@@ -62,7 +62,7 @@ public class ZootTiledScene implements ZootScene
 		//actors
     	ZootTiledSceneActorFactory actorFactory = new ZootTiledSceneActorFactory(this, unitScale);
 		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
-		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getCollidableCells());
+		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getLayerCells(ZootTiledMap.COLLISION_LAYER_NAME));
 		
 		cellActors.forEach(cellActor -> stage.addActor(cellActor));
 		actors.forEach(actor -> stage.addActor(actor));

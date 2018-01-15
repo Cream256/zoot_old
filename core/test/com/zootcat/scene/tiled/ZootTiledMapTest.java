@@ -60,55 +60,6 @@ public class ZootTiledMapTest
 	}
 	
 	@Test
-	public void getCollidableCellsTest()
-	{
-		//given
-		final int tileWidth = 32;
-		final int tileHeight = 48;
-		
-		mapLayersMock.get(0).setName("First Layer");
-		mapLayersMock.get(1).setName("Second layer");
-	
-		TiledMapTile notCollidableTile = mock(TiledMapTile.class); 
-		when(notCollidableTile.getProperties()).thenReturn(new MapProperties());
-		
-		Cell notCollidableCell = new Cell();
-		notCollidableCell.setTile(notCollidableTile);
-		
-		MapProperties collidableTileProperties = new MapProperties();
-		collidableTileProperties.put(ZootTiledMap.COLLIDABLE_PROPERTY, "1");
-		TiledMapTile collidableTile = mock(TiledMapTile.class); 
-		when(collidableTile.getProperties()).thenReturn(collidableTileProperties);
-				
-		Cell collidableCell = new Cell();
-		collidableCell.setTile(collidableTile);
-		
-		TiledMapTileLayer tiledLayer = new TiledMapTileLayer(100, 80, tileWidth, tileHeight); 
-		tiledLayer.setName(ZootTiledMap.COLLISION_LAYER_NAME);
-		tiledLayer.setCell(0, 0, collidableCell);
-		tiledLayer.setCell(10, 20, collidableCell);
-		tiledLayer.setCell(30, 40, notCollidableCell);
-		
-		mapLayersMock.add(tiledLayer);
-		
-		//when
-		List<ZootTiledMapCell> cells = map.getCollidableCells();
-		
-		//then
-		assertEquals(2, cells.size());
-		assertEquals(1, cells.get(0).collidable);
-		assertEquals(0, cells.get(0).x, 0.0f);
-		assertEquals(0, cells.get(0).y, 0.0f);
-		assertEquals(tileWidth, cells.get(0).width, 0.0f);
-		assertEquals(tileHeight, cells.get(0).height, 0.0f);
-		assertEquals(1, cells.get(1).collidable);
-		assertEquals(10, cells.get(1).x);
-		assertEquals(20, cells.get(1).y);
-		assertEquals(tileWidth, cells.get(1).width, 0.0f);
-		assertEquals(tileHeight, cells.get(1).height, 0.0f);
-	}
-	
-	@Test
 	public void getAllObjectsShouldReturnValidObjects()
 	{
 		//given

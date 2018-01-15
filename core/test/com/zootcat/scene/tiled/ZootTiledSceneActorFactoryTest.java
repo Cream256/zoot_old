@@ -13,6 +13,8 @@ import org.mockito.MockitoAnnotations;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.zootcat.controllers.physics.StaticBodyController;
 import com.zootcat.exceptions.RuntimeZootException;
@@ -40,20 +42,33 @@ public class ZootTiledSceneActorFactoryTest
 	private static final int CELL_Y = 7;
 	private static final float CELL_WIDTH = 32;
 	private static final float CELL_HEIGHT = 48;
-	private static final int CELL_COLLIDABLE = 1;
-		
-	private ZootTiledSceneActorFactory factory;	
+			
 	@Mock private ZootTiledScene sceneMock;	
 	@Mock private ZootPhysics physicsMock;
+	@Mock private TiledMapTile tile;
+	@Mock private Cell innerCell;
+	private MapProperties tileProperties;
+	private ZootTiledSceneActorFactory factory;
 	
 	@Before
 	public void setup()
 	{		
 		MockitoAnnotations.initMocks(this);
 		
+		//mock scene
 		when(physicsMock.createBody(any(ZootPhysicsBodyDef.class))).thenReturn(mock(ZootPhysicsBody.class));		
 		when(sceneMock.getPhysics()).thenReturn(physicsMock);
 		
+		//mock tile and inner cell
+		tileProperties = new MapProperties();
+		
+		tile = mock(TiledMapTile.class);
+		when(tile.getProperties()).thenReturn(tileProperties);
+		
+		innerCell = mock(Cell.class);
+		when(innerCell.getTile()).thenReturn(tile);
+		
+		//create factory
 		factory = new ZootTiledSceneActorFactory(sceneMock);
 	}
 	
@@ -194,15 +209,13 @@ public class ZootTiledSceneActorFactoryTest
 	}
 
 	@Test(expected = RuntimeZootException.class)
-	public void createFromMapCellShouldNotSetStaticBodyControllerForNotCollidableCellTest()
+	public void createFromMapCellShouldNotSetAnyControllersWhenThereAreNoneInPropertiesTest()
 	{
 		//given
 		ZootTiledMapCell cell = createDefaultCell();
-		cell.collidable = 0;
 		
 		//when
 		ZootActor actor = factory.createFromMapCell(cell);
-		actor.act(0.0f);
 		
 		//then
 		assertNotNull(actor);
@@ -210,25 +223,23 @@ public class ZootTiledSceneActorFactoryTest
 	}
 	
 	@Test
-	public void createFromMapCellShouldSetStaticBodyControllerForCollidableCellTest()
+	public void createFromMapCellShouldCreateControllersForActorTest()
 	{
-		//given
+		//given				
 		ZootTiledMapCell cell = createDefaultCell();
-		cell.collidable = 1;
-		
+		tileProperties.put(StaticBodyController.class.getSimpleName(), "");
+				
 		//when
 		ZootActor actor = factory.createFromMapCell(cell);
-		actor.act(0.0f);
 		
 		//then
 		assertNotNull(actor);
 		assertNotNull(actor.getController(StaticBodyController.class));
 	}
-	
+		
 	private ZootTiledMapCell createDefaultCell()
-	{
-		Cell innerCell = mock(Cell.class);
-		return new ZootTiledMapCell(CELL_X, CELL_Y, CELL_WIDTH, CELL_HEIGHT, CELL_COLLIDABLE, innerCell);
+	{		
+		return new ZootTiledMapCell(CELL_X, CELL_Y, CELL_WIDTH, CELL_HEIGHT, innerCell);
 	}
 	
 	private MapObject createDefaultMapObject()

@@ -17,12 +17,11 @@ import com.zootcat.map.ZootMap;
 
 public class ZootTiledMap implements ZootMap
 {	
-	public static final String BACKGROUND_COLOR_PROPERTY = "backgroundcolor";
 	public static final String COLLISION_LAYER_NAME = "Collision";
-	public static final String COLLIDABLE_PROPERTY = "collidable";
+	public static final String BACKGROUND_COLOR_PROPERTY = "backgroundcolor";
 	public static final String TILE_WIDTH_PROPERTY = "tilewidth";
 	public static final String TILE_HEIGHT_PROPERTY = "tilewidth";
-	
+		
 	private TiledMap tiledMap;
 	
 	public ZootTiledMap(final TiledMap tiledMap)
@@ -63,12 +62,7 @@ public class ZootTiledMap implements ZootMap
 		}
 		return result;
 	}
-	
-	public List<ZootTiledMapCell> getCollidableCells()
-	{
-		return getLayerCells(COLLISION_LAYER_NAME).stream().filter(cell -> cell.collidable > 0).collect(Collectors.toList());
-	}
-	
+		
 	public List<ZootTiledMapCell> getLayerCells(String layerName)
 	{
 		if(!ClassReflection.isInstance(TiledMapTileLayer.class, tiledMap.getLayers().get(layerName)))
@@ -90,9 +84,7 @@ public class ZootTiledMap implements ZootMap
 				{
 					continue;
 				}
-				
-				int collidable = Integer.valueOf(cell.getTile().getProperties().get(COLLIDABLE_PROPERTY, "0", String.class));
-				result.add(new ZootTiledMapCell(col, row, layer.getTileWidth(), layer.getTileHeight(), collidable, cell));
+				result.add(new ZootTiledMapCell(col, row, layer.getTileWidth(), layer.getTileHeight(), cell));
 			}
 		}
 		return result;

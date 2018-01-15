@@ -9,15 +9,13 @@ public class ZootTiledMapCell
 	public final float width;
 	public final float height;
 	public final Cell cell;
-	public int collidable;
 	
-	public ZootTiledMapCell(int x, int y, float width, float height, int collidable, final Cell cell)
+	public ZootTiledMapCell(int x, int y, float width, float height, final Cell cell)
 	{
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.collidable = collidable;
 		this.cell = cell;
 	}
 }

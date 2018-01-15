@@ -7,11 +7,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.ControllerFactory;
 import com.zootcat.controllers.factory.ControllerFactoryException;
-import com.zootcat.controllers.physics.StaticBodyController;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.map.tiled.ZootTiledMapCell;
 import com.zootcat.scene.ZootActor;
@@ -26,7 +26,6 @@ public class ZootTiledSceneActorFactory
 	private static final String CONTROLLER_SUFFIX = "Controller";
 
 	private float scale;
-	private ZootTiledScene scene;
 	private ControllerFactory controllerFactory = new ControllerFactory();		
 		
 	public ZootTiledSceneActorFactory(ZootTiledScene scene)
@@ -36,7 +35,6 @@ public class ZootTiledSceneActorFactory
 	
 	public ZootTiledSceneActorFactory(ZootTiledScene scene, float scale)
 	{
-		this.scene = scene;
 		this.scale = scale;
 		controllerFactory.addGlobalParameter(SCENE_GLOBAL_PARAM, scene);
 		addControllersFromPackage("com.zootcat.controllers", true);
@@ -46,7 +44,7 @@ public class ZootTiledSceneActorFactory
 	{		
 		ZootActor actor = new ZootActor();		
 		setActorBasicProperties(mapObject, actor);		
-		setActorControllers(mapObject, actor);
+		setActorControllers(mapObject.getProperties(), actor);
 		return actor;
 	}
 	
@@ -55,12 +53,7 @@ public class ZootTiledSceneActorFactory
 		ZootActor cellActor = new ZootActor();
 		cellActor.setName("Cell " + cell.x + "x" + cell.y);
 		cellActor.setBounds(cell.x * cell.width * scale, cell.y * cell.height * scale, cell.width * scale, cell.height * scale);
-		if(cell.collidable > 0)
-		{
-			StaticBodyController staticBodyCtrl = new StaticBodyController(scene);
-			staticBodyCtrl.init(cellActor);
-			cellActor.addController(staticBodyCtrl);
-		}
+		setActorControllers(cell.cell.getTile().getProperties(), cellActor);		
 		return cellActor;
 	}
 	
@@ -106,17 +99,17 @@ public class ZootTiledSceneActorFactory
 		actor.setRotation(rotation);
 	}
 
-	protected void setActorControllers(final MapObject mapObject, ZootActor actor)
+	protected void setActorControllers(final MapProperties actorProperties, ZootActor actor)
 	{
 		controllerFactory.addGlobalParameter(ACTOR_GLOBAL_PARAM, actor);		
-		mapObject.getProperties().getKeys().forEachRemaining(ctrlName ->
+		actorProperties.getKeys().forEachRemaining(ctrlName ->
 		{
 			String normalizedCtrlName = normalizeControllerName(ctrlName); 
 			if(controllerFactory.contains(normalizedCtrlName))
 			{
 				try 
 				{									
-					String[] controllerArguments = mapObject.getProperties().get(ctrlName, String.class).split(",");
+					String[] controllerArguments = actorProperties.get(ctrlName, String.class).split(",");
 					Map<String, Object> arguments = ArgumentParser.parse(controllerArguments);
 					
 					Controller controller = (Controller) controllerFactory.create(normalizedCtrlName, arguments);										
