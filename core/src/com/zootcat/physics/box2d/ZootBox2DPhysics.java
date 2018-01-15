@@ -51,7 +51,7 @@ public class ZootBox2DPhysics implements ZootPhysics
 		
 		List<Fixture> fixtures = new ArrayList<Fixture>(bodyDefinition.fixtures.length);
 		for(ZootPhysicsFixture fixture : bodyDefinition.fixtures)
-		{
+		{			
 			Shape fixtureShape = createBox2DShape(fixture);
 			FixtureDef fixtureDef = createBox2DFixtureDef(bodyDefinition, fixtureShape);		
 			fixtures.add(body.createFixture(fixtureDef));
@@ -108,19 +108,22 @@ public class ZootBox2DPhysics implements ZootPhysics
 		}
 	}
 	
-	private Shape createBox2DShape(ZootPhysicsFixture fixtureDefinition) 
+	private Shape createBox2DShape(ZootPhysicsFixture fixtureDef) 
 	{
-		switch(fixtureDefinition.type)
+		switch(fixtureDef.type)
 		{
 		case CIRCLE:
 			CircleShape circle = new CircleShape();
-			circle.setRadius(fixtureDefinition.width);
+			circle.setRadius(fixtureDef.width);
+			circle.setPosition(new Vector2(fixtureDef.x, fixtureDef.y));
 			return circle;
 			
 		case BOX:
 		default:
 			PolygonShape rect = new PolygonShape();
-			rect.setAsBox(fixtureDefinition.width / 2, fixtureDefinition.height / 2);
+			float halfWidth = fixtureDef.width / 2;
+			float halfHeight = fixtureDef.height / 2;
+			rect.setAsBox(halfWidth, halfHeight, new Vector2(fixtureDef.x, fixtureDef.y), 0.0f);
 			return rect;
 		}
 	}

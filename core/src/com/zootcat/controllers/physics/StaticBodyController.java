@@ -22,7 +22,7 @@ public class StaticBodyController extends PhysicsBodyController
 	protected ZootPhysicsFixture[] createFixtures(ZootActor actor)
 	{
 		ZootPhysicsFixture[] fixtures = new ZootPhysicsFixture[1];
-		fixtures[0] = ZootPhysicsFixture.createBox(actor.getX(), actor.getY(), actor.getWidth(), actor.getHeight());
+		fixtures[0] = ZootPhysicsFixture.createBox(0, 0, actor.getWidth(), actor.getHeight());
 		return fixtures;
 	}
 }

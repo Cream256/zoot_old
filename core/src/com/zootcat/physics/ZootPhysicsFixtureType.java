@@ -2,5 +2,5 @@ package com.zootcat.physics;
 
 public enum ZootPhysicsFixtureType
 {
-	BOX, CIRCLE;
+	NONE, BOX, CIRCLE;
 }
