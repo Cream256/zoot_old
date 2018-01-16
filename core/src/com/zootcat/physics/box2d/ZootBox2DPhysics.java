@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.zootcat.physics.ZootPhysics;
+import com.zootcat.physics.ZootPhysicsContactListener;
 
 public class ZootBox2DPhysics implements ZootPhysics
 {
@@ -27,7 +28,7 @@ public class ZootBox2DPhysics implements ZootPhysics
 		Box2D.init();
 		world = new World(DEFAULT_GRAVITY, true);
 	
-		contactListener = new ZootBox2DContactListener();
+		contactListener = new ZootPhysicsContactListener();
 		world.setContactListener(contactListener);
 	}
 	

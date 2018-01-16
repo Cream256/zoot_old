@@ -47,6 +47,7 @@ public abstract class PhysicsBodyController implements Controller
 		body = scene.getPhysics().createBody(createBodyDef(actor));
 		fixtures = scene.getPhysics().createFixtures(body, createFixtureDefs(actor));
 		body.setActive(false);
+		body.setUserData(actor);
 	}
 	
 	@Override

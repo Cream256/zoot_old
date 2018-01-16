@@ -15,7 +15,7 @@ import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.gfx.RenderController;
 import com.zootcat.exceptions.RuntimeZootException;
 
-public final class ZootActor extends Actor
+public class ZootActor extends Actor
 {
 	private List<Controller> controllers = new ArrayList<Controller>();
 	private Set<String> types = new HashSet<String>();	
