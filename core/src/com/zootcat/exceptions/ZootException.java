@@ -8,5 +8,9 @@ public class ZootException extends Exception
 	{
 		super(msg);
 	}
-	
+
+	public ZootException(String msg, Exception e)
+	{
+		super(msg, e);
+	}
 }
