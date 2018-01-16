@@ -9,21 +9,15 @@ import com.zootcat.scene.ZootActor;
 
 public class ZootPhysicsContactListener implements ContactListener 
 {
-	private ZootCollisionEvent event = new ZootCollisionEvent();
+	private final ZootCollisionEvent event = new ZootCollisionEvent();
 	
 	@Override
 	public void beginContact(Contact contact) 
 	{
 		ZootActor actorA = (ZootActor) contact.getFixtureA().getBody().getUserData();
-		ZootActor actorB = (ZootActor) contact.getFixtureB().getBody().getUserData();		
-	
-		event.reset();
-		event.setActorA(actorA);
-		event.setActorB(actorB);
-		event.setType(Type.BeginContact);
-		event.setContact(contact);		
-		actorA.fire(event);
-		actorB.fire(event);
+		ZootActor actorB = (ZootActor) contact.getFixtureB().getBody().getUserData();			
+		setupEvent(actorA, actorB, Type.BeginContact, contact, null, null);		
+		fireEventOnActors(actorA, actorB);
 	}
 
 	@Override
@@ -32,13 +26,8 @@ public class ZootPhysicsContactListener implements ContactListener
 		ZootActor actorA = (ZootActor) contact.getFixtureA().getBody().getUserData();
 		ZootActor actorB = (ZootActor) contact.getFixtureB().getBody().getUserData();		
 	
-		event.reset();
-		event.setActorA(actorA);
-		event.setActorB(actorB);
-		event.setType(Type.EndContact);
-		event.setContact(contact);		
-		actorA.fire(event);
-		actorB.fire(event);
+		setupEvent(actorA, actorB, Type.EndContact, contact, null, null);		
+		fireEventOnActors(actorA, actorB);
 	}
 
 	@Override
@@ -47,14 +36,8 @@ public class ZootPhysicsContactListener implements ContactListener
 		ZootActor actorA = (ZootActor) contact.getFixtureA().getBody().getUserData();
 		ZootActor actorB = (ZootActor) contact.getFixtureB().getBody().getUserData();	
 	
-		event.reset();
-		event.setActorA(actorA);
-		event.setActorB(actorB);
-		event.setType(Type.PreSolve);
-		event.setContact(contact);
-		event.setManifold(oldManifold);
-		actorA.fire(event);
-		actorB.fire(event);
+		setupEvent(actorA, actorB, Type.PreSolve, contact, oldManifold, null);		
+		fireEventOnActors(actorA, actorB);
 	}
 
 	@Override
@@ -62,14 +45,24 @@ public class ZootPhysicsContactListener implements ContactListener
 	{
 		ZootActor actorA = (ZootActor) contact.getFixtureA().getBody().getUserData();
 		ZootActor actorB = (ZootActor) contact.getFixtureB().getBody().getUserData();
-		
+		setupEvent(actorA, actorB, Type.PostSolve, contact, null, impulse);		
+		fireEventOnActors(actorA, actorB);
+	}
+	
+	private void setupEvent(ZootActor actorA, ZootActor actorB, Type type, Contact contact, Manifold manifold, ContactImpulse impulse) 
+	{
 		event.reset();
 		event.setActorA(actorA);
 		event.setActorB(actorB);
-		event.setType(Type.PostSolve);
+		event.setType(type);
 		event.setContact(contact);
+		event.setManifold(manifold);
 		event.setContactImpulse(impulse);
+	}
+	
+	private void fireEventOnActors(ZootActor actorA, ZootActor actorB)
+	{
 		actorA.fire(event);
-		actorB.fire(event);		
+		actorB.fire(event);
 	}
 }
