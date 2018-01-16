@@ -51,20 +51,20 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	
 	private boolean jump()
 	{
-		getController().getPhysicsBody().setVelocityY(jumpVelocity);
+		getController().setVelocity(0.0f, jumpVelocity, false, true);
 		return true;
 	}
 	
 	private boolean stop()
 	{
-		getController().getPhysicsBody().setVelocityX(0.0f);
+		getController().setVelocity(0.0f, 0.0f, true, false);
 		return true;
 	}
 	
 	private boolean walk(boolean right)
 	{
 		float vx = right ? movementVelocity : -movementVelocity;
-		getController().getPhysicsBody().setVelocityX(vx);		
+		getController().setVelocity(vx, 0.0f, true, false);		
 		return true;
 	}
 	

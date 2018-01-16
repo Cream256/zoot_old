@@ -16,12 +16,13 @@ import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.zootcat.controllers.factory.mocks.SimpleController;
 import com.zootcat.controllers.physics.StaticBodyController;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.map.tiled.ZootTiledMapCell;
 import com.zootcat.physics.ZootPhysics;
-import com.zootcat.physics.ZootPhysicsBody;
-import com.zootcat.physics.ZootPhysicsBodyDef;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.mocks.Mock1Controller;
 import com.zootcat.scene.mocks.Mock2Controller;
@@ -49,14 +50,14 @@ public class ZootTiledSceneActorFactoryTest
 	@Mock private Cell innerCell;
 	private MapProperties tileProperties;
 	private ZootTiledSceneActorFactory factory;
-	
+		
 	@Before
 	public void setup()
-	{		
+	{				
 		MockitoAnnotations.initMocks(this);
 		
 		//mock scene
-		when(physicsMock.createBody(any(ZootPhysicsBodyDef.class))).thenReturn(mock(ZootPhysicsBody.class));		
+		when(physicsMock.createBody(any(BodyDef.class))).thenReturn(mock(Body.class));		
 		when(sceneMock.getPhysics()).thenReturn(physicsMock);
 		
 		//mock tile and inner cell
@@ -227,14 +228,15 @@ public class ZootTiledSceneActorFactoryTest
 	{
 		//given				
 		ZootTiledMapCell cell = createDefaultCell();
-		tileProperties.put(StaticBodyController.class.getSimpleName(), "");
-				
-		//when
+		tileProperties.put(SimpleController.class.getSimpleName(), "");
+		factory.addControllersFromPackage("com.zootcat.controllers.factory.mocks", false);
+		
+		//when		
 		ZootActor actor = factory.createFromMapCell(cell);
 		
 		//then
 		assertNotNull(actor);
-		assertNotNull(actor.getController(StaticBodyController.class));
+		assertNotNull(actor.getController(SimpleController.class));
 	}
 		
 	private ZootTiledMapCell createDefaultCell()

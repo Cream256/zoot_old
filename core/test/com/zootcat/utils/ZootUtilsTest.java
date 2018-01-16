@@ -9,8 +9,7 @@ import java.io.File;
 import org.junit.Test;
 
 import com.zootcat.exceptions.RuntimeZootException;
-import com.zootcat.physics.ZootPhysicsBodyType;
-import com.zootcat.utils.ZootUtils;
+import com.zootcat.physics.ZootBodyShape;
 
 public class ZootUtilsTest 
 {
@@ -111,21 +110,18 @@ public class ZootUtilsTest
 	@Test
 	public void searchEnumTest()
 	{
-		assertEquals(ZootPhysicsBodyType.STATIC, ZootUtils.searchEnum(ZootPhysicsBodyType.class, "STATIC"));
-		assertEquals(ZootPhysicsBodyType.STATIC, ZootUtils.searchEnum(ZootPhysicsBodyType.class, "static"));
-		assertEquals(ZootPhysicsBodyType.STATIC, ZootUtils.searchEnum(ZootPhysicsBodyType.class, "StAtiC"));
-		assertEquals(ZootPhysicsBodyType.DYNAMIC, ZootUtils.searchEnum(ZootPhysicsBodyType.class, "DYNAMIC"));
-		assertEquals(ZootPhysicsBodyType.DYNAMIC, ZootUtils.searchEnum(ZootPhysicsBodyType.class, "dynamic"));
-		assertEquals(ZootPhysicsBodyType.DYNAMIC, ZootUtils.searchEnum(ZootPhysicsBodyType.class, "DynAmiC"));
-		assertEquals(ZootPhysicsBodyType.KINEMATIC, ZootUtils.searchEnum(ZootPhysicsBodyType.class, "KINEMATIC"));
-		assertEquals(ZootPhysicsBodyType.KINEMATIC, ZootUtils.searchEnum(ZootPhysicsBodyType.class, "kinematic"));
-		assertEquals(ZootPhysicsBodyType.KINEMATIC, ZootUtils.searchEnum(ZootPhysicsBodyType.class, "KineMatiC"));
+		assertEquals(ZootBodyShape.BOX, ZootUtils.searchEnum(ZootBodyShape.class, "BOX"));
+		assertEquals(ZootBodyShape.BOX, ZootUtils.searchEnum(ZootBodyShape.class, "box"));
+		assertEquals(ZootBodyShape.BOX, ZootUtils.searchEnum(ZootBodyShape.class, "BoX"));
+		assertEquals(ZootBodyShape.CIRCLE, ZootUtils.searchEnum(ZootBodyShape.class, "CIRCLE"));
+		assertEquals(ZootBodyShape.CIRCLE, ZootUtils.searchEnum(ZootBodyShape.class, "circle"));
+		assertEquals(ZootBodyShape.CIRCLE, ZootUtils.searchEnum(ZootBodyShape.class, "CiRclE"));
 	}
 	
 	@Test(expected=RuntimeZootException.class)
 	public void searchEnumShouldThrowOnInvalidInput()
 	{
-		ZootUtils.searchEnum(ZootPhysicsBodyType.class, "invalid");
+		ZootUtils.searchEnum(ZootBodyShape.class, "invalid");
 	}
 	
 	@Test

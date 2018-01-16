@@ -11,7 +11,7 @@ import com.zootcat.scene.ZootScene;
 
 public class DebugRenderController extends ControllerAdapter implements RenderController 
 {
-	private static final ShapeRenderer shapeRender = new ShapeRenderer(64);
+	private static ShapeRenderer shapeRender = null;
 	
 	@CtrlParam private String color = Color.PINK.toString();
 	@CtrlParam(global = true) private ZootScene scene;
@@ -22,6 +22,11 @@ public class DebugRenderController extends ControllerAdapter implements RenderCo
 	public void init(ZootActor actor)
 	{
 		renderColor = Color.valueOf(color);
+		if(shapeRender == null)
+		{
+			//initialization must happen here due to failure in test initialization
+			shapeRender = new ShapeRenderer(64);
+		}
 	}
 	
 	@Override

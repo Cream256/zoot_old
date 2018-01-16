@@ -28,7 +28,7 @@ public class CollisionFilterController implements Controller
 		Filter collisionFilter = new Filter();
 		collisionFilter.categoryBits = bitMaskConverter.fromString(category);
 		collisionFilter.maskBits = convertMaskBits(mask);		
-		actor.getController(PhysicsBodyController.class).getPhysicsBody().setCollisionFilter(collisionFilter);		
+		actor.getController(PhysicsBodyController.class).setCollisionFilter(collisionFilter);		
 	}
 
 	@Override

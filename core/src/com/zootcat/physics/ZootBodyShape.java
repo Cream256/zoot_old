@@ -1,6 +1,6 @@
 package com.zootcat.physics;
 
-public enum ZootPhysicsFixtureType
+public enum ZootBodyShape
 {
 	NONE, BOX, CIRCLE;
 }
