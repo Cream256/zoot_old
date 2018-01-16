@@ -21,15 +21,13 @@ public class SpriteController implements RenderController
 	@Override
 	public void onAdd(ZootActor actor) 
 	{
-		onSizeChange(actor);
-		onPositionChange(actor);
-		onRotationChange(actor);
+		updateSprite(actor);
 	}
 	
 	@Override
 	public void onRemove(ZootActor actor) 
 	{
-		//noop
+		sprite = null;
 	}
 	
 	@Override
@@ -39,27 +37,17 @@ public class SpriteController implements RenderController
 	}
 
 	@Override
-	public void onSizeChange(ZootActor actor) 
-	{
-		sprite.setSize(actor.getWidth(), actor.getHeight());
-		sprite.setOriginCenter();
-	}
-
-	@Override
-	public void onPositionChange(ZootActor actor) 
-	{
-		sprite.setPosition(actor.getX(), actor.getY());
-	}
-
-	@Override
-	public void onRotationChange(ZootActor actor) 
-	{
-		sprite.setRotation(actor.getRotation());
-	}
-
-	@Override
 	public void onRender(Batch batch, float parentAlpha, ZootActor actor, float delta) 
 	{		
+		updateSprite(actor);
 		sprite.draw(batch);
+	}
+	
+	protected void updateSprite(ZootActor actor)
+	{
+		sprite.setPosition(actor.getX(), actor.getY());
+		sprite.setSize(actor.getWidth(), actor.getHeight());
+		sprite.setOriginCenter();		
+		sprite.setRotation(actor.getRotation());
 	}
 }

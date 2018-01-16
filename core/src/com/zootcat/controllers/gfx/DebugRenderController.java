@@ -58,22 +58,4 @@ public class DebugRenderController extends ControllerAdapter implements RenderCo
 		batch.begin();
 		batch.setColor(oldColor);		
 	}
-	
-	@Override
-	public void onSizeChange(ZootActor actor)
-	{
-		//noop
-	}
-
-	@Override
-	public void onPositionChange(ZootActor actor) 
-	{
-		//noop
-	}
-
-	@Override
-	public void onRotationChange(ZootActor actor) 
-	{
-		//noop
-	}
 }

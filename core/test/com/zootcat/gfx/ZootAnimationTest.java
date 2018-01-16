@@ -1,12 +1,15 @@
 package com.zootcat.gfx;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class ZootAnimationTest 
@@ -27,18 +30,9 @@ public class ZootAnimationTest
 		frames[0] = new TextureRegion(textureMock, 0, 0, FRAME_WIDTH, FRAME_HEIGHT);	
 		frames[1] = new TextureRegion(textureMock, FRAME_WIDTH, 0, FRAME_WIDTH, FRAME_HEIGHT);
 		frames[2] = new TextureRegion(textureMock, FRAME_WIDTH * 2, 0, FRAME_WIDTH, FRAME_HEIGHT);
-		animation = new ZootAnimation(frames, FRAME_DURATION);
+		animation = new ZootAnimation("Anim", frames, FRAME_DURATION);
 	}
-	
-	@Test
-	public void setNameTest()
-	{
-		assertEquals("", animation.getName());
-		
-		animation.setName("Test Name");
-		assertEquals("Test Name", animation.getName());
-	}
-		
+			
 	@Test
 	public void stepTest()
 	{
@@ -51,9 +45,9 @@ public class ZootAnimationTest
 		animation.step(0.25f);
 		assertEquals(0.50f, animation.getAnimationTime(), 0.0f);
 		
-		animation.stop();
+		animation.pause();
 		animation.step(0.25f);
-		assertEquals("After stop animation should not step further", 0.50f, animation.getAnimationTime(), 0.0f);
+		assertEquals("After pause animation should not step further", 0.50f, animation.getAnimationTime(), 0.0f);
 	}
 	
 	@Test
@@ -82,6 +76,11 @@ public class ZootAnimationTest
 		
 		animation.start();
 		assertTrue(animation.isPlaying());
+		
+		animation.step(0.1f);
+		animation.start();
+		assertTrue(animation.isPlaying());
+		assertEquals(0.1f, animation.getAnimationTime(), 0.0f);
 	}
 	
 	@Test
@@ -90,8 +89,10 @@ public class ZootAnimationTest
 		animation.start();
 		assertTrue(animation.isPlaying());
 		
+		animation.step(1.0f);
 		animation.stop();
 		assertFalse(animation.isPlaying());
+		assertEquals(0.0f, animation.getAnimationTime(), 0.0f);
 	}
 	
 	@Test
@@ -107,5 +108,65 @@ public class ZootAnimationTest
 		animation.restart();
 		assertTrue(animation.isPlaying());
 		assertEquals(0.00f, animation.getAnimationTime(), 0.0f);
+	}
+	
+	@Test
+	public void getIdTest()
+	{
+		ZootAnimation anim1 = new ZootAnimation("Anim1", frames, 0.0f);		
+		ZootAnimation anim2 = new ZootAnimation("Anim2", frames, 0.0f);		
+		ZootAnimation anim3 = new ZootAnimation("Anim3", frames, 0.0f);
+		
+		assertTrue(anim1.getId() != anim2.getId() && anim1.getId() != anim3.getId());
+		assertTrue(anim2.getId() != anim3.getId());
+	}
+	
+	@Test
+	public void hashCodeTest()
+	{
+		ZootAnimation anim1 = new ZootAnimation("Anim1", frames, 0.0f);		
+		ZootAnimation anim2 = new ZootAnimation("Anim2", frames, 0.0f);
+		ZootAnimation anim3 = new ZootAnimation("Anim3", frames, 0.0f);
+		
+		assertEquals(anim1.getId(), anim1.hashCode());
+		assertEquals(anim2.getId(), anim2.hashCode());
+		assertEquals(anim3.getId(), anim3.hashCode());
+	}
+	
+	@Test
+	public void equalsTest()
+	{
+		ZootAnimation anim1 = new ZootAnimation("Anim1", frames, 0.0f);		
+		ZootAnimation anim2 = new ZootAnimation("Anim2", frames, 0.0f); 
+		ZootAnimation anim3 = new ZootAnimation("Anim1", frames, 0.0f);
+		
+		assertTrue(anim1.equals(anim1));
+		assertTrue(anim1.equals(anim3));
+		assertTrue(anim3.equals(anim1));
+		assertFalse(anim1.equals(new Integer(0)));
+		assertFalse(anim1.equals("String"));
+		assertFalse(anim1.equals(anim2));
+		assertFalse(anim2.equals(anim1));
+	}
+	
+	@Test
+	public void setPlayModeTest()
+	{
+		assertEquals("Default play mode should be NORMAL", PlayMode.NORMAL, animation.getPlayMode());
+		
+		animation.setPlayMode(PlayMode.LOOP);
+		assertEquals(PlayMode.LOOP, animation.getPlayMode());
+		
+		animation.setPlayMode(PlayMode.LOOP_PINGPONG);
+		assertEquals(PlayMode.LOOP_PINGPONG, animation.getPlayMode());
+		
+		animation.setPlayMode(PlayMode.LOOP_REVERSED);
+		assertEquals(PlayMode.LOOP_REVERSED, animation.getPlayMode());
+		
+		animation.setPlayMode(PlayMode.REVERSED);
+		assertEquals(PlayMode.REVERSED, animation.getPlayMode());
+		
+		animation.setPlayMode(PlayMode.NORMAL);
+		assertEquals(PlayMode.NORMAL, animation.getPlayMode());
 	}
 }
