@@ -22,7 +22,7 @@ import com.zootcat.physics.ZootBodyShape;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
-public abstract class PhysicsBodyController implements Controller
+public class PhysicsBodyController implements Controller
 {
 	@CtrlParam protected float density = 1.0f;
 	@CtrlParam protected float friction = 0.0f;

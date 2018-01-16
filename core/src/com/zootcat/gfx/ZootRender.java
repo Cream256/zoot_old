@@ -1,4 +1,4 @@
-package com.zootcat.render;
+package com.zootcat.gfx;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.Disposable;

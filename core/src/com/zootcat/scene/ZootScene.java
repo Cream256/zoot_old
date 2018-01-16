@@ -8,8 +8,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.utils.Disposable;
+import com.zootcat.gfx.ZootRender;
 import com.zootcat.physics.ZootPhysics;
-import com.zootcat.render.ZootRender;
 
 public interface ZootScene extends Disposable
 {

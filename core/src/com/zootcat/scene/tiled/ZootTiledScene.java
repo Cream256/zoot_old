@@ -15,13 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.zootcat.gfx.ZootRender;
 import com.zootcat.map.tiled.ZootTiledMap;
 import com.zootcat.map.tiled.ZootTiledMapRender;
 import com.zootcat.map.tiled.ZootTiledMapRenderConfig;
 import com.zootcat.map.tiled.ZootTiledWorldScaleCalculator;
 import com.zootcat.physics.ZootPhysics;
 import com.zootcat.physics.box2d.ZootBox2DPhysics;
-import com.zootcat.render.ZootRender;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 

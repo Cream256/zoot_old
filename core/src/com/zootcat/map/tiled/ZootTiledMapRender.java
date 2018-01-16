@@ -13,7 +13,7 @@ import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import com.zootcat.render.ZootRender;
+import com.zootcat.gfx.ZootRender;
 
 public class ZootTiledMapRender extends OrthogonalTiledMapRenderer implements ZootRender 
 {
