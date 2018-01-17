@@ -34,4 +34,6 @@ public interface ZootScene extends Disposable
 	
 	void addListener(EventListener listener);
 	void removeListener(EventListener listener);
+	
+	float getUnitScale();
 }

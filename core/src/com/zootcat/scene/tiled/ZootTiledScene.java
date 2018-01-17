@@ -36,6 +36,7 @@ public class ZootTiledScene implements ZootScene
 	private float timeAccumulator = 0.0f;	
 	private boolean isDebugMode = false;
 	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
+	private float unitScale;
 	
 	public ZootTiledScene(String tiledMapPath, float viewportWidth, float viewportHeight, float worldUnitPerTile)
 	{				
@@ -43,7 +44,7 @@ public class ZootTiledScene implements ZootScene
     	ZootTiledMap map = new ZootTiledMap(new TmxMapLoader().load(tiledMapPath));
 		
     	//scale
-    	float unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
+    	unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
     	
     	//physics
     	physics = new ZootBox2DPhysics();
@@ -199,5 +200,11 @@ public class ZootTiledScene implements ZootScene
 	public InputProcessor getInputProcessor() 
 	{
 		return stage;
+	}
+
+	@Override
+	public float getUnitScale()
+	{
+		return unitScale;
 	}
 }

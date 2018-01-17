@@ -12,23 +12,41 @@ import com.zootcat.exceptions.ZootException;
 import com.zootcat.gfx.ZootAnimation;
 import com.zootcat.gfx.ZootAnimationFile;
 import com.zootcat.scene.ZootActor;
+import com.zootcat.scene.ZootScene;
 
 public class AnimatedSpriteController implements RenderController 
 {
 	@CtrlParam(required = true) private String file;
 	@CtrlParam private boolean useActorSize = true;
+	@CtrlParam private String startingAnimation = "";
+	@CtrlParam(global = true) private ZootScene scene;
 	
 	private Sprite sprite;
+	private ZootAnimation currentAnimation;
 	private Map<Integer, ZootAnimation> animations;
+			
+	public void setAnimation(String animationName)
+	{
+		if(currentAnimation != null)
+		{
+			currentAnimation.stop();
+		}
 		
+		int newId = ZootAnimation.getAnimationId(animationName);		
+		currentAnimation = animations.get(newId);
+		currentAnimation.restart();
+	}
+	
 	@Override
 	public void init(ZootActor actor)
 	{
 		try
 		{
-			sprite = new Sprite();			
-			ZootAnimationFile animationFile = new ZootAnimationFile(Gdx.files.internal(file).file());
-			animations = animationFile.createAnimations();
+			animations = new ZootAnimationFile(Gdx.files.internal(file).file()).createAnimations();
+			setAnimation(startingAnimation);
+			
+			sprite = new Sprite();
+			updateSprite(actor);
 		}
 		catch (ZootException e)
 		{
@@ -46,43 +64,54 @@ public class AnimatedSpriteController implements RenderController
 	public void onRemove(ZootActor actor)
 	{
 		//noop
-		
 	}
 
 	@Override
 	public void onUpdate(float delta, ZootActor actor)
 	{
-		String type = "IDLE";		
-		ZootAnimation animation = animations.get(type.hashCode());
-		animation.start();
-		animation.step(delta);
+		if(currentAnimation == null)
+		{
+			return;
+		}
+		
+		currentAnimation.step(delta);
+		updateSprite(actor);
 	}
 
 	@Override
 	public void onRender(Batch batch, float parentAlpha, ZootActor actor, float delta)
 	{
-		String type = "IDLE";
+		if(currentAnimation == null)
+		{
+			return;
+		}
 		
-		ZootAnimation animation = animations.get(type.hashCode());
-		TextureRegion animationFrame = animation.getKeyFrame();
+		sprite.draw(batch);
+	}
+	
+	private void updateSprite(ZootActor actor)
+	{
+		if(currentAnimation == null)
+		{
+			return;
+		}
 		
-		sprite.setTexture(animationFrame.getTexture());
-		sprite.setRegion(animationFrame);		
-		sprite.setPosition(actor.getX(), actor.getY());
+		TextureRegion frame = currentAnimation.getKeyFrame();		
+		sprite.setTexture(frame.getTexture());
+		sprite.setRegion(frame);				
 		
 		if(useActorSize)
 		{
-			sprite.setSize(actor.getWidth(), actor.getHeight());
-			sprite.setOriginCenter();
+			sprite.setBounds(actor.getX(), actor.getY(), actor.getWidth(), actor.getHeight());
 		}
 		else
-		{
-			//sprite.setSize(animationFrame.getRegionWidth(), animationFrame.getRegionHeight());
-			//sprite.setOriginCenter();
+		{			
+			float scale = scene.getUnitScale();
+			sprite.setBounds(actor.getX(), actor.getY(), frame.getRegionWidth() * scale, frame.getRegionHeight() * scale);
 		}
-				
+		
+		sprite.setOriginCenter();
 		sprite.setRotation(actor.getRotation());
-		sprite.draw(batch);
 	}
 
 }

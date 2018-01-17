@@ -20,6 +20,11 @@ public class ZootAnimation
 		animation = new Animation<TextureRegion>(frameDuration, frames);
 	}
 	
+	public static int getAnimationId(String name)
+	{
+		return name.hashCode();
+	}
+	
 	public int getFrameCount()
 	{
 		return animation.getKeyFrames().length;
@@ -99,7 +104,7 @@ public class ZootAnimation
 	
 	public int getId()
 	{
-		return name.hashCode();
+		return getAnimationId(name);
 	}
 	
 	@Override
