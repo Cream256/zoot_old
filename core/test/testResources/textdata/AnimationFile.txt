@@ -1,0 +1,34 @@
+#This is a comment and it should be skipped
+
+:Settings
+	image = /data/sprites/SpriteAnimation.png
+:EndSettings
+
+:StartAnimation
+	type = ANIMATION_1
+	frameWidth = 85
+	frameHeight = 100
+	firstFrameX = 0
+	firstFrameY = 0
+	frames = 10
+	loop = false
+	pingpong = false
+	speed = 100
+	rightOffsetX = 0
+	leftOffsetX = 0
+:EndAnimation
+
+:StartAnimation
+	type = ANIMATION_2
+	frameWidth = 100
+	frameHeight = 120
+	firstFrameX = 50
+	firstFrameY = 150
+	frames = 12
+	loop = true
+	pingpong = true
+	speed = 250
+	rightOffsetX = 70
+	leftOffsetX = 140
+	frameOrder = 4; 3; 2; 1;
+:EndAnimation

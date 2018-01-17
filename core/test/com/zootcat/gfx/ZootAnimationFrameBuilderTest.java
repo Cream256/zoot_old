@@ -15,9 +15,17 @@ import com.zootcat.exceptions.RuntimeZootException;
 
 public class ZootAnimationFrameBuilderTest
 {
+	private static final int COLS = 5;
+	private static final int ROWS = 6;
+	private static final int FRAME_WIDTH = 10;
+	private static final int FRAME_HEIGHT = 25;
+	private static final int OFFSET_X = 100;
+	private static final int OFFSET_Y = 200;
+	private static final int FRAME_LIMIT = 10;
+	
 	private Texture spriteSheet;
 	private ZootAnimationFrameBuilder builder;
-		
+
 	@Before
 	public void setup()
 	{
@@ -28,39 +36,60 @@ public class ZootAnimationFrameBuilderTest
 	@Test
 	public void buildTest()
 	{
-		final int cols = 5;
-		final int rows = 6;
-		final int frameWidth = 10;
-		final int frameHeight = 25;
-		final int offsetX = 100;
-		final int offsetY = 200;
-		
-		TextureRegion[] frames = builder.setCols(cols)
-										.setRows(rows)
-										.setFrameWidth(frameWidth)
-										.setFrameHeight(frameHeight)
-										.setOffsetX(offsetX)
-										.setOffsetY(offsetY)
+		TextureRegion[] frames = builder.setCols(COLS)
+										.setRows(ROWS)
+										.setFrameWidth(FRAME_WIDTH)
+										.setFrameHeight(FRAME_HEIGHT)
+										.setOffsetX(OFFSET_X)
+										.setOffsetY(OFFSET_Y)
 										.build(spriteSheet);			
 		assertNotNull(frames);
-		assertEquals(cols * rows, frames.length);
+		assertEquals(COLS * ROWS, frames.length);
 		
 		Arrays.stream(frames).forEach((frame) ->
 		{		
 			assertEquals(spriteSheet, frame.getTexture());			
-			assertEquals(frameWidth, frame.getRegionWidth());
-			assertEquals(frameHeight, frame.getRegionHeight());
+			assertEquals(FRAME_WIDTH, frame.getRegionWidth());
+			assertEquals(FRAME_HEIGHT, frame.getRegionHeight());
 		});
+	}
+	
+	@Test
+	public void buildWithFrameLimitTest()
+	{
+		TextureRegion[] frames = builder.setCols(COLS)
+										.setRows(ROWS)
+										.setFrameWidth(FRAME_WIDTH)
+										.setFrameHeight(FRAME_HEIGHT)
+										.setOffsetX(OFFSET_X)
+										.setOffsetY(OFFSET_Y)
+										.setFrameLimit(FRAME_LIMIT)
+										.build(spriteSheet);				
+		assertNotNull(frames);
+		assertEquals(FRAME_LIMIT, frames.length);
+		Arrays.stream(frames).forEach((frame) ->
+		{		
+			assertEquals(spriteSheet, frame.getTexture());			
+			assertEquals(FRAME_WIDTH, frame.getRegionWidth());
+			assertEquals(FRAME_HEIGHT, frame.getRegionHeight());
+		});
+	}
+	
+	@Test
+	public void buildShouldResetBuilderStateTest()
+	{
+		builder.setCols(1).setRows(2).setFrameHeight(3).setFrameWidth(4).setOffsetX(5).setOffsetY(6).setFrameLimit(7);
+		builder.build(spriteSheet);
 		
-		//after succesfull build, the values should reset
 		assertEquals(0, builder.getCols());
 		assertEquals(0, builder.getRows());
 		assertEquals(0, builder.getFrameWidth());
 		assertEquals(0, builder.getFrameHeight());
 		assertEquals(0, builder.getOffsetX());
 		assertEquals(0, builder.getOffsetY());
+		assertEquals(0, builder.getFrameLimit());
 	}
-	
+		
 	@Test
 	public void buildShouldThrowIfNotAllParametersAreSetTest()
 	{
@@ -75,6 +104,13 @@ public class ZootAnimationFrameBuilderTest
 	{
 		builder.setCols(1).setRows(1).setFrameHeight(1).setFrameWidth(1);
 		builder.build(null);
+	}
+	
+	@Test
+	public void setFrameLimitTest()
+	{
+		assertEquals(0, builder.getFrameLimit());
+		assertEquals(50, builder.setFrameLimit(50).getFrameLimit());
 	}
 	
 	@Test

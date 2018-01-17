@@ -12,6 +12,7 @@ public class ZootAnimationFrameBuilder
 	private int offsetY = 0;
 	private int frameWidth = 0;
 	private int frameHeight = 0;
+	private int frameLimit = 0;
 	
 	public TextureRegion[] build(Texture spriteSheet)
 	{
@@ -23,11 +24,12 @@ public class ZootAnimationFrameBuilder
 		TextureRegion animationRegion = new TextureRegion(spriteSheet, offsetX, offsetY, animationWidth, animationHeight);
 		TextureRegion[][] framesTable = animationRegion.split(frameWidth, frameHeight);
 		
-		TextureRegion[] frames = new TextureRegion[rows * cols];
+		int arraySize = frameLimit > 0 ? frameLimit : rows * cols;
+		TextureRegion[] frames = new TextureRegion[arraySize];
 		int index = 0;
-		for (int row = 0; row < rows; row++) 
+		for (int row = 0; row < rows && index < arraySize; row++) 
 		{
-			for (int col = 0; col < cols; col++) 
+			for (int col = 0; col < cols && index < arraySize; col++) 
 			{
 				frames[index++] = framesTable[row][col];
 			}
@@ -35,6 +37,17 @@ public class ZootAnimationFrameBuilder
 		
 		reset();
 		return frames;
+	}
+	
+	public int getFrameLimit()
+	{
+		return frameLimit;
+	}
+	
+	public ZootAnimationFrameBuilder setFrameLimit(int limit)
+	{
+		frameLimit = limit;
+		return this;
 	}
 	
 	public int getRows() 
@@ -111,6 +124,7 @@ public class ZootAnimationFrameBuilder
 		offsetY = 0;
 		frameWidth = 0;
 		frameHeight = 0;
+		frameLimit = 0;
 	}
 	
 	private void validate(Texture spriteSheet) 

@@ -17,9 +17,19 @@ public class ZootAnimation
 		this.name = name;
 		this.playing = false;
 		this.animationTime = 0.0f;
-		animation = new Animation<TextureRegion>(frameDuration, frames);		
+		animation = new Animation<TextureRegion>(frameDuration, frames);
 	}
-		
+	
+	public int getFrameCount()
+	{
+		return animation.getKeyFrames().length;
+	}
+	
+	public float getFrameDuration()
+	{
+		return animation.getFrameDuration();
+	}
+	
 	public void setPlayMode(PlayMode playMode)
 	{
 		animation.setPlayMode(playMode);

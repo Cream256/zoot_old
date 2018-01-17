@@ -169,4 +169,16 @@ public class ZootAnimationTest
 		animation.setPlayMode(PlayMode.NORMAL);
 		assertEquals(PlayMode.NORMAL, animation.getPlayMode());
 	}
+	
+	@Test
+	public void getFrameCountTest()
+	{
+		assertEquals(frames.length, animation.getFrameCount());
+	}
+	
+	@Test
+	public void getFrameDurationTest()
+	{
+		assertEquals(FRAME_DURATION, animation.getFrameDuration(), 0.0f);
+	}
 }

@@ -1,7 +1,5 @@
 package com.zootcat.controllers.gfx;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -12,7 +10,7 @@ import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.exceptions.ZootException;
 import com.zootcat.gfx.ZootAnimation;
-import com.zootcat.gfx.ZootAnimationFileReader;
+import com.zootcat.gfx.ZootAnimationFile;
 import com.zootcat.scene.ZootActor;
 
 public class AnimatedSpriteController implements RenderController 
@@ -28,11 +26,11 @@ public class AnimatedSpriteController implements RenderController
 	{
 		try
 		{
-			sprite = new Sprite();
-			File animationFile = Gdx.files.internal(file).file();
-			animations = ZootAnimationFileReader.readFromFile(animationFile);
+			sprite = new Sprite();			
+			ZootAnimationFile animationFile = new ZootAnimationFile(Gdx.files.internal(file).file());
+			animations = animationFile.createAnimations();
 		}
-		catch (IOException | ZootException e)
+		catch (ZootException e)
 		{
 			throw new RuntimeZootException("Unable to initialize animated sprite: " + e.getMessage(), e);
 		}
