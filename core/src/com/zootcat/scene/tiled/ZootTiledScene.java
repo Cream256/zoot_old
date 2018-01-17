@@ -21,7 +21,6 @@ import com.zootcat.map.tiled.ZootTiledMapRender;
 import com.zootcat.map.tiled.ZootTiledMapRenderConfig;
 import com.zootcat.map.tiled.ZootTiledWorldScaleCalculator;
 import com.zootcat.physics.ZootPhysics;
-import com.zootcat.physics.box2d.ZootBox2DPhysics;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
@@ -32,7 +31,7 @@ public class ZootTiledScene implements ZootScene
 		
 	private Stage stage;
 	private ZootTiledMapRender mapRender;
-	private ZootBox2DPhysics physics;	
+	private ZootPhysics physics;	
 	private float timeAccumulator = 0.0f;	
 	private boolean isDebugMode = false;
 	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
@@ -47,7 +46,7 @@ public class ZootTiledScene implements ZootScene
     	unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
     	
     	//physics
-    	physics = new ZootBox2DPhysics();
+    	physics = new ZootPhysics();
     	
 		//render
     	ZootTiledMapRenderConfig renderConfig = new ZootTiledMapRenderConfig();
