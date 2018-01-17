@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -31,6 +30,7 @@ public class ZootTiledScene implements ZootScene
 		
 	private Stage stage;
 	private ZootTiledMapRender mapRender;
+	private OrthographicCamera camera;
 	private ZootPhysics physics;	
 	private float timeAccumulator = 0.0f;	
 	private boolean isDebugMode = false;
@@ -57,6 +57,7 @@ public class ZootTiledScene implements ZootScene
 				
 		//stage
 		Viewport viewport = new StretchViewport(viewportWidth, viewportHeight);
+		camera = (OrthographicCamera) viewport.getCamera();
 		stage = new Stage(viewport);
 		
 		//actors
@@ -69,9 +70,9 @@ public class ZootTiledScene implements ZootScene
 	}
 	
 	@Override
-	public Camera getCamera()
+	public OrthographicCamera getCamera()
 	{
-		return stage.getViewport().getCamera();
+		return camera;
 	}
 	
 	@Override
