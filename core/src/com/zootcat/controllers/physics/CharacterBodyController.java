@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.utils.ZootUtils;
@@ -19,6 +20,7 @@ public class CharacterBodyController extends PhysicsBodyController
 	@Override
 	public void init(ZootActor actor)
 	{
+		super.type = BodyType.DynamicBody;
 		super.canRotate = false;
 		super.init(actor);
 	}

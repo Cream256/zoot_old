@@ -8,7 +8,6 @@ import com.zootcat.controllers.input.InputProcessorController;
 import com.zootcat.game.GameCharacterInputProcessor;
 import com.zootcat.input.ZootBindableInputProcessor;
 import com.zootcat.input.ZootInputManager;
-import com.zootcat.input.ZootInputProcessorListener;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 import com.zootcat.scene.tiled.ZootTiledScene;
@@ -54,7 +53,6 @@ public class ZootLevelScreen implements Screen
     	debugInputProcessor.bindDown(Input.Keys.PERIOD, () -> { camera.zoom = 1.0f; return true; });    	
     	debugInputProcessor.bindUp(Input.Keys.F9, () -> { scene.setDebugMode(!scene.isDebugMode()); return true; });
     	debugInputProcessor.bindUp(Input.Keys.F12, () -> { resetLevel(); return true; });
-    	scene.addListener(new ZootInputProcessorListener(debugInputProcessor));
     	
     	//character input    	
     	ZootActor player = scene.getActors((act) -> act.getName().equalsIgnoreCase("Frisker")).get(0);

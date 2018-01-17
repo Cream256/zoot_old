@@ -30,6 +30,8 @@ public class PhysicsBodyController implements Controller
 	@CtrlParam protected float linearDamping = 0.0f;
 	@CtrlParam protected float angularDamping = 0.0f;	
 	@CtrlParam protected float gravityScale = 1.0f;
+	@CtrlParam protected float width = 0.0f;
+	@CtrlParam protected float height = 0.0f;
 	@CtrlParam protected boolean sensor = false;	
 	@CtrlParam protected boolean bullet = false;
 	@CtrlParam protected boolean canRotate = true;
@@ -135,18 +137,28 @@ public class PhysicsBodyController implements Controller
 		if(shape == ZootBodyShape.BOX)
 		{
 			PolygonShape polygon = new PolygonShape();
-			polygon.setAsBox(actor.getWidth() / 2, actor.getHeight() / 2);			
+			polygon.setAsBox(getBodyWidth(actor) / 2, getBodyHeight(actor) / 2);			
 			return polygon;
 		}
 		else if (shape == ZootBodyShape.CIRCLE)
 		{
 			CircleShape circle = new CircleShape();
-			circle.setRadius(actor.getWidth());
+			circle.setRadius(getBodyWidth(actor));
 			return circle;
 		}
 		else
 		{
 			throw new RuntimeZootException("Unknown fixture type for for actor: " + actor);
 		}
+	}
+	
+	protected float getBodyWidth(ZootActor actor)
+	{
+		return width == 0.0f ? actor.getWidth() : width * scene.getUnitScale();
+	}
+	
+	protected float getBodyHeight(ZootActor actor)
+	{
+		return height == 0.0f ? actor.getHeight() : height * scene.getUnitScale();
 	}
 }
