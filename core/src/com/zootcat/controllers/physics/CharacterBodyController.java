@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -18,11 +19,11 @@ public class CharacterBodyController extends PhysicsBodyController
 	@CtrlParam private boolean vertical = true;
 	
 	@Override
-	public void init(ZootActor actor)
+	public void init(ZootActor actor, AssetManager assetManager)
 	{
 		super.type = BodyType.DynamicBody;
 		super.canRotate = false;
-		super.init(actor);
+		super.init(actor, assetManager);
 	}
 			
 	@Override

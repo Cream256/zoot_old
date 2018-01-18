@@ -1,11 +1,12 @@
 package com.zootcat.controllers;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.zootcat.scene.ZootActor;
 
 public class ControllerAdapter implements Controller 
 {
 	@Override
-	public void init(ZootActor actor) 
+	public void init(ZootActor actor, AssetManager assetManager) 
 	{
 		//noop
 	}

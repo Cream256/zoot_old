@@ -17,6 +17,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
@@ -27,9 +29,9 @@ import com.zootcat.controllers.gfx.RenderController;
 
 public class ZootActorTest 
 {	
-	private Controller mockCtrl1;
-	private Controller mockCtrl2;
-	private Controller mockCtrl3;
+	@Mock private Controller mockCtrl1;
+	@Mock private Controller mockCtrl2;
+	@Mock private Controller mockCtrl3;
 	
 	@BeforeClass
 	public static void setupClass()
@@ -46,9 +48,7 @@ public class ZootActorTest
 	@Before
 	public void setup()
 	{
-		mockCtrl1 = mock(Controller.class);
-		mockCtrl2 = mock(Controller.class);
-		mockCtrl3 = mock(Controller.class);	
+		MockitoAnnotations.initMocks(this);
 	}
 	
     @Test

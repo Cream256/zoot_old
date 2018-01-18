@@ -2,6 +2,7 @@ package com.zootcat.controllers.factory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
@@ -10,6 +11,9 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.badlogic.gdx.maps.MapProperties;
+import com.zootcat.controllers.Controller;
+import com.zootcat.controllers.factory.mocks.BaseControllerMock;
 import com.zootcat.controllers.factory.mocks.DerivedControllerMock;
 import com.zootcat.controllers.factory.mocks.EmptyControllerMock;
 import com.zootcat.controllers.factory.mocks.EnumParam;
@@ -17,6 +21,7 @@ import com.zootcat.controllers.factory.mocks.EnumParamControllerMock;
 import com.zootcat.controllers.factory.mocks.GlobalParamControllerMock;
 import com.zootcat.controllers.factory.mocks.PrimitiveParamsControllerMock;
 import com.zootcat.controllers.factory.mocks.RequiredParamControllerMock;
+import com.zootcat.controllers.factory.mocks.SimpleController;
 
 public class ControllerFactoryTest
 {
@@ -27,12 +32,81 @@ public class ControllerFactoryTest
     {
 		factory = new ControllerFactory();
     }
+		
+	@Test
+	public void ctorsTest()
+	{
+		assertTrue("Default ctor should add default controllers", new ControllerFactory().getSize() > 0);
+		assertTrue("Should add default controllers", new ControllerFactory(true).getSize() > 0);
+		assertTrue("Should not add default controllers", new ControllerFactory(false).getSize() == 0);
+	}
+	
+	@Test
+	public void addTest()
+	{
+		ControllerFactory localFactory = new ControllerFactory(false);
+		
+		localFactory.add(BaseControllerMock.class);
+		assertEquals(1, localFactory.getSize());
+		
+		localFactory.add(BaseControllerMock.class);
+		assertEquals("Should not add class with the same name", 1, localFactory.getSize());
+		
+		localFactory.add(Controller.class);
+		assertEquals("Should not add interface only class", 1, localFactory.getSize());
+		
+		localFactory.add(SimpleController.class);
+		assertEquals(2, localFactory.getSize());
+	}
+	
+	@Test
+	public void removeTest()
+	{
+		ControllerFactory localFactory = new ControllerFactory(false);
+		
+		localFactory.add(BaseControllerMock.class);
+		localFactory.add(SimpleController.class);
+		assertEquals(2, localFactory.getSize());
+		
+		localFactory.remove(BaseControllerMock.class);
+		assertEquals(1, localFactory.getSize());
+		assertNull(localFactory.get(BaseControllerMock.class.getSimpleName()));
+		assertEquals(SimpleController.class, localFactory.get(SimpleController.class.getSimpleName()));
+		
+		localFactory.remove(SimpleController.class);
+		assertEquals(0, localFactory.getSize());
+	}
+	
+	@Test
+	public void addFromPackageTest()
+	{
+		assertEquals("Should include subpackages and skip interfaces", 4, factory.addFromPackage("com.zootcat.controllers.factory.mocks", true));
+		assertEquals("Should not include subpackages and skip interfaces", 3, factory.addFromPackage("com.zootcat.controllers.factory.mocks", false));
+	}
+	
+	@Test
+	public void normalizeNameAndCreateTest() throws ControllerFactoryException
+	{
+		factory.add(BaseControllerMock.class);
+		factory.add(SimpleController.class);
+		
+		Controller created1 = factory.normalizeNameAndCreate("SimpleController", new MapProperties());
+		assertNotNull("Should create controller from full name", created1);
+		assertEquals(SimpleController.class, created1.getClass());
+		
+		Controller created2 = factory.normalizeNameAndCreate("Simple", new MapProperties());
+		assertNotNull("Should create controller from short name", created2);
+		assertEquals(SimpleController.class, created2.getClass());
+		
+		Controller created3 = factory.normalizeNameAndCreate("NotExistingCtrl", new MapProperties());
+		assertNull("Should not create from not existing controller class", created3);
+	}
 	
 	@Test
     public void controllerWithNoParamsTest() throws ControllerFactoryException
     {
         //given
-        ControllerFactory factory = new ControllerFactory();
+        ControllerFactory factory = new ControllerFactory(false);
         
         //then
         assertEquals(0, factory.getSize());

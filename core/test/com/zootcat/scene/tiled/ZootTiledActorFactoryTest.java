@@ -18,18 +18,16 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.zootcat.controllers.factory.mocks.SimpleController;
+import com.zootcat.controllers.factory.ControllerFactory;
 import com.zootcat.controllers.physics.StaticBodyController;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.map.tiled.ZootTiledMapCell;
 import com.zootcat.physics.ZootPhysics;
 import com.zootcat.scene.ZootActor;
-import com.zootcat.scene.mocks.Mock1Controller;
-import com.zootcat.scene.mocks.Mock2Controller;
-import com.zootcat.scene.mocks.inner.Mock3Controller;
 
-public class ZootTiledSceneActorFactoryTest
+public class ZootTiledActorFactoryTest
 {	
+	private static final int ACTOR_ID = 1;
 	private static final String ACTOR_NAME = "abc";
 	private static final Color ACTOR_COLOR = Color.RED;
 	private static final float ACTOR_X = 1.0f;
@@ -49,7 +47,8 @@ public class ZootTiledSceneActorFactoryTest
 	@Mock private TiledMapTile tile;
 	@Mock private Cell innerCell;
 	private MapProperties tileProperties;
-	private ZootTiledSceneActorFactory factory;
+	private ControllerFactory ctrlFactory;
+	private ZootTiledActorFactory factory;
 		
 	@Before
 	public void setup()
@@ -70,101 +69,16 @@ public class ZootTiledSceneActorFactoryTest
 		when(innerCell.getTile()).thenReturn(tile);
 		
 		//create factory
-		factory = new ZootTiledSceneActorFactory(sceneMock);
+		ctrlFactory = new ControllerFactory();
+		factory = new ZootTiledActorFactory(1.0f);
 	}
-	
-	@Test
-	public void addControllersTestTest()
-	{
-		assertEquals("Should include subpackages and skip interfaces", 3, factory.addControllersFromPackage("com.zootcat.scene.mocks", true));
-		assertEquals("Should not include subpackages and skip interfaces", 2, factory.addControllersFromPackage("com.zootcat.scene.mocks", false));
-	}
-		
+			
 	@Test(expected = RuntimeZootException.class)
 	public void createFromMapObjectShuoldThrowIfBasicPropertiesAreNotInPlaceTest()
 	{
 		//given
 		MapObject mapObject = new MapObject();
 				
-		//then
-		factory.createFromMapObject(mapObject);
-	}
-	
-	@Test(expected = NumberFormatException.class)
-	public void createFromMapObjectShouldThrowNumberFormatExceptionIfIntegerValuesAreWrong()
-	{
-		//given
-		MapObject mapObject = new MapObject();
-		mapObject.getProperties().put("x", "wrongValue");
-				
-		//then
-		factory.createFromMapObject(mapObject);
-	}
-	
-	@Test
-	public void createFromMapObjectShouldAddControllerWithNotParamsTest()
-	{
-		//given
-		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
-		MapObject mapObject = createDefaultMapObject();
-		mapObject.getProperties().put("Mock1Controller", "");
-		
-		//when
-		ZootActor actor = factory.createFromMapObject(mapObject);
-		actor.act(0.0f);
-		
-		//then
-		Mock1Controller ctrl = actor.getController(Mock1Controller.class);
-		assertNotNull(ctrl);
-	}
-
-	@Test
-	public void createFromMapObjectShouldAddControllerWithParamsTest()
-	{
-		//given
-		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
-		MapObject mapObject = createDefaultMapObject();
-		mapObject.getProperties().put("Mock2Controller", "a=1, b=2.2f, c=string");
-		
-		//when
-		ZootActor actor = factory.createFromMapObject(mapObject);
-		actor.act(0.0f);
-		
-		//then
-		Mock2Controller ctrl = actor.getController(Mock2Controller.class);
-		assertNotNull(ctrl);
-		assertEquals(1, ctrl.a);
-		assertEquals(2.2f, ctrl.b, 0.0f);
-		assertEquals("string", ctrl.c);
-	}
-	
-	@Test
-	public void createFromMapObjectShouldAddControllerWithSceneGlobalParamTest()
-	{
-		//given
-		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
-		MapObject mapObject = createDefaultMapObject();
-		mapObject.getProperties().put("Mock3Controller", "param = 100");
-		
-		//then
-		ZootActor actor = factory.createFromMapObject(mapObject);
-		actor.act(0.0f);
-		
-		//then
-		Mock3Controller ctrl = actor.getController(Mock3Controller.class);
-		assertNotNull(ctrl);
-		assertEquals(100, ctrl.param);
-		assertEquals(sceneMock, ctrl.scene);
-	}
-	
-	@Test(expected = RuntimeZootException.class)
-	public void createFromMapObjectShouldThrowWhenControllerParamsAreWrongTest()
-	{
-		//given
-		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
-		MapObject mapObject = createDefaultMapObject();
-		mapObject.getProperties().put("Mock2Controller", "1, string");
-		
 		//then
 		factory.createFromMapObject(mapObject);
 	}
@@ -184,6 +98,7 @@ public class ZootTiledSceneActorFactoryTest
 		assertEquals(mapObject.getColor(), actor.getColor());
 		assertEquals(mapObject.getOpacity(), actor.getOpacity(), 0.0f);
 		assertEquals(mapObject.isVisible(), actor.isVisible());
+		assertEquals(ACTOR_ID, actor.getId());
 		assertEquals(ACTOR_X, actor.getX(), 0.0f);
 		assertEquals(ACTOR_Y, actor.getY(), 0.0f);
 		assertEquals(ACTOR_WIDTH, actor.getWidth(), 0.0f);
@@ -222,23 +137,7 @@ public class ZootTiledSceneActorFactoryTest
 		assertNotNull(actor);
 		actor.getController(StaticBodyController.class);
 	}
-	
-	@Test
-	public void createFromMapCellShouldCreateControllersForActorTest()
-	{
-		//given				
-		ZootTiledMapCell cell = createDefaultCell();
-		tileProperties.put(SimpleController.class.getSimpleName(), "");
-		factory.addControllersFromPackage("com.zootcat.controllers.factory.mocks", false);
-		
-		//when		
-		ZootActor actor = factory.createFromMapCell(cell);
-		
-		//then
-		assertNotNull(actor);
-		assertNotNull(actor.getController(SimpleController.class));
-	}
-		
+			
 	private ZootTiledMapCell createDefaultCell()
 	{		
 		return new ZootTiledMapCell(CELL_X, CELL_Y, CELL_WIDTH, CELL_HEIGHT, innerCell);
@@ -251,6 +150,7 @@ public class ZootTiledSceneActorFactoryTest
 		mapObject.setColor(ACTOR_COLOR);
 		mapObject.setOpacity(ACTOR_OPACITY);
 		mapObject.setVisible(ACTOR_VISIBLE);
+		mapObject.getProperties().put("id", ACTOR_ID);
 		mapObject.getProperties().put("x",ACTOR_X);
 		mapObject.getProperties().put("y", ACTOR_Y);
 		mapObject.getProperties().put("width", ACTOR_WIDTH);

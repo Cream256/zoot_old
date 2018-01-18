@@ -15,7 +15,7 @@ import com.zootcat.physics.ZootCollisionEvent;
 import com.zootcat.physics.ZootCollisionEvent.Type;
 import com.zootcat.scene.ZootActor;
 
-public class ZootCollisionEventTest 
+public class ZootCollisionEventTest
 {
 	@Mock private ZootActor actorA;
 	@Mock private ZootActor actorB;

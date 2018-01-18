@@ -3,6 +3,8 @@ package com.zootcat.controllers.gfx;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,6 +26,8 @@ public class AnimatedSpriteController implements RenderController
 	private Sprite sprite;
 	private ZootAnimation currentAnimation;
 	private Map<Integer, ZootAnimation> animations;
+	private AssetManager assetManager;
+	private ZootAnimationFile zootAnimationFile;
 			
 	public void setAnimation(String animationName)
 	{
@@ -38,26 +42,32 @@ public class AnimatedSpriteController implements RenderController
 	}
 	
 	@Override
-	public void init(ZootActor actor)
+	public void init(ZootActor actor, AssetManager assetManager)
 	{
 		try
 		{
-			animations = new ZootAnimationFile(Gdx.files.internal(file).file()).createAnimations();
-			setAnimation(startingAnimation);
-			
-			sprite = new Sprite();
-			updateSprite(actor);
+			this.assetManager = assetManager;
+			zootAnimationFile = new ZootAnimationFile(Gdx.files.internal(file).file());
+			assetManager.load(zootAnimationFile.getSpriteSheetPath(), Texture.class);
 		}
-		catch (ZootException e)
+		catch(ZootException e)
 		{
-			throw new RuntimeZootException("Unable to initialize animated sprite: " + e.getMessage(), e);
+			throw new RuntimeZootException("Unable to initialize animated sprite", e);
 		}
 	}
 
 	@Override
 	public void onAdd(ZootActor actor)
 	{
-		//noop
+		String spriteSheetPath = zootAnimationFile.getSpriteSheetPath();
+		
+		animations = zootAnimationFile.createAnimations(assetManager.get(spriteSheetPath, Texture.class));
+		setAnimation(startingAnimation);
+		
+		sprite = new Sprite();
+		updateSprite(actor);
+		
+		zootAnimationFile = null;
 	}
 
 	@Override
@@ -113,5 +123,4 @@ public class AnimatedSpriteController implements RenderController
 		sprite.setOriginCenter();
 		sprite.setRotation(actor.getRotation());
 	}
-
 }

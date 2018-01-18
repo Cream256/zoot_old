@@ -1,5 +1,6 @@
 package com.zootcat.controllers.gfx;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,16 +12,19 @@ public class SpriteController implements RenderController
 	@CtrlParam(required = true) private String file;
 	
 	private Sprite sprite;
+	private AssetManager assetManager;
 	
 	@Override
-	public void init(ZootActor actor)
+	public void init(ZootActor actor, AssetManager assetManager)
 	{
-		sprite = new Sprite(new Texture(file));
+		this.assetManager = assetManager;
+		assetManager.load(file, Texture.class);
 	}
-	
+		
 	@Override
 	public void onAdd(ZootActor actor) 
 	{
+		sprite = new Sprite(assetManager.get(file, Texture.class));	
 		updateSprite(actor);
 	}
 	
@@ -28,6 +32,7 @@ public class SpriteController implements RenderController
 	public void onRemove(ZootActor actor) 
 	{
 		sprite = null;
+		assetManager.unload(file);
 	}
 	
 	@Override

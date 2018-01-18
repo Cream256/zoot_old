@@ -12,6 +12,5 @@ public class RuntimeZootException extends RuntimeException
 	public RuntimeZootException(String msg, Exception inner)
 	{
 		super(msg, inner);
-	}
-	
+	}	
 }
