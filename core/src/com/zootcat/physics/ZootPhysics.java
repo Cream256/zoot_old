@@ -47,7 +47,7 @@ public class ZootPhysics implements Disposable
 		List<Fixture> fixtures = new ArrayList<Fixture>();
 		fixtureDefs.forEach((def) -> 
 		{
-			body.createFixture(def);
+			fixtures.add(body.createFixture(def));
 			def.shape.dispose();
 			def.shape = null;
 		});
