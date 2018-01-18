@@ -20,6 +20,7 @@ public class ZootActor extends Actor
 	private List<Controller> controllers = new ArrayList<Controller>();
 	private Set<String> types = new HashSet<String>();	
 	private float opacity = 1.0f;
+	private int id = 0;
 			
 	public ZootActor()
 	{
@@ -130,6 +131,16 @@ public class ZootActor extends Actor
     {
         return types.contains(type.toLowerCase());
     }	
+    
+    public int getId()
+    {
+    	return id;
+    }
+    
+    public void setId(int id)
+    {
+    	this.id = id;
+    }
     
     @Override
     public String toString()
