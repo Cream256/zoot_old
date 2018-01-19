@@ -4,7 +4,7 @@ import com.zootcat.controllers.Controller;
 import com.zootcat.physics.ZootCollisionListener;
 import com.zootcat.scene.ZootActor;
 
-public class CollisionController extends ZootCollisionListener implements Controller 
+public abstract class PhysicsCollisionController extends ZootCollisionListener implements Controller 
 {
 	@Override
 	public void init(ZootActor actor)

@@ -31,6 +31,13 @@ public class ZootGame extends Game
     	setScreen(loadingScreen);
     }
     
+    @Override
+    public void dispose()
+    {
+    	assetManager.dispose();
+    	assetManager = null;
+    }
+    
     public AssetManager getAssetManager()
     {
     	return assetManager;

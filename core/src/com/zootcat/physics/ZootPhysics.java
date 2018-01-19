@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2D;
+import com.badlogic.gdx.physics.box2d.ContactFilter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
@@ -19,12 +20,24 @@ public class ZootPhysics implements Disposable
 	private static final Vector2 DEFAULT_GRAVITY = new Vector2(0.0f, -9.80f);
 	
 	private World world;
+	private ZootContactFilter contactFilter = new ZootContactFilter();
 	
 	public ZootPhysics()
 	{
 		Box2D.init();
 		world = new World(DEFAULT_GRAVITY, true);	
 		world.setContactListener(new ZootPhysicsContactListener());
+		world.setContactFilter(contactFilter);
+	}
+	
+	public void addFixtureContactFilter(Fixture fixture, ContactFilter filter)
+	{
+		contactFilter.addFixtureFilter(fixture, filter);
+	}
+	
+	public void removeFixtureContactFilters(Fixture fixture)
+	{
+		contactFilter.removeContactFilters(fixture);
 	}
 	
 	public void setGravity(float x, float y, float z)
