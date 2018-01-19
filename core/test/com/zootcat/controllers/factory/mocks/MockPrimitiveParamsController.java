@@ -3,7 +3,7 @@ package com.zootcat.controllers.factory.mocks;
 import com.zootcat.controllers.ControllerAdapter;
 import com.zootcat.controllers.factory.CtrlParam;
 
-public class PrimitiveParamsControllerMock extends ControllerAdapter	
+public class MockPrimitiveParamsController extends ControllerAdapter	
 {
 	@CtrlParam private int intParam = 0;
 	@CtrlParam private float floatParam = 0.0f;

@@ -3,9 +3,11 @@ package com.zootcat.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.zootcat.exceptions.RuntimeZootException;
+
 public class ArgumentParser
 {        
-    public static Map<String, Object> parse(String[] arguments) throws ArgumentParserException
+    public static Map<String, Object> parse(String[] arguments) throws RuntimeZootException
     {
         Map<String, Object> result = new HashMap<String, Object>();
         
@@ -24,7 +26,7 @@ public class ArgumentParser
         	String[] splittedArg = arg.split("="); 
         	if(splittedArg.length != 2)
         	{
-        		throw new ArgumentParserException("Invalid argument: " + arg);
+        		throw new RuntimeZootException("Invalid argument: " + arg);
         	}
         	
         	String argName = splittedArg[0].trim();
@@ -32,12 +34,12 @@ public class ArgumentParser
             
             if(argName.isEmpty())
             {
-                throw new ArgumentParserException("Empty argument name!");
+                throw new RuntimeZootException("Empty argument name!");
             }
             
             if(argValue.isEmpty())
             {
-            	throw new ArgumentParserException("Empty argument value for: " + argName);
+            	throw new RuntimeZootException("Empty argument value for: " + argName);
             }
                       
             //Integer argument

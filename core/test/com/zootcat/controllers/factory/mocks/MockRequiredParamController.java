@@ -3,7 +3,7 @@ package com.zootcat.controllers.factory.mocks;
 import com.zootcat.controllers.ControllerAdapter;
 import com.zootcat.controllers.factory.CtrlParam;
 
-public class RequiredParamControllerMock extends ControllerAdapter
+public class MockRequiredParamController extends ControllerAdapter
 {
 	@CtrlParam private int optional;
 	@CtrlParam(required=true) private int required;

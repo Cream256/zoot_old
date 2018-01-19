@@ -11,7 +11,7 @@ import org.junit.Test;
 public class ArgumentParserTest
 {                
     @Test
-    public void noArgsTest() throws ArgumentParserException
+    public void noArgsTest()
     {
         Map<String, Object> result = ArgumentParser.parse(new String[0]);        
         assertNotNull(result);
@@ -19,7 +19,7 @@ public class ArgumentParserTest
     }
         
     @Test
-    public void booleanTrueTest() throws ArgumentParserException
+    public void booleanTrueTest()
     {
     	Map<String, Object> result = ArgumentParser.parse(new String[]{"myBool = true"});        
         assertNotNull(result);
@@ -29,7 +29,7 @@ public class ArgumentParserTest
     }
     
     @Test
-    public void booleanFalseTest() throws ArgumentParserException
+    public void booleanFalseTest()
     {
     	Map<String, Object> result = ArgumentParser.parse(new String[]{"myBool = false"});        
         assertNotNull(result);
@@ -38,13 +38,13 @@ public class ArgumentParserTest
         assertEquals(false, result.get("myBool"));
     }
     
-    public void emptyStringArgShouldNotThrowTest() throws ArgumentParserException
+    public void emptyStringArgShouldNotThrowTest()
     {
     	ArgumentParser.parse(new String[]{"   "});        
     }
     
     @Test
-    public void stringArgTest() throws ArgumentParserException
+    public void stringArgTest()
     {                
         Map<String, Object> result = ArgumentParser.parse(new String[]{"str = myString"});        
         assertNotNull(result);
@@ -54,7 +54,7 @@ public class ArgumentParserTest
     }
 
     @Test
-    public void stringWithSpacesTest() throws ArgumentParserException
+    public void stringWithSpacesTest()
     {                
         Map<String, Object> result = ArgumentParser.parse(new String[]{"str = '  '"});        
         assertNotNull(result);
@@ -64,7 +64,7 @@ public class ArgumentParserTest
     }   
                     
     @Test
-    public void integerArgTest() throws ArgumentParserException
+    public void integerArgTest() 
     {
         Map<String, Object> result = ArgumentParser.parse(new String[]{"myInt = 123"});
         assertNotNull(result);
@@ -74,7 +74,7 @@ public class ArgumentParserTest
     }
     
     @Test
-    public void negativeIntegerArgTest() throws ArgumentParserException
+    public void negativeIntegerArgTest() 
     {
         Map<String, Object> result = ArgumentParser.parse(new String[]{"myInt = -123"});
         assertNotNull(result);
@@ -84,7 +84,7 @@ public class ArgumentParserTest
     }
     
     @Test
-    public void positiveIntegerArgTest() throws ArgumentParserException
+    public void positiveIntegerArgTest() 
     {
         Map<String, Object> result = ArgumentParser.parse(new String[]{"myInt = +123"});
         assertNotNull(result);
@@ -94,7 +94,7 @@ public class ArgumentParserTest
     }
         
     @Test
-    public void floatArgTest() throws ArgumentParserException
+    public void floatArgTest() 
     {
         Map<String, Object> result = ArgumentParser.parse(new String[]{"myFloat = 0.123f"});
         assertNotNull(result);
@@ -104,7 +104,7 @@ public class ArgumentParserTest
     }
     
     @Test
-    public void floatNoLeadingZeroArgTest() throws ArgumentParserException
+    public void floatNoLeadingZeroArgTest() 
     {
         Map<String, Object> result = ArgumentParser.parse(new String[]{"myFloat = .123f"});
         assertNotNull(result);
@@ -114,7 +114,7 @@ public class ArgumentParserTest
     }
     
     @Test
-    public void floatNegativeArgTest() throws ArgumentParserException
+    public void floatNegativeArgTest() 
     {
         Map<String, Object> result = ArgumentParser.parse(new String[]{"myFloat = -0.123f"});
         assertNotNull(result);
@@ -124,7 +124,7 @@ public class ArgumentParserTest
     }
     
     @Test
-    public void doubleArgTest() throws ArgumentParserException
+    public void doubleArgTest() 
     {
         Map<String, Object> result = ArgumentParser.parse(new String[]{"myDouble = 0.123d"});
         assertNotNull(result);
@@ -134,7 +134,7 @@ public class ArgumentParserTest
     }
                    
     @Test
-    public void multiplyArgumentsTest() throws ArgumentParserException
+    public void multiplyArgumentsTest() 
     {        
         String[] arguments = {"arg1=@player1", "arg2=@little bunny", "arg3 = 'DUH'", "arg4=3.14f", "arg5 = 6.14d"};
         Map<String, Object> result = ArgumentParser.parse(arguments); 

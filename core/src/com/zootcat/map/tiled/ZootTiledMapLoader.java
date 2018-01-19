@@ -16,8 +16,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.XmlReader;
 import com.badlogic.gdx.utils.XmlReader.Element;
 import com.zootcat.assets.ZootAssetRecognizer;
+import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.utils.ArgumentParser;
-import com.zootcat.utils.ArgumentParserException;
 
 public class ZootTiledMapLoader extends AsynchronousAssetLoader<ZootTiledMap, ZootTiledMapLoader.Parameters>
 {
@@ -91,7 +91,7 @@ public class ZootTiledMapLoader extends AsynchronousAssetLoader<ZootTiledMap, Zo
 				  				.map(filename -> assetRecognizer.getAssetDescriptor(filename))
 				  				.forEach(dependency -> dependencies.add(dependency));
 			}
-			catch (ArgumentParserException e)
+			catch (RuntimeZootException e)
 			{
 				continue;
 			}

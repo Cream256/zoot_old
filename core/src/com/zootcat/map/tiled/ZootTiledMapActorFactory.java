@@ -2,42 +2,29 @@ package com.zootcat.map.tiled;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.ControllerFactory;
-import com.zootcat.controllers.factory.ControllerFactoryException;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.tiled.ZootTiledScene;
-import com.zootcat.utils.ArgumentParser;
-import com.zootcat.utils.ArgumentParserException;
-import com.zootcat.utils.ClassFinder;
 
 public class ZootTiledMapActorFactory 
 {
 	private static final String ACTOR_GLOBAL_PARAM = "actor";
-	private static final String SCENE_GLOBAL_PARAM = "scene";	
-	private static final String CONTROLLER_SUFFIX = "Controller";
+	private static final String SCENE_GLOBAL_PARAM = "scene";
 
 	private float scale;
-	private ControllerFactory controllerFactory = new ControllerFactory();		
-		
-	public ZootTiledMapActorFactory(ZootTiledScene scene)
+	private ControllerFactory controllerFactory;		
+			
+	public ZootTiledMapActorFactory(ZootTiledScene scene, ControllerFactory controllerFactory)
 	{
-		this(scene, 1.0f);
-	}
-	
-	public ZootTiledMapActorFactory(ZootTiledScene scene, float scale)
-	{
-		this.scale = scale;
-		controllerFactory.addGlobalParameter(SCENE_GLOBAL_PARAM, scene);
-		addControllersFromPackage("com.zootcat.controllers", true);
+		this.scale = scene.getUnitScale();
+		this.controllerFactory = controllerFactory;
+		this.controllerFactory.addGlobalParameter(SCENE_GLOBAL_PARAM, scene);
 	}
 	
 	public ZootActor createFromMapObject(final MapObject mapObject)
@@ -66,23 +53,7 @@ public class ZootTiledMapActorFactory
 	{
 		return objects.stream().map(obj -> createFromMapObject(obj)).collect(Collectors.toList());
 	}
-	
-	public int addControllersFromPackage(String packageName, boolean includeSubDirs)
-	{
-		List<Class<?>> found = ClassFinder.find(packageName, includeSubDirs);
 		
-		Predicate<Class<?>> filterAssignable = cls -> ClassReflection.isAssignableFrom(Controller.class, cls) && !ClassReflection.isInterface(cls);		
-		Predicate<Class<?>> filterByName = cls -> cls.getSimpleName().endsWith(CONTROLLER_SUFFIX);
-		
-		List<Class<?>> filtered = found.stream()
-									   .filter(filterAssignable)
-									   .filter(filterByName)
-									   .collect(Collectors.toList());
-		
-		filtered.forEach(cls -> controllerFactory.add(cls));
-		return filtered.size();
-	}
-	
 	protected void setActorBasicProperties(final MapObject mapObject, ZootActor actor) 
 	{
 		actor.setName(mapObject.getName());
@@ -103,33 +74,18 @@ public class ZootTiledMapActorFactory
 	{
 		controllerFactory.addGlobalParameter(ACTOR_GLOBAL_PARAM, actor);		
 		actorProperties.getKeys().forEachRemaining(ctrlName ->
-		{
-			String normalizedCtrlName = normalizeControllerName(ctrlName); 
-			if(controllerFactory.contains(normalizedCtrlName))
+		{								
+			if(controllerFactory.contains(ctrlName))
 			{
-				try 
-				{									
-					String[] controllerArguments = actorProperties.get(ctrlName, String.class).split(",");
-					Map<String, Object> arguments = ArgumentParser.parse(controllerArguments);
-					
-					Controller controller = (Controller) controllerFactory.create(normalizedCtrlName, arguments);										
-					controller.init(actor);		//initialize first, then assign
-					actor.addController(controller);	
-				}
-				catch(ArgumentParserException | ControllerFactoryException e)
-                {
-                    throw new RuntimeZootException("Error while trying to create " + ctrlName, e);
-                }
+				String controllerParams = actorProperties.get(ctrlName, String.class);
+				Controller controller = controllerFactory.create(ctrlName, controllerParams);
+				controller.init(actor);		//initialize first, then assign
+				actor.addController(controller);
 			}
 		});
 		controllerFactory.removeGlobalParameter(ACTOR_GLOBAL_PARAM);
 	}
-	
-	protected String normalizeControllerName(String controllerName)
-	{
-		return controllerName.endsWith(CONTROLLER_SUFFIX) ? controllerName : controllerName + CONTROLLER_SUFFIX;
-	}
-	
+		
 	protected String getPropertyOrDefault(MapObject mapObject, String key, String defaultValue)
 	{
 		Object value = mapObject.getProperties().get(key);

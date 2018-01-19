@@ -3,7 +3,7 @@ package com.zootcat.controllers.factory.mocks;
 import com.zootcat.controllers.ControllerAdapter;
 import com.zootcat.controllers.factory.CtrlParam;
 
-public class GlobalParamControllerMock extends ControllerAdapter
+public class MockGlobalParamController extends ControllerAdapter
 {
 	@CtrlParam private int local = 0;
 	@CtrlParam(global = true) private int global;

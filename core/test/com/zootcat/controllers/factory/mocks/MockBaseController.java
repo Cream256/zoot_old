@@ -3,13 +3,13 @@ package com.zootcat.controllers.factory.mocks;
 import com.zootcat.controllers.ControllerAdapter;
 import com.zootcat.controllers.factory.CtrlParam;
 
-public class EnumParamControllerMock extends ControllerAdapter 
+public class MockBaseController extends ControllerAdapter 
 {
-	@CtrlParam private EnumParam enumParam;
+	@CtrlParam private int baseParam = 0;
 	
-	public EnumParam getEnum()
+	public int getBaseParam()
 	{
-		return enumParam;
+		return baseParam;
 	}
 	
 }

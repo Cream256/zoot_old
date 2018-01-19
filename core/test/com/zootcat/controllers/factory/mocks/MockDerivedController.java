@@ -2,7 +2,7 @@ package com.zootcat.controllers.factory.mocks;
 
 import com.zootcat.controllers.factory.CtrlParam;
 
-public class DerivedControllerMock extends BaseControllerMock 
+public class MockDerivedController extends MockBaseController 
 {
 	@CtrlParam private int derivedParam = 0;
 	

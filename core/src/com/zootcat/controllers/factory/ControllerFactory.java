@@ -6,30 +6,71 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.zootcat.controllers.Controller;
+import com.zootcat.exceptions.RuntimeZootException;
+import com.zootcat.utils.ArgumentParser;
+import com.zootcat.utils.ClassFinder;
 import com.zootcat.utils.ZootUtils;
 
 public class ControllerFactory
 {
-    Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+	private static final String CONTROLLER_SUFFIX = "controller";
+	
+	Map<String, Class<? extends Controller>> classes = new HashMap<String, Class<? extends Controller>>();
     Map<String, Object> globalParameters = new HashMap<String, Object>();
     
-    public void add(Class<?> clazz)
+    public ControllerFactory()
     {
-        classes.put(clazz.getSimpleName().toLowerCase(), clazz);
+    	this(true);
     }
     
-    public Class<?> get(String name)
+    public ControllerFactory(boolean addDefaultControllers)
     {
-        return classes.get(name.toLowerCase());
+    	if(addDefaultControllers)
+    	{
+    		addFromPackage("com.zootcat.controllers", true);
+    	}
+    }
+    
+    public void add(Class<? extends Controller> clazz)
+    {
+        if(!ClassReflection.isInterface(clazz) && !ClassReflection.isAbstract(clazz))
+        {
+        	classes.put(normalizeName(clazz.getSimpleName()), clazz);
+        }
+    }
+        
+    public Class<? extends Controller> get(String ctrlName)
+    {
+        return classes.get(normalizeName(ctrlName));
     }
 
-	public boolean contains(String className) 
+	public boolean contains(Class<? extends Controller> clazz)
 	{
-		return classes.containsKey(removeSuffix(className.toLowerCase()));
+		return classes.containsKey(clazz.getSimpleName().toLowerCase());
 	}
     
+	public boolean contains(String ctrlName)
+	{
+		return classes.containsKey(normalizeName(ctrlName));
+	}
+    
+	@SuppressWarnings("unchecked")
+	public void addFromPackage(String packageName, boolean includeSubDirs)
+	{
+		List<Class<?>> found = ClassFinder.find(packageName, includeSubDirs);		
+		Predicate<Class<?>> filterAssignable = cls -> ClassReflection.isAssignableFrom(Controller.class, cls) && !ClassReflection.isInterface(cls);				
+		List<Class<? extends Controller>> filtered = found.stream()
+									   .filter(filterAssignable)
+									   .map(clazz -> (Class<? extends Controller>)clazz)
+									   .collect(Collectors.toList());		
+		filtered.forEach(cls -> add(cls));
+	}
+	
     public int getSize()
     {
         return classes.size();
@@ -49,33 +90,30 @@ public class ControllerFactory
     {
     	return globalParameters;
     }
-        
-    private String removeSuffix(String nameWithSuffix)
-    {
-        String[] result = nameWithSuffix.split("_"); 
-        return result[0];
-    }
+            
+	public Controller create(String ctrlName, String ctrlParams)
+	{
+		return create(ctrlName, ArgumentParser.parse(ctrlParams.split(",")));
+	}
     
-    public Object create(String name, Map<String, Object> params) throws ControllerFactoryException
+    public Controller create(String ctrlName, Map<String, Object> params)
     {
-        if(!contains(name))
+    	if(!contains(ctrlName))
         {
-            throw new ControllerFactoryException("No controller for given name: " + name + ".");
+            throw new RuntimeZootException("No controller for given name: " + ctrlName + ".");
         }
-        
-        String nameWithoutSuffix = removeSuffix(name);
-        Class<?> classToCreate = classes.get(nameWithoutSuffix.toLowerCase());
+    	
+        Class<?> classToCreate = get(ctrlName);
         
         try 
         {
 			Controller createdController = (Controller) classToCreate.newInstance();
 			assignParamsToClassFields(createdController, params);
 			return createdController;
-			
 		}
         catch (InstantiationException | IllegalAccessException | IllegalArgumentException e) 
         {
-        	throw new ControllerFactoryException(e.getMessage(), e);
+        	throw new RuntimeZootException(e.getMessage(), e);
 		}
     }
     
@@ -122,5 +160,20 @@ public class ControllerFactory
 				field.set(createdClass, param);
 			}			
 		}
+	}
+    
+	private String normalizeName(String name)
+	{
+		//to lowercase
+		String lowerCase = name.toLowerCase();
+		
+		//remove number suffix
+		String noNumber = lowerCase.split("_")[0];
+		
+		//controller suffix
+		String withSuffix = noNumber.endsWith(CONTROLLER_SUFFIX) ? noNumber : noNumber + CONTROLLER_SUFFIX; 
+		
+		//result
+		return withSuffix;
 	}
 }

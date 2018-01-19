@@ -11,9 +11,9 @@ public class ZootGame extends Game
 	private static final String MAP_FILE = "data/TestBed.tmx";
 	
 	private ZootAssetManager assetManager;
-	private float viewportWidth = 16.0f;
-	private float viewportHeight = 9.0f;
-	private float unitPerTile = 1.0f;
+	private float viewportWidth;
+	private float viewportHeight;
+	private float unitPerTile;
 	
 	public ZootGame(float viewportWidth, float viewportHeight, float unitPerTile)
 	{
@@ -36,6 +36,8 @@ public class ZootGame extends Game
     {
     	assetManager.dispose();
     	assetManager = null;
+    	
+    	super.dispose();
     }
     
     public AssetManager getAssetManager()

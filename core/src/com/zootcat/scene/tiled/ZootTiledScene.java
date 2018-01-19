@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.zootcat.controllers.factory.ControllerFactory;
 import com.zootcat.gfx.ZootRender;
 import com.zootcat.map.tiled.ZootTiledMap;
 import com.zootcat.map.tiled.ZootTiledMapActorFactory;
@@ -58,7 +59,8 @@ public class ZootTiledScene implements ZootScene
 		stage = new Stage(viewport);
 		
 		//actors
-    	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, unitScale);
+		ControllerFactory ctrlFactory = new ControllerFactory();
+    	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, ctrlFactory);
 		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
 		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getLayerCells(ZootTiledMap.COLLISION_LAYER_NAME));
 		

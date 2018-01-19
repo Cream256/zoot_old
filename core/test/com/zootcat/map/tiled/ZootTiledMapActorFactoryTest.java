@@ -1,4 +1,4 @@
-package org.zootcat.map.tiled;
+package com.zootcat.map.tiled;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,20 +18,22 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.zootcat.controllers.factory.ControllerFactory;
+import com.zootcat.controllers.factory.mocks.Mock1Controller;
+import com.zootcat.controllers.factory.mocks.Mock2Controller;
 import com.zootcat.controllers.factory.mocks.SimpleController;
+import com.zootcat.controllers.factory.mocks.inner.Mock3Controller;
 import com.zootcat.controllers.physics.StaticBodyController;
 import com.zootcat.exceptions.RuntimeZootException;
-import com.zootcat.map.tiled.ZootTiledMapCell;
 import com.zootcat.map.tiled.ZootTiledMapActorFactory;
+import com.zootcat.map.tiled.ZootTiledMapCell;
 import com.zootcat.physics.ZootPhysics;
 import com.zootcat.scene.ZootActor;
-import com.zootcat.scene.mocks.Mock1Controller;
-import com.zootcat.scene.mocks.Mock2Controller;
-import com.zootcat.scene.mocks.inner.Mock3Controller;
 import com.zootcat.scene.tiled.ZootTiledScene;
 
 public class ZootTiledMapActorFactoryTest
 {	
+	private static final String CTRL_PACKAGE = "com.zootcat.controllers.factory.mocks";
 	private static final String ACTOR_NAME = "abc";
 	private static final Color ACTOR_COLOR = Color.RED;
 	private static final float ACTOR_X = 1.0f;
@@ -52,6 +54,7 @@ public class ZootTiledMapActorFactoryTest
 	@Mock private Cell innerCell;
 	private MapProperties tileProperties;
 	private ZootTiledMapActorFactory factory;
+	private ControllerFactory ctrlFactory;
 		
 	@Before
 	public void setup()
@@ -61,6 +64,7 @@ public class ZootTiledMapActorFactoryTest
 		//mock scene
 		when(physicsMock.createBody(any(BodyDef.class))).thenReturn(mock(Body.class));		
 		when(sceneMock.getPhysics()).thenReturn(physicsMock);
+		when(sceneMock.getUnitScale()).thenReturn(1.0f);
 		
 		//mock tile and inner cell
 		tileProperties = new MapProperties();
@@ -72,16 +76,10 @@ public class ZootTiledMapActorFactoryTest
 		when(innerCell.getTile()).thenReturn(tile);
 		
 		//create factory
-		factory = new ZootTiledMapActorFactory(sceneMock);
+		ctrlFactory = new ControllerFactory();
+		factory = new ZootTiledMapActorFactory(sceneMock, ctrlFactory);
 	}
-	
-	@Test
-	public void addControllersTestTest()
-	{
-		assertEquals("Should include subpackages and skip interfaces", 3, factory.addControllersFromPackage("com.zootcat.scene.mocks", true));
-		assertEquals("Should not include subpackages and skip interfaces", 2, factory.addControllersFromPackage("com.zootcat.scene.mocks", false));
-	}
-		
+			
 	@Test(expected = RuntimeZootException.class)
 	public void createFromMapObjectShuoldThrowIfBasicPropertiesAreNotInPlaceTest()
 	{
@@ -107,7 +105,7 @@ public class ZootTiledMapActorFactoryTest
 	public void createFromMapObjectShouldAddControllerWithNotParamsTest()
 	{
 		//given
-		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
+		ctrlFactory.addFromPackage(CTRL_PACKAGE, true);
 		MapObject mapObject = createDefaultMapObject();
 		mapObject.getProperties().put("Mock1Controller", "");
 		
@@ -124,7 +122,7 @@ public class ZootTiledMapActorFactoryTest
 	public void createFromMapObjectShouldAddControllerWithParamsTest()
 	{
 		//given
-		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
+		ctrlFactory.addFromPackage(CTRL_PACKAGE, true);
 		MapObject mapObject = createDefaultMapObject();
 		mapObject.getProperties().put("Mock2Controller", "a=1, b=2.2f, c=string");
 		
@@ -144,7 +142,7 @@ public class ZootTiledMapActorFactoryTest
 	public void createFromMapObjectShouldAddControllerWithSceneGlobalParamTest()
 	{
 		//given
-		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
+		ctrlFactory.addFromPackage(CTRL_PACKAGE, true);
 		MapObject mapObject = createDefaultMapObject();
 		mapObject.getProperties().put("Mock3Controller", "param = 100");
 		
@@ -163,7 +161,7 @@ public class ZootTiledMapActorFactoryTest
 	public void createFromMapObjectShouldThrowWhenControllerParamsAreWrongTest()
 	{
 		//given
-		factory.addControllersFromPackage("com.zootcat.scene.mocks", true);
+		ctrlFactory.addFromPackage(CTRL_PACKAGE, true);
 		MapObject mapObject = createDefaultMapObject();
 		mapObject.getProperties().put("Mock2Controller", "1, string");
 		
@@ -231,7 +229,7 @@ public class ZootTiledMapActorFactoryTest
 		//given				
 		ZootTiledMapCell cell = createDefaultCell();
 		tileProperties.put(SimpleController.class.getSimpleName(), "");
-		factory.addControllersFromPackage("com.zootcat.controllers.factory.mocks", false);
+		ctrlFactory.addFromPackage("com.zootcat.controllers.factory.mocks", false);
 		
 		//when		
 		ZootActor actor = factory.createFromMapCell(cell);
