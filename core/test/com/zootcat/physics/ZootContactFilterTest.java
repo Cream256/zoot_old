@@ -64,13 +64,24 @@ public class ZootContactFilterTest
 	}
 	
 	@Test
-	public void removeContactFiltersTest()
+	public void removeFixtureFilterTest()
 	{
 		contactFilter.addFixtureFilter(fixtureA, filterTrue);
 		contactFilter.addFixtureFilter(fixtureA, filterFalse);
 		assertFalse(contactFilter.shouldCollide(fixtureA, fixtureB));
 		
-		contactFilter.removeContactFilters(fixtureA);
+		contactFilter.removeFixtureFilter(fixtureA, filterFalse);
+		assertTrue(contactFilter.shouldCollide(fixtureA, fixtureB));
+	}
+	
+	@Test
+	public void removeFixtureFiltersTest()
+	{
+		contactFilter.addFixtureFilter(fixtureA, filterTrue);
+		contactFilter.addFixtureFilter(fixtureA, filterFalse);
+		assertFalse(contactFilter.shouldCollide(fixtureA, fixtureB));
+		
+		contactFilter.removeFixtureFilters(fixtureA);
 		assertTrue(contactFilter.shouldCollide(fixtureA, fixtureB));
 	}
 	

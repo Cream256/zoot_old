@@ -35,9 +35,14 @@ public class ZootPhysics implements Disposable
 		contactFilter.addFixtureFilter(fixture, filter);
 	}
 	
+	public void removeFixtureContactFilter(Fixture fixture, ContactFilter filter)
+	{
+		contactFilter.removeFixtureFilter(fixture, filter);
+	}
+	
 	public void removeFixtureContactFilters(Fixture fixture)
 	{
-		contactFilter.removeContactFilters(fixture);
+		contactFilter.removeFixtureFilters(fixture);
 	}
 	
 	public void setGravity(float x, float y, float z)

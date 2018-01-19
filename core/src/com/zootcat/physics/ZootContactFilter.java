@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.physics.box2d.ContactFilter;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 
 public class ZootContactFilter implements ContactFilter
@@ -27,7 +26,12 @@ public class ZootContactFilter implements ContactFilter
 		fixtureFilters.put(fixture, filters);
 	}
 	
-	public void removeContactFilters(Fixture fixture)
+	public void removeFixtureFilter(Fixture fixture, ContactFilter filter)
+	{
+		getFixtureFilters(fixture).remove(filter);
+	}
+	
+	public void removeFixtureFilters(Fixture fixture)
 	{
 		fixtureFilters.remove(fixture);
 	}
@@ -39,28 +43,14 @@ public class ZootContactFilter implements ContactFilter
 		List<ContactFilter> filtersB = getFixtureFilters(fixtureB);		
 		if(filtersA.size() == 0 && filtersB.size() == 0)
 		{
-			return defaulShouldCollide(fixtureA, fixtureB);	
+			return ZootDefaultContactFilter.shouldCollide(fixtureA, fixtureB);	
 		}
 	
 		boolean fixtureACollided = filtersA.stream().allMatch(filter -> filter.shouldCollide(fixtureA, fixtureB));
 		boolean fixtureBCollided = filtersB.stream().allMatch(filter -> filter.shouldCollide(fixtureA, fixtureB));
 		return fixtureACollided && fixtureBCollided;
 	}
-		
-	protected final boolean defaulShouldCollide(Fixture fixtureA, Fixture fixtureB)
-	{
-		Filter filterA = fixtureA.getFilterData();
-		Filter filterB = fixtureB.getFilterData();
-	
-		if (filterA.groupIndex == filterB.groupIndex && filterA.groupIndex != 0)
-		{
-			return filterA.groupIndex > 0;
-		}
-	
-		boolean collide = (filterA.maskBits & filterB.categoryBits) != 0 && (filterA.categoryBits & filterB.maskBits) != 0;
-		return collide;
-	}
-	
+			
 	private List<ContactFilter> getFixtureFilters(Fixture fixture)
 	{
 		List<ContactFilter> filters = fixtureFilters.get(fixture);
