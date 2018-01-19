@@ -56,9 +56,29 @@ public class ZootTiledMapLoader extends AsynchronousAssetLoader<ZootTiledMap, Zo
 	@Override
 	public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, Parameters parameter)
 	{
-		Array<AssetDescriptor> dependencies = tmxMapLoader.getDependencies(fileName, file, toTmxParams(parameter)); 
+		Array<AssetDescriptor> dependencies = tmxMapLoader.getDependencies(fileName, file, toTmxParams(parameter)); 		
 		
-		Element root = new XmlReader().parse(file);			
+		//add dependencies from this map
+		Element tilemapRoot = new XmlReader().parse(file);
+		addDependenciesFromXml(tilemapRoot, dependencies);
+		
+		//add dependencies from external tilesets
+		for(Element tileset : tilemapRoot.getChildrenByNameRecursively("tileset"))
+		{
+			String tilesetName = tileset.getAttribute("source", null);
+			if(tilesetName == null || tilesetName.isEmpty()) continue;
+			
+			FileHandle tilesetFile = resolve(file.parent().path() + "/" + tilesetName);
+			Element tilesetRoot = new XmlReader().parse(tilesetFile);
+			addDependenciesFromXml(tilesetRoot, dependencies);
+		}
+		
+		return dependencies;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void addDependenciesFromXml(Element root, Array<AssetDescriptor> dependencies)
+	{			
 		for(Element property : root.getChildrenByNameRecursively("property"))
 		{			
 			try
@@ -76,12 +96,8 @@ public class ZootTiledMapLoader extends AsynchronousAssetLoader<ZootTiledMap, Zo
 				continue;
 			}
 		}
-		
-		//TODO add external tileset support
-		
-		return dependencies;
 	}
-		
+	
 	private TmxMapLoader.Parameters toTmxParams(Parameters zootParams)
 	{
 		if(zootParams == null)
