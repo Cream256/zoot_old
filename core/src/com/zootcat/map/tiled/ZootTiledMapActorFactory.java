@@ -1,4 +1,4 @@
-package com.zootcat.scene.tiled;
+package com.zootcat.map.tiled;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,13 +13,13 @@ import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.ControllerFactory;
 import com.zootcat.controllers.factory.ControllerFactoryException;
 import com.zootcat.exceptions.RuntimeZootException;
-import com.zootcat.map.tiled.ZootTiledMapCell;
 import com.zootcat.scene.ZootActor;
+import com.zootcat.scene.tiled.ZootTiledScene;
 import com.zootcat.utils.ArgumentParser;
 import com.zootcat.utils.ArgumentParserException;
 import com.zootcat.utils.ClassFinder;
 
-public class ZootTiledSceneActorFactory 
+public class ZootTiledMapActorFactory 
 {
 	private static final String ACTOR_GLOBAL_PARAM = "actor";
 	private static final String SCENE_GLOBAL_PARAM = "scene";	
@@ -28,12 +28,12 @@ public class ZootTiledSceneActorFactory
 	private float scale;
 	private ControllerFactory controllerFactory = new ControllerFactory();		
 		
-	public ZootTiledSceneActorFactory(ZootTiledScene scene)
+	public ZootTiledMapActorFactory(ZootTiledScene scene)
 	{
 		this(scene, 1.0f);
 	}
 	
-	public ZootTiledSceneActorFactory(ZootTiledScene scene, float scale)
+	public ZootTiledMapActorFactory(ZootTiledScene scene, float scale)
 	{
 		this.scale = scale;
 		controllerFactory.addGlobalParameter(SCENE_GLOBAL_PARAM, scene);

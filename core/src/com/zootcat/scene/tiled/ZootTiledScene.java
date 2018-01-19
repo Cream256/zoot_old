@@ -7,7 +7,6 @@ import java.util.stream.StreamSupport;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -16,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.zootcat.gfx.ZootRender;
 import com.zootcat.map.tiled.ZootTiledMap;
+import com.zootcat.map.tiled.ZootTiledMapActorFactory;
 import com.zootcat.map.tiled.ZootTiledMapRender;
 import com.zootcat.map.tiled.ZootTiledMapRenderConfig;
 import com.zootcat.map.tiled.ZootTiledWorldScaleCalculator;
@@ -37,11 +37,8 @@ public class ZootTiledScene implements ZootScene
 	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
 	private float unitScale;
 	
-	public ZootTiledScene(String tiledMapPath, float viewportWidth, float viewportHeight, float worldUnitPerTile)
-	{				
-		//map    	
-    	ZootTiledMap map = new ZootTiledMap(new TmxMapLoader().load(tiledMapPath));
-		
+	public ZootTiledScene(ZootTiledMap map, float viewportWidth, float viewportHeight, float worldUnitPerTile)
+	{						
     	//scale
     	unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
     	
@@ -61,7 +58,7 @@ public class ZootTiledScene implements ZootScene
 		stage = new Stage(viewport);
 		
 		//actors
-    	ZootTiledSceneActorFactory actorFactory = new ZootTiledSceneActorFactory(this, unitScale);
+    	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, unitScale);
 		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
 		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getLayerCells(ZootTiledMap.COLLISION_LAYER_NAME));
 		

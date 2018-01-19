@@ -10,35 +10,20 @@ import com.zootcat.input.ZootBindableInputProcessor;
 import com.zootcat.input.ZootInputManager;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
-import com.zootcat.scene.tiled.ZootTiledScene;
 
 public class ZootLevelScreen implements Screen
 {
-	private boolean paused = false;
 	private ZootScene scene;
 	private ZootInputManager inputManager;
-	
-	private float viewportWidth;
-	private float viewportHeight;
-	private float unitPerTile;
-	private String levelPath;
-	
-	public ZootLevelScreen(String levelPath, float viewportWidth, float viewportHeight, float unitPerTile)
+	private boolean paused = false;
+		
+	public ZootLevelScreen(ZootScene scene)
 	{
-		this.levelPath = levelPath;
-		this.viewportWidth = viewportWidth;
-		this.viewportHeight = viewportHeight;
-		this.unitPerTile = unitPerTile;
+		this.scene = scene;
 	}
 	
 	public void resetLevel()
-	{
-		//dispose previous scene
-		dispose();
-		
-		//create scene
-    	scene = new ZootTiledScene(levelPath, viewportWidth, viewportHeight, unitPerTile);
-				
+	{				
     	//debug input
     	final float camMove = 0.1f;
     	final float zoom = 0.01f;

@@ -1,4 +1,4 @@
-package com.zootcat.scene.tiled;
+package org.zootcat.map.tiled;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -22,13 +22,15 @@ import com.zootcat.controllers.factory.mocks.SimpleController;
 import com.zootcat.controllers.physics.StaticBodyController;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.map.tiled.ZootTiledMapCell;
+import com.zootcat.map.tiled.ZootTiledMapActorFactory;
 import com.zootcat.physics.ZootPhysics;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.mocks.Mock1Controller;
 import com.zootcat.scene.mocks.Mock2Controller;
 import com.zootcat.scene.mocks.inner.Mock3Controller;
+import com.zootcat.scene.tiled.ZootTiledScene;
 
-public class ZootTiledSceneActorFactoryTest
+public class ZootTiledMapActorFactoryTest
 {	
 	private static final String ACTOR_NAME = "abc";
 	private static final Color ACTOR_COLOR = Color.RED;
@@ -49,7 +51,7 @@ public class ZootTiledSceneActorFactoryTest
 	@Mock private TiledMapTile tile;
 	@Mock private Cell innerCell;
 	private MapProperties tileProperties;
-	private ZootTiledSceneActorFactory factory;
+	private ZootTiledMapActorFactory factory;
 		
 	@Before
 	public void setup()
@@ -70,7 +72,7 @@ public class ZootTiledSceneActorFactoryTest
 		when(innerCell.getTile()).thenReturn(tile);
 		
 		//create factory
-		factory = new ZootTiledSceneActorFactory(sceneMock);
+		factory = new ZootTiledMapActorFactory(sceneMock);
 	}
 	
 	@Test
