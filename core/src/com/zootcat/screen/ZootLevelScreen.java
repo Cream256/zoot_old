@@ -9,22 +9,36 @@ import com.zootcat.game.GameCharacterInputProcessor;
 import com.zootcat.input.ZootBindableInputProcessor;
 import com.zootcat.input.ZootInputManager;
 import com.zootcat.scene.ZootActor;
+import com.zootcat.scene.ZootScene;
 import com.zootcat.scene.tiled.ZootTiledScene;
 
 public class ZootLevelScreen implements Screen
-{	
+{
 	private boolean paused = false;
-	private ZootTiledScene scene;
+	private ZootScene scene;
 	private ZootInputManager inputManager;
-			
-	public ZootLevelScreen(ZootTiledScene scene)
+	
+	private float viewportWidth;
+	private float viewportHeight;
+	private float unitPerTile;
+	private String levelPath;
+	
+	public ZootLevelScreen(String levelPath, float viewportWidth, float viewportHeight, float unitPerTile)
 	{
-		this.scene = scene;
+		this.levelPath = levelPath;
+		this.viewportWidth = viewportWidth;
+		this.viewportHeight = viewportHeight;
+		this.unitPerTile = unitPerTile;
 	}
 	
-	@Override
-	public void show()
+	public void resetLevel()
 	{
+		//dispose previous scene
+		dispose();
+		
+		//create scene
+    	scene = new ZootTiledScene(levelPath, viewportWidth, viewportHeight, unitPerTile);
+				
     	//debug input
     	final float camMove = 0.1f;
     	final float zoom = 0.01f;
@@ -38,7 +52,7 @@ public class ZootLevelScreen implements Screen
     	debugInputProcessor.bindDown(Input.Keys.NUMPAD_0, () -> { camera.zoom += zoom; return true; });
     	debugInputProcessor.bindDown(Input.Keys.PERIOD, () -> { camera.zoom = 1.0f; return true; });    	
     	debugInputProcessor.bindUp(Input.Keys.F9, () -> { scene.setDebugMode(!scene.isDebugMode()); return true; });
-    	//debugInputProcessor.bindUp(Input.Keys.F12, () -> { resetLevel(); return true; });
+    	debugInputProcessor.bindUp(Input.Keys.F12, () -> { resetLevel(); return true; });
     	
     	//character input    	
     	ZootActor player = scene.getActors((act) -> act.getName().equalsIgnoreCase("Frisker")).get(0);
@@ -53,23 +67,13 @@ public class ZootLevelScreen implements Screen
     	inputManager.addProcessor(debugInputProcessor);
     	inputManager.addProcessor(characterInputProcessor);
     	inputManager.addProcessor(scene.getInputProcessor());
-    	assignInput();	
-	}
-	
-	@Override
-	public void hide()
-	{
-		dispose();
-		deassignInput();
+    	assignInput();
 	}
 	
 	@Override
 	public void resize (int width, int height) 
 	{
-		if(scene != null)
-		{
-			scene.resize(width, height);
-		}
+		scene.resize(width, height);
 	}
     
 	@Override
@@ -95,9 +99,22 @@ public class ZootLevelScreen implements Screen
 	}
 
 	@Override
+	public void show()
+	{
+		resetLevel();
+	}
+	
+	@Override
+	public void hide()
+	{
+		dispose();
+		deassignInput();
+	}
+
+	@Override
 	public void render(float delta)
-	{	
-		if(paused || scene == null)
+	{
+        if(paused || scene == null)
         {
         	return;
         }

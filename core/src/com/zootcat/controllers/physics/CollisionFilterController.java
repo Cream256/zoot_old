@@ -1,31 +1,27 @@
 package com.zootcat.controllers.physics;
 
 import com.badlogic.gdx.physics.box2d.Filter;
-import com.zootcat.controllers.ControllerAdapter;
+import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.utils.BitMaskConverter;
 
-public class CollisionFilterController extends ControllerAdapter 
+public class CollisionFilterController implements Controller 
 {
 	private static final int MASK_COLLIDE_WITH_ALL = -1;
 	private static final int MASK_COLLIDE_WITH_NONE = 0;
+
 	private static final BitMaskConverter bitMaskConverter = new BitMaskConverter();
 	
-	@CtrlParam private String mask = "";
 	@CtrlParam(required = true) private String category = "";
-			
-	public CollisionFilterController()
+	@CtrlParam private String mask = "";
+		
+	@Override
+	public void init(ZootActor actor)
 	{
 		//noop
 	}
-	
-	public CollisionFilterController(String category, String mask)
-	{
-		this.mask = mask;
-		this.category = category;
-	}
-	
+
 	@Override
 	public void onAdd(ZootActor actor)
 	{
@@ -33,6 +29,18 @@ public class CollisionFilterController extends ControllerAdapter
 		collisionFilter.categoryBits = bitMaskConverter.fromString(category);
 		collisionFilter.maskBits = convertMaskBits(mask);		
 		actor.getController(PhysicsBodyController.class).setCollisionFilter(collisionFilter);		
+	}
+
+	@Override
+	public void onRemove(ZootActor actor) 
+	{
+		//noop
+	}
+
+	@Override
+	public void onUpdate(float delta, ZootActor actor) 
+	{
+		//noop
 	}
 
 	private short convertMaskBits(String mask) 
@@ -49,5 +57,6 @@ public class CollisionFilterController extends ControllerAdapter
 			bitMask |= categoryBit;
 		}		
 		return bitMask;
-	}	
+	}
+	
 }

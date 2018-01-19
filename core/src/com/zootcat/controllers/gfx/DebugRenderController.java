@@ -1,6 +1,5 @@
 package com.zootcat.controllers.gfx;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -20,7 +19,7 @@ public class DebugRenderController extends ControllerAdapter implements RenderCo
 	private Color renderColor;
 	
 	@Override
-	public void init(ZootActor actor, AssetManager assetManager)
+	public void init(ZootActor actor)
 	{
 		renderColor = Color.valueOf(color);
 		if(shapeRender == null)

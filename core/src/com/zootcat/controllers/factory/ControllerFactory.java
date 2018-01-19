@@ -6,60 +6,28 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.zootcat.controllers.Controller;
-import com.zootcat.exceptions.RuntimeZootException;
-import com.zootcat.utils.ArgumentParser;
-import com.zootcat.utils.ArgumentParserException;
-import com.zootcat.utils.ClassFinder;
 import com.zootcat.utils.ZootUtils;
 
 public class ControllerFactory
 {
-	public static final String CONTROLLER_SUFFIX = "Controller";
-	public static final String SCENE_GLOBAL_PARAM = "scene";
-	
-	Map<String, Class<? extends Controller>> classes = new HashMap<String, Class<? extends Controller>>();
+    Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
     Map<String, Object> globalParameters = new HashMap<String, Object>();
     
-    public ControllerFactory()
+    public void add(Class<?> clazz)
     {
-    	this(true);
+        classes.put(clazz.getSimpleName().toLowerCase(), clazz);
     }
     
-    public ControllerFactory(boolean addDefaultControllers)
-    {
-    	if(addDefaultControllers)
-    	{
-    		addFromPackage("com.zootcat.controllers", true);
-    	}
-    }
-    
-    public void add(Class<? extends Controller> clazz)
-    {
-    	if(!ClassReflection.isAbstract(clazz) && !ClassReflection.isInterface(clazz))
-    	{
-    		classes.put(clazz.getSimpleName().toLowerCase(), clazz);
-    	}
-    }
-    
-    public void remove(Class<? extends Controller> clazz)
-    {
-    	classes.remove(clazz.getSimpleName().toLowerCase());
-    }
-    
-    public Class<? extends Controller> get(String name)
+    public Class<?> get(String name)
     {
         return classes.get(name.toLowerCase());
     }
 
 	public boolean contains(String className) 
 	{
-		return classes.containsKey(className.toLowerCase());
+		return classes.containsKey(removeSuffix(className.toLowerCase()));
 	}
     
     public int getSize()
@@ -82,62 +50,11 @@ public class ControllerFactory
     	return globalParameters;
     }
         
-	@SuppressWarnings("unchecked")
-	public int addFromPackage(String packageName, boolean includeSubDirs)
-	{
-		List<Class<?>> found = ClassFinder.find(packageName, includeSubDirs);		
-		Predicate<Class<?>> filterByType = cls -> ClassReflection.isAssignableFrom(Controller.class, cls) && !ClassReflection.isInterface(cls);		
-		Predicate<Class<?>> filterByName = cls -> cls.getSimpleName().endsWith(CONTROLLER_SUFFIX);		
-		List<Class<? extends Controller>> filtered = found.stream()
-									   .filter(filterByType)
-									   .filter(filterByName)
-									   .map(cls -> (Class<? extends Controller>)cls)
-									   .collect(Collectors.toList());		
-		filtered.forEach(cls -> add(cls));
-		return filtered.size();
-	}
-    
-	//TODO add test for it
-	public List<Controller> createFromProperties(final MapProperties actorProperties)
-	{
-		List<Controller> controllers = new ArrayList<Controller>();
-		actorProperties.getKeys().forEachRemaining(ctrlName ->
-		{			
-			try
-			{
-				Controller controller = normalizeNameAndCreate(ctrlName, actorProperties);
-				if(controller != null)
-				{
-					controllers.add(controller);
-				}
-			}
-			catch (ControllerFactoryException e)
-			{
-				throw new RuntimeZootException("Error while creating controllers", e);
-			}
-		});
-		return controllers;
-	}
-	
-	public Controller normalizeNameAndCreate(final String controllerName, final MapProperties actorProperties) throws ControllerFactoryException
-	{
-		String normalizedCtrlName = normalizeControllerName(controllerName); 
-		if(!contains(normalizedCtrlName))
-		{
-			return null;
-		}
-		try 
-		{									
-			String[] controllerArguments = actorProperties.get(controllerName, "", String.class).split(",");
-			Map<String, Object> arguments = ArgumentParser.parse(controllerArguments);			
-			Controller controller = (Controller) create(normalizedCtrlName, arguments);
-			return controller;
-		}
-		catch(ArgumentParserException e)
-        {
-            throw new ControllerFactoryException(e.getMessage(), e);
-        }
-	}
+    private String removeSuffix(String nameWithSuffix)
+    {
+        String[] result = nameWithSuffix.split("_"); 
+        return result[0];
+    }
     
     public Object create(String name, Map<String, Object> params) throws ControllerFactoryException
     {
@@ -146,23 +63,21 @@ public class ControllerFactory
             throw new ControllerFactoryException("No controller for given name: " + name + ".");
         }
         
-        try
+        String nameWithoutSuffix = removeSuffix(name);
+        Class<?> classToCreate = classes.get(nameWithoutSuffix.toLowerCase());
+        
+        try 
         {
-        	Class<? extends Controller> classToCreate = get(name);
 			Controller createdController = (Controller) classToCreate.newInstance();
 			assignParamsToClassFields(createdController, params);
 			return createdController;
+			
 		}
         catch (InstantiationException | IllegalAccessException | IllegalArgumentException e) 
         {
         	throw new ControllerFactoryException(e.getMessage(), e);
 		}
     }
-    
-	private String normalizeControllerName(String controllerName)
-	{
-		return controllerName.endsWith(CONTROLLER_SUFFIX) ? controllerName : controllerName + CONTROLLER_SUFFIX;
-	}
     
     private void assignParamsToClassFields(Object createdClass, Map<String, Object> params) throws IllegalArgumentException, IllegalAccessException 
     {

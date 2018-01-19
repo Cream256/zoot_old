@@ -7,6 +7,7 @@ import java.util.stream.StreamSupport;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -28,19 +29,18 @@ public class ZootTiledScene implements ZootScene
 	private static final float MIN_TIME_STEP = 1.0f / 4.0f;
 		
 	private Stage stage;
-	private ZootPhysics physics;
-	private OrthographicCamera camera;
 	private ZootTiledMapRender mapRender;
-	private float unitScale;
+	private OrthographicCamera camera;
+	private ZootPhysics physics;	
 	private float timeAccumulator = 0.0f;	
-	
 	private boolean isDebugMode = false;
 	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
-		
-	public ZootTiledScene(ZootTiledMap tiledMap, float viewportWidth, float viewportHeight, float worldUnitPerTile)
-	{					
-		//map
-		ZootTiledMap map = tiledMap;
+	private float unitScale;
+	
+	public ZootTiledScene(String tiledMapPath, float viewportWidth, float viewportHeight, float worldUnitPerTile)
+	{				
+		//map    	
+    	ZootTiledMap map = new ZootTiledMap(new TmxMapLoader().load(tiledMapPath));
 		
     	//scale
     	unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
@@ -59,6 +59,14 @@ public class ZootTiledScene implements ZootScene
 		Viewport viewport = new StretchViewport(viewportWidth, viewportHeight);
 		camera = (OrthographicCamera) viewport.getCamera();
 		stage = new Stage(viewport);
+		
+		//actors
+    	ZootTiledSceneActorFactory actorFactory = new ZootTiledSceneActorFactory(this, unitScale);
+		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
+		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getLayerCells(ZootTiledMap.COLLISION_LAYER_NAME));
+		
+		cellActors.forEach(cellActor -> stage.addActor(cellActor));
+		actors.forEach(actor -> stage.addActor(actor));
 	}
 	
 	@Override

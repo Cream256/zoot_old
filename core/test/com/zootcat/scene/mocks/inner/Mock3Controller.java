@@ -1,6 +1,5 @@
-package com.zootcat.controllers.factory.mocks.inner;
+package com.zootcat.scene.mocks.inner;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.scene.ZootActor;
@@ -30,7 +29,7 @@ public class Mock3Controller implements Controller
 	}
 
 	@Override
-	public void init(ZootActor actor, AssetManager assetManager) 
+	public void init(ZootActor actor) 
 	{
 		//noop
 	}

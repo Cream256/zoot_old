@@ -21,11 +21,6 @@ public class ZootLoadingScreen implements Screen
 		this.assetManager = assetManager;
 	}
 	
-	public AssetManager getAssetManager()
-	{
-		return assetManager;
-	}
-	
 	@Override
 	public void show()
 	{

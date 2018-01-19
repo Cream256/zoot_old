@@ -1,4 +1,4 @@
-package com.zootcat.controllers.factory.mocks.inner;
+package com.zootcat.scene.mocks.inner;
 
 import com.zootcat.controllers.Controller;
 

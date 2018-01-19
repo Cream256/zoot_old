@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -43,19 +42,20 @@ public class PhysicsBodyController implements Controller
 	
 	private Body body;
 	private List<Fixture> fixtures;
-			
+	
 	@Override
-	public void init(ZootActor actor, AssetManager assetManager)
+	public void init(ZootActor actor)
 	{
 		body = scene.getPhysics().createBody(createBodyDef(actor));
 		fixtures = scene.getPhysics().createFixtures(body, createFixtureDefs(actor));
+		body.setActive(false);
 		body.setUserData(actor);
 	}
 	
 	@Override
 	public void onAdd(ZootActor actor) 
 	{
-		//noop
+		body.setActive(true);
 	}
 
 	@Override

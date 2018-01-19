@@ -30,6 +30,11 @@ public class ZootAnimationFile
 		return settings.get("Image");
 	}
 	
+	public Map<Integer, ZootAnimation> createAnimations()
+	{
+		return createAnimations(new Texture(getSpriteSheetPath()));
+	}
+	
 	public Map<Integer, ZootAnimation> createAnimations(Texture spriteSheet)
 	{
 		Map<Integer, ZootAnimation> animations = new HashMap<Integer, ZootAnimation>();
