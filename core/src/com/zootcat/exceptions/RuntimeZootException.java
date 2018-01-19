@@ -9,9 +9,14 @@ public class RuntimeZootException extends RuntimeException
 		super(msg);
 	}
 	
-	public RuntimeZootException(String msg, Exception inner)
+	public RuntimeZootException(Exception e)
 	{
-		super(msg, inner);
+		super(e);
+	}
+	
+	public RuntimeZootException(String msg, Exception e)
+	{
+		super(msg, e);
 	}
 	
 }

@@ -26,8 +26,11 @@ public class ZootLoadingScreen implements Screen
 	{
 		finishedCount = 0;
 		allCount = loadTasks.size();		
-		task = loadTasks.remove();
-		task.accept(assetManager);
+		if(allCount > 0)
+		{
+			task = loadTasks.remove();
+			task.accept(assetManager);
+		}
 	}
 
 	@Override
@@ -56,6 +59,11 @@ public class ZootLoadingScreen implements Screen
 				task.accept(assetManager);
 			}
 		}
+	}
+	
+	public AssetManager getAssetManager()
+	{
+		return assetManager;
 	}
 	
 	public void addTask(Consumer<Void> loadTask)
