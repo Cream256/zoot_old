@@ -34,10 +34,10 @@ public class ZootGame extends Game
     @Override
     public void dispose()
     {
+    	super.dispose();
+    	
     	assetManager.dispose();
     	assetManager = null;
-    	
-    	super.dispose();
     }
     
     public AssetManager getAssetManager()

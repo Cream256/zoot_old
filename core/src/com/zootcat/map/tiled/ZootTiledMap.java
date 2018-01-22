@@ -11,10 +11,10 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.zootcat.map.ZootMap;
 
-public class ZootTiledMap implements ZootMap
+public class ZootTiledMap implements Disposable
 {	
 	public static final String COLLISION_LAYER_NAME = "Collision";
 	public static final String BACKGROUND_COLOR_PROPERTY = "backgroundcolor";
@@ -92,8 +92,11 @@ public class ZootTiledMap implements ZootMap
 	@Override
 	public void dispose() 
 	{
-		tiledMap.dispose();
-		tiledMap = null;
+		if(tiledMap != null)
+		{
+			tiledMap.dispose();
+			tiledMap = null;
+		}
 	}
 	
 	private MapObject createMapObjectWithProperties(final MapObject obj, final MapLayer layer) 

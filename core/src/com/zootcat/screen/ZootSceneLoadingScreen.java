@@ -23,6 +23,6 @@ public class ZootSceneLoadingScreen extends ZootLoadingScreen
 		ZootTiledMap tiledMap = getAssetManager().get(mapFileName, ZootTiledMap.class);
 		ZootScene scene = new ZootTiledScene(tiledMap, game.getViewportWidth(),	game.getViewportHeight(), 
 											 game.getUnitPerTile());
-		game.setScreen(new ZootLevelScreen(scene));
+		game.setScreen(new ZootSceneScreen(scene));
 	}
 }

@@ -37,35 +37,17 @@ public class ZootTiledScene implements ZootScene
 	private boolean isDebugMode = false;
 	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
 	private float unitScale;
+	private float viewportWidth;
+	private float viewportHeight;
+	private ZootTiledMap map;
 	
 	public ZootTiledScene(ZootTiledMap map, float viewportWidth, float viewportHeight, float worldUnitPerTile)
 	{						
-    	//scale
-    	unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
-    	
-    	//physics
-    	physics = new ZootPhysics();
-    	
-		//render
-    	ZootTiledMapRenderConfig renderConfig = new ZootTiledMapRenderConfig();
-		renderConfig.renderRectangleObjects = false;
-		renderConfig.renderTextureObjects = false;	
-		renderConfig.unitScale = unitScale;
-		mapRender = new ZootTiledMapRender(map, renderConfig);
-				
-		//stage
-		Viewport viewport = new StretchViewport(viewportWidth, viewportHeight);
-		camera = (OrthographicCamera) viewport.getCamera();
-		stage = new Stage(viewport);
-		
-		//actors
-		ControllerFactory ctrlFactory = new ControllerFactory();
-    	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, ctrlFactory);
-		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
-		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getLayerCells(ZootTiledMap.COLLISION_LAYER_NAME));
-		
-		cellActors.forEach(cellActor -> stage.addActor(cellActor));
-		actors.forEach(actor -> stage.addActor(actor));
+    	this.unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
+    	this.viewportWidth = viewportWidth;
+    	this.viewportHeight = viewportHeight;
+    	this.map = map;
+    	createScene();
 	}
 	
 	@Override
@@ -149,14 +131,13 @@ public class ZootTiledScene implements ZootScene
 	@Override
 	public void dispose() 
 	{
-		mapRender.dispose();
-		mapRender = null;
+		disposeSceneResources();
 		
-		stage.dispose();
-		stage = null;
-		
-		debugRender.dispose();
-		debugRender = null;
+		if(map != null)
+		{
+			map.dispose();
+			map = null;
+		}
 	}
 
 	@Override
@@ -205,5 +186,66 @@ public class ZootTiledScene implements ZootScene
 	public float getUnitScale()
 	{
 		return unitScale;
+	}
+	
+	@Override
+	public void reload()
+	{
+		disposeSceneResources();
+		createScene();
+	}
+	
+	private void createScene()
+	{
+		//physics
+    	physics = new ZootPhysics();
+    	
+		//render
+    	ZootTiledMapRenderConfig renderConfig = new ZootTiledMapRenderConfig();
+		renderConfig.renderRectangleObjects = false;
+		renderConfig.renderTextureObjects = false;	
+		renderConfig.unitScale = unitScale;
+		mapRender = new ZootTiledMapRender(map, renderConfig);
+				
+		//stage
+		Viewport viewport = new StretchViewport(viewportWidth, viewportHeight);
+		camera = (OrthographicCamera) viewport.getCamera();
+		stage = new Stage(viewport);
+		
+		//actors
+		ControllerFactory ctrlFactory = new ControllerFactory();
+    	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, ctrlFactory);
+		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
+		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getLayerCells(ZootTiledMap.COLLISION_LAYER_NAME));
+		
+		cellActors.forEach(cellActor -> stage.addActor(cellActor));
+		actors.forEach(actor -> stage.addActor(actor));
+	}
+	
+	private void disposeSceneResources()
+	{
+		if(mapRender != null)
+		{
+			mapRender.dispose();
+			mapRender = null;
+		}
+		
+		if(stage != null)
+		{
+			stage.dispose();
+			stage = null;
+		}
+		
+		if(debugRender != null)
+		{
+			debugRender.dispose();
+			debugRender = null;
+		}
+		
+		if(physics != null)
+		{
+			physics.dispose();
+			physics = null;
+		}
 	}
 }
