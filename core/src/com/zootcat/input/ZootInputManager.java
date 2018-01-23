@@ -26,6 +26,42 @@ public class ZootInputManager extends InputAdapter
 		return multiplexer.keyUp(keycode);
 	}
 	
+	@Override
+	public boolean keyTyped (char character) 
+	{
+		return multiplexer.keyTyped(character);
+	}
+
+	@Override
+	public boolean touchDown (int screenX, int screenY, int pointer, int button) 
+	{
+		return multiplexer.touchDown(screenX, screenY, pointer, button);
+	}
+
+	@Override
+	public boolean touchUp (int screenX, int screenY, int pointer, int button) 
+	{
+		return multiplexer.touchUp(screenX, screenY, pointer, button);
+	}
+
+	@Override
+	public boolean touchDragged (int screenX, int screenY, int pointer) 
+	{
+		return multiplexer.touchDragged(screenX, screenY, pointer);
+	}
+
+	@Override
+	public boolean mouseMoved (int screenX, int screenY) 
+	{
+		return multiplexer.mouseMoved(screenX, screenY);
+	}
+
+	@Override
+	public boolean scrolled (int amount)
+	{
+		return multiplexer.scrolled(amount);
+	}
+	
 	public void processPressedKeys(float delta)
 	{
 		pressedKeys.forEach((key) -> keyDown(key));

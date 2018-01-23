@@ -30,16 +30,18 @@ public class ZootTiledScene implements ZootScene
 	private static final float MIN_TIME_STEP = 1.0f / 4.0f;
 		
 	private Stage stage;
-	private ZootTiledMapRender mapRender;
-	private OrthographicCamera camera;
+	private ZootTiledMap map;
 	private ZootPhysics physics;	
-	private float timeAccumulator = 0.0f;	
-	private boolean isDebugMode = false;
-	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
+	private OrthographicCamera camera;
+	private ZootTiledMapRender mapRender;
+		
 	private float unitScale;
 	private float viewportWidth;
 	private float viewportHeight;
-	private ZootTiledMap map;
+	private float timeAccumulator = 0.0f;	
+	
+	private boolean isDebugMode = false;
+	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
 	
 	public ZootTiledScene(ZootTiledMap map, float viewportWidth, float viewportHeight, float worldUnitPerTile)
 	{						
@@ -219,7 +221,7 @@ public class ZootTiledScene implements ZootScene
 		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getLayerCells(ZootTiledMap.COLLISION_LAYER_NAME));
 		
 		cellActors.forEach(cellActor -> stage.addActor(cellActor));
-		actors.forEach(actor -> stage.addActor(actor));
+		actors.forEach(actor -> stage.addActor(actor));	
 	}
 	
 	private void disposeSceneResources()

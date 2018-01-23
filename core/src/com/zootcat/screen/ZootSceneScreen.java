@@ -6,6 +6,8 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.zootcat.controllers.input.InputProcessorController;
 import com.zootcat.game.GameCharacterInputProcessor;
+import com.zootcat.hud.ZootDebugHud;
+import com.zootcat.hud.ZootDebugWindowListener;
 import com.zootcat.input.ZootBindableInputProcessor;
 import com.zootcat.input.ZootInputManager;
 import com.zootcat.scene.ZootActor;
@@ -14,18 +16,22 @@ import com.zootcat.scene.ZootScene;
 public class ZootSceneScreen implements Screen
 {
 	private ZootScene scene;
-	private ZootInputManager inputManager;
+	private ZootDebugHud debugHud;
 	private boolean paused = false;
-		
+	private ZootInputManager inputManager;
+	
 	public ZootSceneScreen(ZootScene scene)
 	{
 		this.scene = scene;
+		debugHud = new ZootDebugHud();
+		scene.addListener(new ZootDebugWindowListener(debugHud));
 	}
 			
 	@Override
 	public void resize (int width, int height) 
 	{
 		scene.resize(width, height);
+		debugHud.resize(width, height);
 	}
     
 	@Override
@@ -75,8 +81,9 @@ public class ZootSceneScreen implements Screen
         inputManager.processPressedKeys(delta);
         scene.update(delta);
     	
-    	//render
+        //render
     	scene.render(delta);
+    	debugHud.render(delta);
 	}
 	
 	private void reloadScene()
@@ -100,7 +107,12 @@ public class ZootSceneScreen implements Screen
     	debugInputProcessor.bindDown(Input.Keys.NUMPAD_5, () -> { camera.zoom -= zoom; return true; });
     	debugInputProcessor.bindDown(Input.Keys.NUMPAD_0, () -> { camera.zoom += zoom; return true; });
     	debugInputProcessor.bindDown(Input.Keys.PERIOD, () -> { camera.zoom = 1.0f; return true; });    	
-    	debugInputProcessor.bindUp(Input.Keys.F9, () -> { scene.setDebugMode(!scene.isDebugMode()); return true; });
+    	debugInputProcessor.bindUp(Input.Keys.F9, () -> 
+    	{ 
+    		scene.setDebugMode(!scene.isDebugMode()); 
+    		debugHud.setWindowVisible(scene.isDebugMode()); 
+    		return true; 
+    	});
     	debugInputProcessor.bindUp(Input.Keys.F12, () -> { reloadScene(); return true; });
     	
     	//character input    	
@@ -111,11 +123,12 @@ public class ZootSceneScreen implements Screen
     	player.addController(new InputProcessorController(characterInputProcessor));
     	scene.setFocusedActor(player);
     	
-    	//input    	
+    	//input  	
     	inputManager = new ZootInputManager();    	
     	inputManager.addProcessor(debugInputProcessor);
     	inputManager.addProcessor(characterInputProcessor);
-    	inputManager.addProcessor(scene.getInputProcessor());		
+    	inputManager.addProcessor(scene.getInputProcessor());
+    	inputManager.addProcessor(debugHud.getInputProcessor());
     	Gdx.input.setInputProcessor(inputManager);
 	}
 	

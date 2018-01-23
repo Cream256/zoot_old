@@ -1,8 +1,6 @@
 package com.zootcat.controllers.factory;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,24 +115,11 @@ public class ControllerFactory
 		}
     }
     
-    private void assignParamsToClassFields(Object createdClass, Map<String, Object> params) throws IllegalArgumentException, IllegalAccessException 
+    private void assignParamsToClassFields(Controller controller, Map<String, Object> params) throws IllegalArgumentException, IllegalAccessException 
     {
-		List<Field> allClassFields = new ArrayList<Field>();
-    	
-		Class<?> currentClass = createdClass.getClass();
-		while(currentClass != null)
-		{
-			allClassFields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
-			currentClass = currentClass.getSuperclass();
-		}
-			
-		for(Field field : allClassFields)
-		{			
-			if(!field.isAnnotationPresent(CtrlParam.class))
-			{
-				continue;
-			}
-									
+    	List<Field> annotatedFields = ControllerAnnotations.getAnnotatedFields(controller);     	
+    	for(Field field : annotatedFields)
+    	{
 			String fieldName = field.getName();
 			CtrlParam ctrlParam = field.getAnnotation(CtrlParam.class);								
 			Object param = ctrlParam.global() ? globalParameters.get(fieldName) : params.get(fieldName);
@@ -143,7 +128,7 @@ public class ControllerFactory
 			{
 				if(ctrlParam.required() || ctrlParam.global())
 				{				
-					throw new IllegalArgumentException("Parameter " + field.getName() + " is required for " + createdClass.getClass().getSimpleName());
+					throw new IllegalArgumentException("Parameter " + field.getName() + " is required for " + controller.getClass().getSimpleName());
 				}
 				continue;
 			}
@@ -153,13 +138,14 @@ public class ControllerFactory
 			{
 				@SuppressWarnings("unchecked")
 				Enum<?> enumeration = ZootUtils.searchEnum((Class<? extends Enum<?>>)field.getType(), param.toString());					
-				field.set(createdClass, enumeration);
+				field.set(controller, enumeration);
 			}
 			else
 			{				
-				field.set(createdClass, param);
-			}			
-		}
+				field.set(controller, param);
+			}		
+    	}
+		
 	}
     
 	private String normalizeName(String name)
