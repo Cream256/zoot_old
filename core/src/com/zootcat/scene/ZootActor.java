@@ -14,17 +14,23 @@ import com.zootcat.controllers.ChangeListenerController;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.gfx.RenderController;
 import com.zootcat.exceptions.RuntimeZootException;
+import com.zootcat.fsm.StateMachine;
 
 public class ZootActor extends Actor
 {
+	public static final String DEFAULT_NAME = "Unnamed Actor";
+	
 	private List<Controller> controllers = new ArrayList<Controller>();
 	private Set<String> types = new HashSet<String>();	
 	private float opacity = 1.0f;
 	private int id = 0;
+	private StateMachine stateMachine = new StateMachine();
 			
 	public ZootActor()
 	{
-		setName("Unnamed Actor");
+		setName(DEFAULT_NAME);
+		stateMachine.setOwner(this);
+		addListener(stateMachine);
 	}
 	
 	@Override
@@ -147,4 +153,9 @@ public class ZootActor extends Actor
     {
     	return getName();
     }
+
+	public StateMachine getStateMachine()
+	{
+		return stateMachine;
+	}
 }

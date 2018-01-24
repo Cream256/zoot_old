@@ -2,6 +2,7 @@ package com.zootcat.scene;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyObject;
@@ -49,6 +50,16 @@ public class ZootActorTest
 		mockCtrl1 = mock(Controller.class);
 		mockCtrl2 = mock(Controller.class);
 		mockCtrl3 = mock(Controller.class);	
+	}
+	
+	@Test
+	public void ctorTest()
+	{
+		ZootActor actor = new ZootActor();
+		assertEquals("Should have default name", ZootActor.DEFAULT_NAME, actor.getName());
+		assertNotNull("Should have state machine", actor.getStateMachine());
+		assertEquals("State machine should listen to events", 1, actor.getListeners().size);
+		assertTrue("State machine should listen to events", actor.getListeners().contains(actor.getStateMachine(), true));
 	}
 	
     @Test
@@ -283,4 +294,14 @@ public class ZootActorTest
 		verify(renderCtrl2, times(2)).onRender(eq(batch), eq(parentAlpha), anyObject(), anyFloat());;
 	}
 	
+	@Test
+	public void getStateMachineTest()
+	{
+		//when
+		ZootActor actor = new ZootActor();
+		
+		//then
+		assertNotNull(actor.getStateMachine());
+		assertEquals(actor, actor.getStateMachine().getOwner());
+	}
 }

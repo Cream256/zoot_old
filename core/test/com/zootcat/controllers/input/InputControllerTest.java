@@ -19,8 +19,7 @@ public class InputControllerTest
 		ctrl.onAdd(actor);
 		
 		//then
-		assertEquals(1, actor.getListeners().size);
-		assertEquals(ctrl, actor.getListeners().get(0));
+		assertTrue(actor.getListeners().contains(ctrl, true));
 	}
 	
 	@Test
@@ -30,18 +29,17 @@ public class InputControllerTest
 		ZootActor actor = new ZootActor();
 		InputController ctrl = new InputController();
 		
-		
 		//when
 		actor.addListener(ctrl);
 
 		//then
-		assertEquals(1, actor.getListeners().size);
+		assertTrue(actor.getListeners().contains(ctrl, true));
 		
 		//when
 		ctrl.onRemove(actor);
 		
 		//then
-		assertEquals(0, actor.getListeners().size);
+		assertFalse(actor.getListeners().contains(ctrl, true));
 	}
 	
 }
