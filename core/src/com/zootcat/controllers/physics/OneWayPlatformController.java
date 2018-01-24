@@ -12,10 +12,12 @@ public class OneWayPlatformController implements Controller, ContactFilter
 {
 	@CtrlParam(global = true) private ZootScene scene;
 	
+	private ZootActor platform;
+	
 	@Override
 	public void init(ZootActor actor)
 	{
-		//noop
+		platform = actor;
 	}
 
 	@Override
@@ -47,11 +49,14 @@ public class OneWayPlatformController implements Controller, ContactFilter
 			return false;
 		}
 		
-		float actorBottom = fixtureA.getBody().getPosition().y + fixtureA.getShape().getRadius();
-		float platformTop = fixtureB.getBody().getPosition().y + fixtureB.getShape().getRadius();				
+		Fixture platformFixture = fixtureA.getBody().getUserData() == platform ? fixtureA : fixtureB;
+		Fixture otherFixture = fixtureA.getBody().getUserData() == platform ? fixtureB : fixtureA;
+				
+		float actorBottom = otherFixture.getBody().getPosition().y + otherFixture.getShape().getRadius();
+		float platformTop = platformFixture.getBody().getPosition().y + platformFixture.getShape().getRadius();				
 		boolean actorOnTop = actorBottom > platformTop;
 		
-		float actorVelocityY = fixtureA.getBody().getLinearVelocity().y;
+		float actorVelocityY = otherFixture.getBody().getLinearVelocity().y;
 		boolean actorFallingDown = actorVelocityY < 0.0f;
 		
 		return actorOnTop && actorFallingDown;

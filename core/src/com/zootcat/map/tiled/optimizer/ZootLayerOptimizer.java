@@ -28,6 +28,8 @@ public class ZootLayerOptimizer
 				if(firstCell == null) continue;
 				
 				ZootLayerRegion region = new ZootLayerRegion(x, y, layer.getTileWidth(), layer.getTileHeight(), firstCell);
+				
+				//get max horizontal slice
 				for(int rx = x + 1; rx < layer.getWidth(); ++rx)
 				{
 					Cell cell = layer.getCell(rx, y);
@@ -38,6 +40,33 @@ public class ZootLayerOptimizer
 					takenCells[rx][y] = true;
 					++region.width;				
 				}
+				
+				//try to make a box
+				for(int ry = y + 1; ry < layer.getHeight(); ++ry)
+				{
+					boolean foundAnotherSlice = true;
+					for(int rx = x; rx < x + region.width; ++rx)
+					{
+						Cell cell = layer.getCell(rx, ry);
+						if(cell == null || takenCells[rx][ry] == true || !comparator.areEqual(firstCell, cell))
+						{
+							foundAnotherSlice = false;
+							break;
+						}	
+					}
+					
+					if(foundAnotherSlice)
+					{
+						for(int rx = x; rx < x + region.width; ++rx) takenCells[rx][ry] = true;						
+						++region.height;
+					}
+					else
+					{
+						break;
+					}
+				}
+				
+				//add new region
 				regions.add(region);
 			}
 		}
