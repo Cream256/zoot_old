@@ -38,6 +38,7 @@ public class ZootTiledMapActorFactory
 	public ZootActor createFromMapCell(final ZootTiledMapCell cell)
 	{
 		ZootActor cellActor = new ZootActor();
+		cellActor.setId(cell.cell.getTile().getProperties().get("id", 0, Integer.class));		
 		cellActor.setName("Cell " + cell.x + "x" + cell.y);
 		cellActor.setBounds(cell.x * cell.width * scale, cell.y * cell.height * scale, cell.width * scale, cell.height * scale);
 		setActorControllers(cell.cell.getTile().getProperties(), cellActor);		
@@ -61,6 +62,7 @@ public class ZootTiledMapActorFactory
 		actor.setVisible(mapObject.isVisible());
 		actor.setOpacity(mapObject.getOpacity());
 		
+		int id = Integer.valueOf(getPropertyOrThrow(mapObject, "id"));
 		float x = Float.valueOf(getPropertyOrThrow(mapObject, "x")) * scale;
 		float y = Float.valueOf(getPropertyOrThrow(mapObject, "y")) * scale;
 		float width = Float.valueOf(getPropertyOrThrow(mapObject, "width")) * scale;
@@ -68,6 +70,7 @@ public class ZootTiledMapActorFactory
 		float rotation = Float.valueOf(getPropertyOrDefault(mapObject, "rotation", "0.0f"));
 		actor.setBounds(x, y, width, height);
 		actor.setRotation(rotation);
+		actor.setId(id);
 	}
 
 	protected void setActorControllers(final MapProperties actorProperties, ZootActor actor)

@@ -47,6 +47,7 @@ public class ZootTiledMapActorFactoryTest
 	private static final int CELL_Y = 7;
 	private static final float CELL_WIDTH = 32;
 	private static final float CELL_HEIGHT = 48;
+	private static final int ACTOR_ID = 1;
 			
 	@Mock private ZootTiledScene sceneMock;	
 	@Mock private ZootPhysics physicsMock;
@@ -68,12 +69,14 @@ public class ZootTiledMapActorFactoryTest
 		
 		//mock tile and inner cell
 		tileProperties = new MapProperties();
+		tileProperties.put("id", ACTOR_ID);
 		
 		tile = mock(TiledMapTile.class);
 		when(tile.getProperties()).thenReturn(tileProperties);
 		
 		innerCell = mock(Cell.class);
 		when(innerCell.getTile()).thenReturn(tile);
+		when(innerCell.getTile().getProperties()).thenReturn(tileProperties);
 		
 		//create factory
 		ctrlFactory = new ControllerFactory();
@@ -95,7 +98,7 @@ public class ZootTiledMapActorFactoryTest
 	{
 		//given
 		MapObject mapObject = new MapObject();
-		mapObject.getProperties().put("x", "wrongValue");
+		mapObject.getProperties().put("id", "wrongValue");
 				
 		//then
 		factory.createFromMapObject(mapObject);
@@ -184,6 +187,7 @@ public class ZootTiledMapActorFactoryTest
 		assertEquals(mapObject.getColor(), actor.getColor());
 		assertEquals(mapObject.getOpacity(), actor.getOpacity(), 0.0f);
 		assertEquals(mapObject.isVisible(), actor.isVisible());
+		assertEquals(ACTOR_ID, actor.getId());
 		assertEquals(ACTOR_X, actor.getX(), 0.0f);
 		assertEquals(ACTOR_Y, actor.getY(), 0.0f);
 		assertEquals(ACTOR_WIDTH, actor.getWidth(), 0.0f);
@@ -202,6 +206,7 @@ public class ZootTiledMapActorFactoryTest
 		
 		//then
 		assertNotNull(actor);
+		assertEquals(ACTOR_ID, actor.getId());
 		assertEquals(CELL_X * CELL_WIDTH, actor.getX(), 0.0f);
 		assertEquals(CELL_Y * CELL_HEIGHT, actor.getY(), 0.0f);
 		assertEquals(CELL_WIDTH, actor.getWidth(), 0.0f);
@@ -246,12 +251,13 @@ public class ZootTiledMapActorFactoryTest
 	
 	private MapObject createDefaultMapObject()
 	{		
-		MapObject mapObject = new MapObject();
+		MapObject mapObject = new MapObject();		
 		mapObject.setName(ACTOR_NAME);
 		mapObject.setColor(ACTOR_COLOR);
 		mapObject.setOpacity(ACTOR_OPACITY);
 		mapObject.setVisible(ACTOR_VISIBLE);
-		mapObject.getProperties().put("x",ACTOR_X);
+		mapObject.getProperties().put("id",ACTOR_ID);
+		mapObject.getProperties().put("x", ACTOR_X);
 		mapObject.getProperties().put("y", ACTOR_Y);
 		mapObject.getProperties().put("width", ACTOR_WIDTH);
 		mapObject.getProperties().put("height", ACTOR_HEIGHT);

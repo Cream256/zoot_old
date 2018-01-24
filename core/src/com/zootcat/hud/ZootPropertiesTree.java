@@ -13,7 +13,7 @@ public class ZootPropertiesTree extends Tree
 {
 	private static final int TEXT_ALIGN = Align.left;
 	private static final int INDENT = -60;
-	private static final int ROW_HEIGHT = 30;
+	private static final int ROW_HEIGHT = 20;
 	
 	private Skin skin;
 	private Table table;
