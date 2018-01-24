@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -36,6 +37,7 @@ public class ZootTiledScene implements ZootScene
 	private Stage stage;
 	private ZootTiledMap map;
 	private ZootPhysics physics;	
+	private AssetManager assetManager;
 	private OrthographicCamera camera;
 	private ZootTiledMapRender mapRender;
 		
@@ -47,12 +49,14 @@ public class ZootTiledScene implements ZootScene
 	private boolean isDebugMode = false;
 	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
 	
-	public ZootTiledScene(ZootTiledMap map, float viewportWidth, float viewportHeight, float worldUnitPerTile)
+	
+	public ZootTiledScene(ZootTiledMap map, AssetManager assetManager, float viewportWidth, float viewportHeight, float worldUnitPerTile)
 	{						
     	this.unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
     	this.viewportWidth = viewportWidth;
     	this.viewportHeight = viewportHeight;
-    	this.map = map;
+    	this.assetManager = assetManager;
+    	this.map = map;    	
     	createScene();
 	}
 	
@@ -220,7 +224,7 @@ public class ZootTiledScene implements ZootScene
 		
 		//cell actors
 		ControllerFactory ctrlFactory = new ControllerFactory();
-    	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, ctrlFactory);		
+    	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, ctrlFactory, assetManager);		
     	TiledMapTileLayer collisionLayer = map.getLayer(ZootTiledMap.COLLISION_LAYER_NAME);
     	
     	List<ZootLayerRegion> cellRegions = ZootLayerOptimizer.optimize(collisionLayer, new ZootTiledCellTileComparator());			

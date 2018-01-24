@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
@@ -83,7 +84,7 @@ public class ZootTiledMapActorFactoryTest
 		
 		//create factory
 		ctrlFactory = new ControllerFactory();
-		factory = new ZootTiledMapActorFactory(sceneMock, ctrlFactory);
+		factory = new ZootTiledMapActorFactory(sceneMock, ctrlFactory, mock(AssetManager.class));
 	}
 			
 	@Test(expected = RuntimeZootException.class)

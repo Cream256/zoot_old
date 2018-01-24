@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.zootcat.controllers.Controller;
@@ -15,17 +16,18 @@ import com.zootcat.scene.tiled.ZootTiledScene;
 
 public class ZootTiledMapActorFactory 
 {
-	private static final String ACTOR_GLOBAL_PARAM = "actor";
 	private static final String SCENE_GLOBAL_PARAM = "scene";
+	private static final String ASSET_MANAGER_GLOBAL_PARAM = "assetManager";
 
 	private float scale;
 	private ControllerFactory controllerFactory;		
 			
-	public ZootTiledMapActorFactory(ZootTiledScene scene, ControllerFactory controllerFactory)
+	public ZootTiledMapActorFactory(ZootTiledScene scene, ControllerFactory controllerFactory, AssetManager assetManager)
 	{
 		this.scale = scene.getUnitScale();
 		this.controllerFactory = controllerFactory;
 		this.controllerFactory.addGlobalParameter(SCENE_GLOBAL_PARAM, scene);
+		this.controllerFactory.addGlobalParameter(ASSET_MANAGER_GLOBAL_PARAM, assetManager);
 	}
 	
 	public ZootActor createFromMapObject(final MapObject mapObject)
@@ -93,8 +95,7 @@ public class ZootTiledMapActorFactory
 	}
 
 	protected void setActorControllers(final MapProperties actorProperties, ZootActor actor)
-	{
-		controllerFactory.addGlobalParameter(ACTOR_GLOBAL_PARAM, actor);		
+	{		
 		actorProperties.getKeys().forEachRemaining(ctrlName ->
 		{								
 			if(controllerFactory.contains(ctrlName))
@@ -105,7 +106,6 @@ public class ZootTiledMapActorFactory
 				actor.addController(controller);
 			}
 		});
-		controllerFactory.removeGlobalParameter(ACTOR_GLOBAL_PARAM);
 	}
 		
 	protected String getPropertyOrDefault(MapObject mapObject, String key, String defaultValue)

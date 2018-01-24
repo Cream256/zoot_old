@@ -3,12 +3,14 @@ package com.zootcat.controllers.gfx;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.exceptions.RuntimeZootException;
-import com.zootcat.exceptions.ZootException;
 import com.zootcat.gfx.ZootAnimation;
 import com.zootcat.gfx.ZootAnimationFile;
 import com.zootcat.scene.ZootActor;
@@ -20,6 +22,7 @@ public class AnimatedSpriteController implements RenderController
 	@CtrlParam private boolean useActorSize = true;
 	@CtrlParam private String startingAnimation = "";
 	@CtrlParam(global = true) private ZootScene scene;
+	@CtrlParam(global = true) private AssetManager assetManager;
 	
 	private Sprite sprite;
 	private ZootAnimation currentAnimation;
@@ -41,16 +44,20 @@ public class AnimatedSpriteController implements RenderController
 	public void init(ZootActor actor)
 	{
 		try
-		{
-			animations = new ZootAnimationFile(Gdx.files.internal(file).file()).createAnimations();
+		{			
+			FileHandle animationFileHandle = Gdx.files.internal(file);			
+			ZootAnimationFile zootAnimationFile = new ZootAnimationFile(animationFileHandle.file()); 
+			
+			Texture spriteSheet = assetManager.get(animationFileHandle.parent().path() + "/" + zootAnimationFile.getSpriteSheetFileName());			
+			animations = zootAnimationFile.createAnimations(spriteSheet); 		
 			setAnimation(startingAnimation);
 			
 			sprite = new Sprite();
 			updateSprite(actor);
 		}
-		catch (ZootException e)
+		catch (Exception e)
 		{
-			throw new RuntimeZootException("Unable to initialize animated sprite: " + e.getMessage(), e);
+			throw new RuntimeZootException("Unable to initialize animated sprite", e);
 		}
 	}
 

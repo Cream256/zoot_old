@@ -46,8 +46,10 @@ public class ZootAnimationFileLoader extends AsynchronousAssetLoader<ZootAnimati
 	public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, Parameters parameter)
 	{
 		animationFile = loadFromFile(file);
-		Array<AssetDescriptor> dependencies = new Array<AssetDescriptor>(1);		
-		dependencies.add(assetRecognizer.getAssetDescriptor(animationFile.getSpriteSheetPath()));
+		Array<AssetDescriptor> dependencies = new Array<AssetDescriptor>(1);				
+		
+		String relativeSpriteSheetPath = file.parent().path() + "/" + animationFile.getSpriteSheetFileName();		
+		dependencies.add(assetRecognizer.getAssetDescriptor(relativeSpriteSheetPath));		
 		return dependencies;
 	}
 	

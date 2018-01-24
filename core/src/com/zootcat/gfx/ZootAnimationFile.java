@@ -14,7 +14,7 @@ import com.zootcat.textdata.TextDataSection;
 
 public class ZootAnimationFile
 {
-    private TextDataFile animationFile;
+	private TextDataFile animationFile;
     private TextDataSection settings;
     private List<TextDataSection> animationDataX;
 	
@@ -25,16 +25,11 @@ public class ZootAnimationFile
 		animationDataX = animationFile.readSections(":StartAnimation", ":EndAnimation");
 	}
 
-	public String getSpriteSheetPath()
+	public String getSpriteSheetFileName()
 	{        
 		return settings.get("Image");
 	}
-	
-	public Map<Integer, ZootAnimation> createAnimations()
-	{
-		return createAnimations(new Texture(getSpriteSheetPath()));
-	}
-	
+				
 	public Map<Integer, ZootAnimation> createAnimations(Texture spriteSheet)
 	{
 		Map<Integer, ZootAnimation> animations = new HashMap<Integer, ZootAnimation>();

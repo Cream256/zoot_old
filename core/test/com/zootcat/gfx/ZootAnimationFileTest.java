@@ -28,9 +28,9 @@ public class ZootAnimationFileTest
 	}
 	
 	@Test
-	public void getSpriteSheetPathTest() throws ZootException
+	public void getSpriteSheetFileNameTest() throws ZootException
 	{
-		assertEquals("/data/sprites/SpriteAnimation.png", anmFile.getSpriteSheetPath());
+		assertEquals("/data/sprites/SpriteAnimation.png", anmFile.getSpriteSheetFileName());
 	}
 	
 	@Test
