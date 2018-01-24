@@ -2,6 +2,8 @@ package com.zootcat.game;
 
 import com.badlogic.gdx.Input;
 import com.zootcat.controllers.physics.PhysicsBodyController;
+import com.zootcat.events.ZootEvent;
+import com.zootcat.events.ZootEventType;
 import com.zootcat.input.ZootBindableInputProcessor;
 import com.zootcat.scene.ZootActor;
 
@@ -52,12 +54,14 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	private boolean jump()
 	{
 		getController().setVelocity(0.0f, jumpVelocity, false, true);
+		player.fire(new ZootEvent(ZootEventType.Jump));
 		return true;
 	}
 	
 	private boolean stop()
 	{
 		getController().setVelocity(0.0f, 0.0f, true, false);
+		player.fire(new ZootEvent(ZootEventType.Stop));
 		return true;
 	}
 	
@@ -65,6 +69,7 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	{
 		float vx = right ? movementVelocity : -movementVelocity;
 		getController().setVelocity(vx, 0.0f, true, false);		
+		player.fire(new ZootEvent(ZootEventType.Walk));		
 		return true;
 	}
 	

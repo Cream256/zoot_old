@@ -13,26 +13,30 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.badlogic.gdx.scenes.scene2d.Event;
+import com.zootcat.events.ZootEvent;
 import com.zootcat.exceptions.RuntimeZootException;
+import com.zootcat.fsm.states.IdleState;
+import com.zootcat.fsm.states.NamedState;
+import com.zootcat.fsm.states.NullState;
 import com.zootcat.scene.ZootActor;
 
-public class StateMachineTest
+public class ZootStateMachineTest
 {
-	private StateMachine sm;
+	private ZootStateMachine sm;
 	private ZootActor owner;
 	
 	@Before
 	public void setup()
 	{
-		sm = new StateMachine();
+		sm = new ZootStateMachine();
 		owner = new ZootActor();
 	}
 	
 	@Test
 	public void addStateTest()
 	{
-		State state1 = new NamedState("state1");
-		State state2 = new NamedState("state2");
+		ZootState state1 = new NamedState("state1");
+		ZootState state2 = NullState.INSTANCE;
 		
 		sm.addState(state1);
 		assertEquals(1, sm.getStates().size());
@@ -50,34 +54,32 @@ public class StateMachineTest
 	}
 	
 	@Test
-	public void getStateByIdTest()
+	public void getStateByClassTest()
 	{
 		//given
-		State state1 = mock(State.class);
-		State state2 = mock(State.class);
-		when(state1.getId()).thenReturn(100);
-		when(state2.getId()).thenReturn(200);
+		ZootState state1 = NullState.INSTANCE;
+		ZootState state2 = new IdleState();
 		
 		//when
 		sm.addState(state1);
 		sm.addState(state2);
 		
 		//then
-		assertEquals(state1, sm.getStateById(100));
-		assertEquals(state2, sm.getStateById(200));		
+		assertEquals(state1, sm.getStateByClass(NullState.class));
+		assertEquals(state2, sm.getStateByClass(IdleState.class));		
 	}
 	
 	@Test(expected = RuntimeZootException.class)
-	public void getStateByIdShouldThrowOnNotExistingIdTest()
+	public void getStateByClassShouldThrowOnNotExistingIdTest()
 	{
-		sm.getStateById(256);
+		sm.getStateByClass(NullState.class);
 	}
 	
 	@Test
 	public void initTest()
 	{
 		//given
-		State initialState = mock(State.class);
+		ZootState initialState = mock(ZootState.class);
 		
 		//when
 		sm.setOwner(owner);
@@ -110,10 +112,8 @@ public class StateMachineTest
 	public void changeStateTest()
 	{
 		//given
-		State firstState = mock(State.class);
-		State secondState = mock(State.class);
-		when(firstState.getId()).thenReturn(1);				
-		when(secondState.getId()).thenReturn(2);
+		ZootState firstState = mock(ZootState.class);
+		ZootState secondState = mock(ZootState.class);
 		
 		sm.setOwner(owner);
 		sm.init(firstState);
@@ -133,21 +133,25 @@ public class StateMachineTest
 	public void handleTest()
 	{
 		//given
-		State state = mock(State.class);
+		ZootState state = mock(ZootState.class);
 		sm.init(state);	
 		
 		//when
 		when(state.handle(anyObject())).thenReturn(true);		
 
 		//then
-		assertTrue(sm.handle(new Event()));
+		assertTrue(sm.handle(new ZootEvent()));
 		verify(state, times(1)).handle(anyObject());
 		
 		//when
 		when(state.handle(anyObject())).thenReturn(false);		
 
 		//then
-		assertFalse(sm.handle(new Event()));
+		assertFalse(sm.handle(new ZootEvent()));
+		verify(state, times(2)).handle(anyObject());
+		
+		//then
+		assertFalse(sm.handle(new Event()));	//not ZootStateEvent should not be processed
 		verify(state, times(2)).handle(anyObject());
 	}
 	
@@ -155,7 +159,7 @@ public class StateMachineTest
 	public void updateTest()
 	{
 		//given
-		State state = mock(State.class);
+		ZootState state = mock(ZootState.class);
 		sm.init(state);
 		sm.setOwner(owner);
 		
@@ -163,12 +167,12 @@ public class StateMachineTest
 		sm.update(0.0f);
 		
 		//then
-		verify(state, times(1)).update(owner, 0.0f);
+		verify(state, times(1)).onUpdate(owner, 0.0f);
 		
 		//when
 		sm.update(0.33f);
 
 		//then
-		verify(state, times(1)).update(owner, 0.33f);
+		verify(state, times(1)).onUpdate(owner, 0.33f);
 	}
 }

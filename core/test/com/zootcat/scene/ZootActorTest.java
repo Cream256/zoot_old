@@ -3,6 +3,7 @@ package com.zootcat.scene;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyFloat;
 import static org.mockito.Matchers.anyObject;
@@ -24,7 +25,9 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.zootcat.controllers.ChangeListenerController;
 import com.zootcat.controllers.Controller;
+import com.zootcat.controllers.factory.mocks.SimpleController;
 import com.zootcat.controllers.gfx.RenderController;
+import com.zootcat.exceptions.RuntimeZootException;
 
 public class ZootActorTest 
 {	
@@ -303,5 +306,47 @@ public class ZootActorTest
 		//then
 		assertNotNull(actor.getStateMachine());
 		assertEquals(actor, actor.getStateMachine().getOwner());
+	}
+	
+	@Test
+	public void getControllerTest()
+	{
+		//given
+		Controller ctrl = new SimpleController();
+		ZootActor actor = new ZootActor();
+
+		//when
+		actor.addController(ctrl);
+		
+		//then
+		assertEquals(ctrl, actor.getController(SimpleController.class));		
+	}
+	
+	@Test(expected = RuntimeZootException.class)
+	public void getControllerShouldThrowWhenControllerDoesNotExistTest()
+	{
+		ZootActor actor = new ZootActor();
+		actor.getController(SimpleController.class);
+	}
+	
+	@Test
+	public void tryGetControllerTest()
+	{
+		//given
+		Controller ctrl = new SimpleController();
+		ZootActor actor = new ZootActor();
+
+		//when
+		actor.addController(ctrl);
+		
+		//then
+		assertEquals(ctrl, actor.tryGetController(SimpleController.class));
+	}
+	
+	@Test
+	public void tryGetControllerShouldReturnNullWhenControllerDoesNotExistTest()
+	{
+		ZootActor actor = new ZootActor();
+		assertNull(actor.tryGetController(SimpleController.class));
 	}
 }

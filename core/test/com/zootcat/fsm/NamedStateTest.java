@@ -1,13 +1,15 @@
 package com.zootcat.fsm;
 
-import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 import org.junit.Test;
 
-import com.badlogic.gdx.scenes.scene2d.Event;
+import com.zootcat.events.ZootEvent;
+import com.zootcat.fsm.states.NamedState;
 import com.zootcat.scene.ZootActor;
 
 public class NamedStateTest
@@ -22,17 +24,7 @@ public class NamedStateTest
 		assertEquals(state1.hashCode(), state2.hashCode());
 		assertFalse(state2.hashCode() == state3.hashCode());
 	}
-	
-	@Test
-	public void getIdTest()
-	{
-		NamedState state1 = new NamedState("abc");
-		NamedState state2 = new NamedState("def");
 		
-		assertEquals("abc".hashCode(), state1.getId());
-		assertEquals("def".hashCode(), state2.getId());
-	}
-	
 	@Test
 	public void equalsTest()
 	{
@@ -65,7 +57,7 @@ public class NamedStateTest
 	@Test
 	public void handleTest()
 	{
-		assertFalse("NamedState should always return false", new NamedState("").handle(new Event()));
+		assertFalse("NamedState should always return false", new NamedState("").handle(new ZootEvent()));
 	}
 	
 	@Test
@@ -77,7 +69,7 @@ public class NamedStateTest
 		
 		//when
 		state.onEnter(actor);
-		state.update(actor, 0.0f);
+		state.onUpdate(actor, 0.0f);
 		state.onLeave(actor);
 		
 		//then

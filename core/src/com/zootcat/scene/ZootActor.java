@@ -14,7 +14,7 @@ import com.zootcat.controllers.ChangeListenerController;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.gfx.RenderController;
 import com.zootcat.exceptions.RuntimeZootException;
-import com.zootcat.fsm.StateMachine;
+import com.zootcat.fsm.ZootStateMachine;
 
 public class ZootActor extends Actor
 {
@@ -24,7 +24,7 @@ public class ZootActor extends Actor
 	private Set<String> types = new HashSet<String>();	
 	private float opacity = 1.0f;
 	private int id = 0;
-	private StateMachine stateMachine = new StateMachine();
+	private ZootStateMachine stateMachine = new ZootStateMachine();
 			
 	public ZootActor()
 	{
@@ -94,6 +94,20 @@ public class ZootActor extends Actor
 	}
 	
 	@SuppressWarnings("unchecked")
+	public <T extends Controller> T tryGetController(Class<T> controllerClass)
+	{
+		try
+		{
+			Controller result = getController(controllerClass);
+			return (T) result;
+		}
+		catch(RuntimeZootException e)
+		{
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
 	public <T extends Controller> T getController(Class<T> controllerClass)
 	{
 		Controller result = controllers.stream()
@@ -154,7 +168,7 @@ public class ZootActor extends Actor
     	return getName();
     }
 
-	public StateMachine getStateMachine()
+	public ZootStateMachine getStateMachine()
 	{
 		return stateMachine;
 	}

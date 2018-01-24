@@ -1,9 +1,10 @@
-package com.zootcat.fsm;
+package com.zootcat.fsm.states;
 
-import com.badlogic.gdx.scenes.scene2d.Event;
+import com.zootcat.events.ZootEvent;
+import com.zootcat.fsm.ZootState;
 import com.zootcat.scene.ZootActor;
 
-public class NullState implements State
+public class NullState implements ZootState
 {
 	public static final NullState INSTANCE = new NullState();
 	
@@ -12,12 +13,6 @@ public class NullState implements State
 		//use instance
 	}
 	
-	@Override
-	public int getId()
-	{
-		return 0;
-	}
-
 	@Override
 	public void onEnter(ZootActor actor)
 	{
@@ -31,13 +26,13 @@ public class NullState implements State
 	}
 
 	@Override
-	public void update(ZootActor actor, float delta)
+	public void onUpdate(ZootActor actor, float delta)
 	{
 		//noop
 	}
 
 	@Override
-	public boolean handle(Event event)
+	public boolean handle(ZootEvent event)
 	{
 		return false;
 	}

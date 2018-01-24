@@ -1,13 +1,14 @@
 package com.zootcat.fsm;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.badlogic.gdx.scenes.scene2d.Event;
+import com.zootcat.events.ZootEvent;
+import com.zootcat.fsm.states.NullState;
 import com.zootcat.scene.ZootActor;
 
 public class NullStateTest
@@ -19,17 +20,11 @@ public class NullStateTest
 	{
 		state = NullState.INSTANCE;
 	}
-	
-	@Test
-	public void getIdTest()
-	{
-		assertEquals(0, state.getId());		
-	}
-	
+		
 	@Test
 	public void handleTest()
 	{
-		assertFalse(state.handle(new Event()));
+		assertFalse(state.handle(new ZootEvent()));
 		assertFalse(state.handle(null));
 	}
 	
@@ -41,7 +36,7 @@ public class NullStateTest
 		
 		//when
 		state.onEnter(actor);
-		state.update(actor, 0.0f);
+		state.onUpdate(actor, 0.0f);
 		state.onLeave(actor);
 		
 		//then

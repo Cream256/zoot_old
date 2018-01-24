@@ -28,19 +28,7 @@ public class AnimatedSpriteController implements RenderController
 	private Sprite sprite;
 	private ZootAnimation currentAnimation;
 	private Map<Integer, ZootAnimation> animations;
-			
-	public void setAnimation(String animationName)
-	{
-		if(currentAnimation != null)
-		{
-			currentAnimation.stop();
-		}
-		
-		int newId = ZootAnimation.getAnimationId(animationName);		
-		currentAnimation = animations.get(newId);
-		currentAnimation.restart();
-	}
-	
+				
 	@Override
 	public void init(ZootActor actor)
 	{
@@ -97,6 +85,22 @@ public class AnimatedSpriteController implements RenderController
 		sprite.draw(batch);
 	}
 	
+	public void setAnimation(String animationName)
+	{
+		if(currentAnimation != null)
+		{
+			currentAnimation.stop();
+		}
+		
+		int newId = ZootAnimation.getAnimationId(animationName);				
+		currentAnimation = animations.get(newId);
+		
+		if(currentAnimation != null)
+		{
+			currentAnimation.restart();
+		}
+	}
+	
 	private void updateSprite(ZootActor actor)
 	{
 		if(currentAnimation == null)
@@ -118,8 +122,7 @@ public class AnimatedSpriteController implements RenderController
 			sprite.setBounds(x, y, actor.getWidth(), actor.getHeight());
 		}
 		else
-		{			
-			
+		{
 			sprite.setBounds(x, y, frame.getRegionWidth() * scale, frame.getRegionHeight() * scale);
 		}
 		
