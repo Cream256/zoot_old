@@ -36,6 +36,12 @@ public class ZootTiledMapLoader extends AsynchronousAssetLoader<ZootTiledMap, Zo
 		this.assetRecognizer = assetRecognizer;
 	}
 	
+	public ZootTiledMap load(String fileName)
+	{
+		TiledMap tiledMap = tmxMapLoader.load(fileName);
+		return new ZootTiledMap(tiledMap);
+	}
+	
 	@Override
 	public void loadAsync(AssetManager manager, String fileName, FileHandle file, Parameters parameter)
 	{

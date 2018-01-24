@@ -25,32 +25,45 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 
 import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.backends.headless.HeadlessApplication;
-import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-public class GdxTestRunner extends BlockJUnit4ClassRunner implements ApplicationListener {
+public class GdxTestRunner extends BlockJUnit4ClassRunner implements ApplicationListener 
+{
 
 	private Map<FrameworkMethod, RunNotifier> invokeInRender = new HashMap<FrameworkMethod, RunNotifier>();
 
-	public GdxTestRunner(Class<?> klass) throws InitializationError {
+	public GdxTestRunner(Class<?> klass) throws InitializationError 
+	{
 		super(klass);
-		HeadlessApplicationConfiguration conf = new HeadlessApplicationConfiguration();
-
-		new HeadlessApplication(this, conf);
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.title = klass.getSimpleName();
+		config.width = 320;
+		config.height = 240;		
+		config.x = 0;
+		config.y = 0;
+		new LwjglApplication(this, config);
 	}
 
 	@Override
-	public void create() {
+	public void create() 
+	{
+		//noop
 	}
 
 	@Override
-	public void resume() {
+	public void resume() 
+	{
+		//noop
 	}
 
 	@Override
-	public void render() {
-		synchronized (invokeInRender) {
-			for (Map.Entry<FrameworkMethod, RunNotifier> each : invokeInRender.entrySet()) {
+	public void render() 
+	{
+		synchronized (invokeInRender) 
+		{
+			for (Map.Entry<FrameworkMethod, RunNotifier> each : invokeInRender.entrySet()) 
+			{
 				super.runChild(each.getKey(), each.getValue());
 			}
 			invokeInRender.clear();
@@ -58,20 +71,28 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
 	}
 
 	@Override
-	public void resize(int width, int height) {
+	public void resize(int width, int height) 
+	{
+		//noop
 	}
 
 	@Override
-	public void pause() {
+	public void pause() 
+	{
+		//noop
 	}
 
 	@Override
-	public void dispose() {
+	public void dispose() 
+	{
+		//noop
 	}
 
 	@Override
-	protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-		synchronized (invokeInRender) {
+	protected void runChild(FrameworkMethod method, RunNotifier notifier) 
+	{
+		synchronized (invokeInRender) 
+		{
 			// add for invoking in render phase, where gl context is available
 			invokeInRender.put(method, notifier);
 		}
@@ -79,18 +100,22 @@ public class GdxTestRunner extends BlockJUnit4ClassRunner implements Application
 		waitUntilInvokedInRenderMethod();
 	}
 
-	private void waitUntilInvokedInRenderMethod() {
-		try {
-			while (true) {
+	private void waitUntilInvokedInRenderMethod() 
+	{
+		try 
+		{
+			while (true) 
+			{
 				Thread.sleep(10);
-				synchronized (invokeInRender) {
-					if (invokeInRender.isEmpty())
-						break;
+				synchronized (invokeInRender) 
+				{
+					if (invokeInRender.isEmpty()) break;
 				}
 			}
-		} catch (InterruptedException e) {
+		}
+		catch (InterruptedException e) 
+		{
 			e.printStackTrace();
 		}
 	}
-
 }

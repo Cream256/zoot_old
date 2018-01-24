@@ -61,7 +61,12 @@ public class ZootTiledMap implements Disposable
 		}
 		return result;
 	}
-		
+	
+	public TiledMapTileLayer getLayer(String layerName)
+	{
+		return (TiledMapTileLayer) tiledMap.getLayers().get(layerName);		
+	}
+	
 	public List<ZootTiledMapCell> getLayerCells(String layerName)
 	{
 		if(!ClassReflection.isInstance(TiledMapTileLayer.class, tiledMap.getLayers().get(layerName)))
@@ -69,7 +74,7 @@ public class ZootTiledMap implements Disposable
 			return Collections.<ZootTiledMapCell>emptyList();
 		}
 		
-		TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(layerName);
+		TiledMapTileLayer layer = getLayer(layerName);
 		int layerWidth = layer.getWidth();
 		int layerHeight = layer.getHeight();
 		

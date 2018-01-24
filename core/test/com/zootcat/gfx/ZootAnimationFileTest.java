@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.zootcat.exceptions.ZootException;
+import com.zootcat.testing.ZootTestUtils;
 
 public class ZootAnimationFileTest
 {
@@ -22,9 +23,7 @@ public class ZootAnimationFileTest
 	public void setup() throws ZootException
 	{
     	textureMock = mock(Texture.class);
-		String animationFilePath = getClass().getClassLoader()
-	  	        .getResource("testResources/textdata/AnimationFile.txt")
-	  	        .getPath();
+		String animationFilePath = ZootTestUtils.getResourcePath("testResources/textdata/AnimationFile.txt", this);
     	anmFile = new ZootAnimationFile(new File(animationFilePath));
 	}
 	

@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zootcat.exceptions.ZootException;
+import com.zootcat.testing.ZootTestUtils;
 
 public class TextDataFileTest
 {
@@ -17,10 +18,8 @@ public class TextDataFileTest
 	@Before
     public void setup()
     {
-    	String textDataFilePath = getClass().getClassLoader()
-	  	        .getResource("testResources/textdata/TextDataFile.txt")
-	  	        .getPath();
-    	testFile = new File(textDataFilePath);
+    	String textDataFilePath = ZootTestUtils.getResourcePath("testResources/textdata/TextDataFile.txt", this);
+    	testFile = new File(  textDataFilePath);
     }
 	
 	@Test(expected=ZootException.class)
