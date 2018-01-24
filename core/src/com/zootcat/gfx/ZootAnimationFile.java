@@ -8,6 +8,7 @@ import java.util.Map;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.zootcat.exceptions.ZootException;
 import com.zootcat.textdata.TextDataFile;
 import com.zootcat.textdata.TextDataSection;
@@ -17,7 +18,7 @@ public class ZootAnimationFile
 	private TextDataFile animationFile;
     private TextDataSection settings;
     private List<TextDataSection> animationDataX;
-	
+    
 	public ZootAnimationFile(File file) throws ZootException
 	{
 		animationFile = new TextDataFile(file);
@@ -34,29 +35,53 @@ public class ZootAnimationFile
 	{
 		Map<Integer, ZootAnimation> animations = new HashMap<Integer, ZootAnimation>();
 		for(TextDataSection data : animationDataX)
-		{
-			/*
-			 * TODO complete rest of the functionality like frameorder etc.
-			int rightOffsetX = animationData.getInt("rightoffsetx", 0);
-			int rightOffsetY = animationData.getInt("rightoffsety", 0);			
-			int leftOffsetX = animationData.getInt("leftoffsetx", 0);
-			int leftOffsetY = animationData.getInt("leftoffsety", 0);			
-			Vector2[] rightOffsets = animationData.getVectors("rightoffsets");
-			Vector2[] leftOffsets = animationData.getVectors("leftoffsets");
-			*/        
-			//
-					
+		{					
 			TextureRegion[] frames = buildFrames(data, spriteSheet);
 			TextureRegion[] orderedFrames = orderFrames(data, frames);
+			ZootAnimationOffset[] offsets = buildOffsets(data, orderedFrames);
 			
 			ZootAnimation animation = new ZootAnimation(getName(data), orderedFrames, getFrameDuration(data));		
 			animation.setPlayMode(getPlayMode(data));
-			
+			animation.setOffsets(offsets);			
 			animations.put(animation.getId(), animation);
 		}
 		return animations;
 	}
 
+	private ZootAnimationOffset[] buildOffsets(TextDataSection data, TextureRegion[] frames)
+	{
+		Vector2[] rightOffsets = data.getVectors("rightoffsets");
+		Vector2[] leftOffsets = data.getVectors("leftoffsets");
+		if(rightOffsets.length > 0 && leftOffsets.length == rightOffsets.length)
+		{
+			ZootAnimationOffset[] offsets = new ZootAnimationOffset[rightOffsets.length];	
+			for(int i = 0; i < offsets.length; ++i)
+			{
+				offsets[i] = new ZootAnimationOffset();
+				offsets[i].right = rightOffsets[i];
+				offsets[i].left = leftOffsets[i];
+			}			
+			return offsets;
+		}
+		
+		int rightOffsetX = data.getInt("rightoffsetx", 0);
+		int rightOffsetY = data.getInt("rightoffsety", 0);			
+		int leftOffsetX = data.getInt("leftoffsetx", 0);
+		int leftOffsetY = data.getInt("leftoffsety", 0);
+		
+		ZootAnimationOffset[] offsets = new ZootAnimationOffset[frames.length];
+		for(int i = 0; i < offsets.length; ++i)
+		{
+			ZootAnimationOffset offset = new ZootAnimationOffset();
+			offset.right.x = rightOffsetX;
+			offset.right.y = rightOffsetY;
+			offset.left.x = leftOffsetX;
+			offset.left.y = leftOffsetY;
+			offsets[i] = offset;
+		}		
+		return offsets;
+	}
+	
 	private float getFrameDuration(TextDataSection data)
 	{
 		return data.getInt("Speed", 100) / 1000.0f;

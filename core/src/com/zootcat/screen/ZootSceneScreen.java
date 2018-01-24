@@ -24,7 +24,6 @@ public class ZootSceneScreen implements Screen
 	{
 		this.scene = scene;
 		debugHud = new ZootDebugHud();
-		scene.addListener(new ZootDebugWindowListener(debugHud));
 	}
 			
 	@Override
@@ -130,6 +129,9 @@ public class ZootSceneScreen implements Screen
     	inputManager.addProcessor(scene.getInputProcessor());
     	inputManager.addProcessor(debugHud.getInputProcessor());
     	Gdx.input.setInputProcessor(inputManager);
+    	
+    	//debug
+		scene.addListener(new ZootDebugWindowListener(debugHud));
 	}
 	
 	private void deassignInput()

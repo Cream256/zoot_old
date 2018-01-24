@@ -13,6 +13,7 @@ import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.gfx.ZootAnimation;
 import com.zootcat.gfx.ZootAnimationFile;
+import com.zootcat.gfx.ZootAnimationOffset;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
@@ -107,14 +108,19 @@ public class AnimatedSpriteController implements RenderController
 		sprite.setTexture(frame.getTexture());
 		sprite.setRegion(frame);				
 		
+		ZootAnimationOffset offset = currentAnimation.getFrameOffset();
+		float scale = scene.getUnitScale();
+		float x = actor.getX() + offset.right.x * scale;
+		float y = actor.getY() + offset.right.y * scale;
+		
 		if(useActorSize)
 		{
-			sprite.setBounds(actor.getX(), actor.getY(), actor.getWidth(), actor.getHeight());
+			sprite.setBounds(x, y, actor.getWidth(), actor.getHeight());
 		}
 		else
 		{			
-			float scale = scene.getUnitScale();
-			sprite.setBounds(actor.getX(), actor.getY(), frame.getRegionWidth() * scale, frame.getRegionHeight() * scale);
+			
+			sprite.setBounds(x, y, frame.getRegionWidth() * scale, frame.getRegionHeight() * scale);
 		}
 		
 		sprite.setOriginCenter();

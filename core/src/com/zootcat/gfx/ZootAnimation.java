@@ -8,21 +8,35 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class ZootAnimation 
 {	
 	private final String name;	//name must be final in order to make getId() immutable	
-	private float animationTime;	
-	private boolean playing;
+	private float animationTime = 0.0f;	
+	private boolean playing = false;
 	private Animation<TextureRegion> animation;
+	private ZootAnimationOffset[] offsets;
 		
 	public ZootAnimation(String name, TextureRegion[] frames, float frameDuration)
 	{
 		this.name = name;
-		this.playing = false;
-		this.animationTime = 0.0f;
 		animation = new Animation<TextureRegion>(frameDuration, frames);
 	}
-	
+		
 	public static int getAnimationId(String name)
 	{
 		return name.hashCode();
+	}
+		
+	public void setOffsets(ZootAnimationOffset[] offsets)
+	{
+		this.offsets = offsets;
+	}
+	
+	public ZootAnimationOffset[] getOffsets()
+	{
+		return offsets;
+	}
+	
+	public ZootAnimationOffset getFrameOffset()
+	{
+		return offsets[animation.getKeyFrameIndex(animationTime)];
 	}
 	
 	public int getFrameCount()

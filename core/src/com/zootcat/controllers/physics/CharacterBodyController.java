@@ -13,6 +13,8 @@ import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.utils.ZootUtils;
 
+//TODO make circles only in the lower half of the body to avoid getting stuck on objects
+//TODO make the number of circles configurable
 public class CharacterBodyController extends PhysicsBodyController
 {	
 	@CtrlParam private boolean vertical = true;

@@ -28,7 +28,7 @@
 	loop = true
 	pingpong = true
 	speed = 250
-	rightOffsetX = 70
-	leftOffsetX = 140
+	rightOffsets = 0,1 ; 2,3 ; 4,5 ; 6,7 ; 8,9
+	leftOffsets = 10,11 ; 12,13; 14,15; 16,17; 18,19;
 	frameOrder = 4; 3; 2; 1;
 :EndAnimation

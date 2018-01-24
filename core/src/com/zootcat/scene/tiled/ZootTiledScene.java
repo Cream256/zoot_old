@@ -46,8 +46,8 @@ public class ZootTiledScene implements ZootScene
 	private float viewportHeight;
 	private float timeAccumulator = 0.0f;	
 	
-	private boolean isDebugMode = false;
-	private Box2DDebugRenderer debugRender = new Box2DDebugRenderer();
+	private boolean isDebugMode;
+	private Box2DDebugRenderer debugRender;
 	
 	
 	public ZootTiledScene(ZootTiledMap map, AssetManager assetManager, float viewportWidth, float viewportHeight, float worldUnitPerTile)
@@ -233,7 +233,11 @@ public class ZootTiledScene implements ZootScene
 		
 		//object actors
 		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
-		actors.forEach(actor -> stage.addActor(actor));	
+		actors.forEach(actor -> stage.addActor(actor));
+		
+		//debug
+		isDebugMode = false;
+		debugRender = new Box2DDebugRenderer();
 	}
 	
 	private void disposeSceneResources()
