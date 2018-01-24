@@ -1,6 +1,7 @@
 package com.zootcat.map.tiled;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -27,6 +28,7 @@ import com.zootcat.controllers.physics.StaticBodyController;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.map.tiled.ZootTiledMapActorFactory;
 import com.zootcat.map.tiled.ZootTiledMapCell;
+import com.zootcat.map.tiled.optimizer.ZootLayerRegion;
 import com.zootcat.physics.ZootPhysics;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.tiled.ZootTiledScene;
@@ -73,6 +75,7 @@ public class ZootTiledMapActorFactoryTest
 		
 		tile = mock(TiledMapTile.class);
 		when(tile.getProperties()).thenReturn(tileProperties);
+		
 		
 		innerCell = mock(Cell.class);
 		when(innerCell.getTile()).thenReturn(tile);
@@ -212,6 +215,7 @@ public class ZootTiledMapActorFactoryTest
 		assertEquals(CELL_WIDTH, actor.getWidth(), 0.0f);
 		assertEquals(CELL_HEIGHT, actor.getHeight(), 0.0f);
 		assertEquals(0.0f, actor.getRotation(), 0.0f);
+		assertFalse(actor.getName().isEmpty());
 	}
 
 	@Test(expected = RuntimeZootException.class)
@@ -244,6 +248,38 @@ public class ZootTiledMapActorFactoryTest
 		assertNotNull(actor.getController(SimpleController.class));
 	}
 		
+	@Test
+	public void createFromLayerRegionTest()
+	{
+		//given
+		final int x = 5;
+		final int y = 6;
+		final int tileWidth = 32;
+		final int tileHeight = 24;
+		final int regionWidth = 3;
+		final int regionHeight = 4;
+		
+		ZootLayerRegion region = new ZootLayerRegion(x, y, tileWidth, tileHeight, innerCell);
+		region.width = regionWidth;
+		region.height = regionHeight;
+		
+		tileProperties.put(SimpleController.class.getSimpleName(), "");
+		ctrlFactory.addFromPackage("com.zootcat.controllers.factory.mocks", false);
+		
+		//when
+		ZootActor actor = factory.createFromLayerRegion(region);
+		
+		//then
+		assertNotNull(actor);
+		assertEquals(1, actor.getId());
+		assertEquals(x * tileWidth, actor.getX(), 0.0f);
+		assertEquals(y * tileHeight, actor.getY(), 0.0f);
+		assertEquals(tileWidth * regionWidth, actor.getWidth(), 0.0f);
+		assertEquals(tileHeight * regionHeight, actor.getHeight(), 0.0f);
+		assertFalse(actor.getName().isEmpty());
+		assertNotNull(actor.getController(SimpleController.class));		
+	}
+	
 	private ZootTiledMapCell createDefaultCell()
 	{		
 		return new ZootTiledMapCell(CELL_X, CELL_Y, CELL_WIDTH, CELL_HEIGHT, innerCell);

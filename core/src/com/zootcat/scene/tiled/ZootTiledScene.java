@@ -7,6 +7,7 @@ import java.util.stream.StreamSupport;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -20,6 +21,9 @@ import com.zootcat.map.tiled.ZootTiledMapActorFactory;
 import com.zootcat.map.tiled.ZootTiledMapRender;
 import com.zootcat.map.tiled.ZootTiledMapRenderConfig;
 import com.zootcat.map.tiled.ZootTiledWorldScaleCalculator;
+import com.zootcat.map.tiled.optimizer.ZootLayerOptimizer;
+import com.zootcat.map.tiled.optimizer.ZootLayerRegion;
+import com.zootcat.map.tiled.optimizer.ZootTiledCellTileComparator;
 import com.zootcat.physics.ZootPhysics;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
@@ -214,13 +218,17 @@ public class ZootTiledScene implements ZootScene
 		camera = (OrthographicCamera) viewport.getCamera();
 		stage = new Stage(viewport);
 		
-		//actors
+		//cell actors
 		ControllerFactory ctrlFactory = new ControllerFactory();
-    	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, ctrlFactory);
-		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
-		List<ZootActor> cellActors = actorFactory.createFromMapCells(map.getLayerCells(ZootTiledMap.COLLISION_LAYER_NAME));
-		
+    	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, ctrlFactory);		
+    	TiledMapTileLayer collisionLayer = map.getLayer(ZootTiledMap.COLLISION_LAYER_NAME);
+    	
+    	List<ZootLayerRegion> cellRegions = ZootLayerOptimizer.optimize(collisionLayer, new ZootTiledCellTileComparator());			
+		List<ZootActor> cellActors = actorFactory.createFromLayerRegions(cellRegions);		
 		cellActors.forEach(cellActor -> stage.addActor(cellActor));
+		
+		//object actors
+		List<ZootActor> actors = actorFactory.createFromMapObjects(map.getAllObjects());		
 		actors.forEach(actor -> stage.addActor(actor));	
 	}
 	

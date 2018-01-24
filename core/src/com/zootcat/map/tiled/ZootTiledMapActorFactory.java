@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.MapProperties;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.ControllerFactory;
 import com.zootcat.exceptions.RuntimeZootException;
+import com.zootcat.map.tiled.optimizer.ZootLayerRegion;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.tiled.ZootTiledScene;
 
@@ -45,6 +46,19 @@ public class ZootTiledMapActorFactory
 		return cellActor;
 	}
 	
+	public ZootActor createFromLayerRegion(ZootLayerRegion region)
+	{
+		ZootActor cellActor = new ZootActor();
+		cellActor.setId(region.cell.getTile().getProperties().get("id", 0, Integer.class));		
+		cellActor.setName("Region (" + region.x + "," + region.y + ";" + region.width + "," + region.height + ")");
+		cellActor.setBounds(region.x * region.tileWidth * scale, 
+							region.y * region.tileHeight * scale, 
+							region.width * region.tileWidth * scale,
+							region.height * region.tileHeight * scale);
+		setActorControllers(region.cell.getTile().getProperties(), cellActor);		
+		return cellActor;
+	}
+	
 	public List<ZootActor> createFromMapCells(final List<ZootTiledMapCell> cells) 
 	{
 		return cells.stream().map(cell -> createFromMapCell(cell)).collect(Collectors.toList());
@@ -53,6 +67,11 @@ public class ZootTiledMapActorFactory
 	public List<ZootActor> createFromMapObjects(final Collection<MapObject> objects)
 	{
 		return objects.stream().map(obj -> createFromMapObject(obj)).collect(Collectors.toList());
+	}
+	
+	public List<ZootActor> createFromLayerRegions(final List<ZootLayerRegion> regions)
+	{
+		return regions.stream().map(obj -> createFromLayerRegion(obj)).collect(Collectors.toList());
 	}
 		
 	protected void setActorBasicProperties(final MapObject mapObject, ZootActor actor) 

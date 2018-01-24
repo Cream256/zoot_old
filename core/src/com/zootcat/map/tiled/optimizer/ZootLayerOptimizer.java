@@ -27,7 +27,7 @@ public class ZootLayerOptimizer
 				Cell firstCell = layer.getCell(x, y);
 				if(firstCell == null) continue;
 				
-				ZootLayerRegion region = new ZootLayerRegion(x, y, firstCell);
+				ZootLayerRegion region = new ZootLayerRegion(x, y, layer.getTileWidth(), layer.getTileHeight(), firstCell);
 				for(int rx = x + 1; rx < layer.getWidth(); ++rx)
 				{
 					Cell cell = layer.getCell(rx, y);

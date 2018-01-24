@@ -8,14 +8,18 @@ public class ZootLayerRegion
 	public int y;
 	public int width;
 	public int height;
+	public float tileWidth;
+	public float tileHeight;
 	public Cell cell;
 	
-	public ZootLayerRegion(int x, int y, Cell cell)
+	public ZootLayerRegion(int x, int y, float tileWidth, float tileHeight, Cell cell)
 	{
 		this.x = x;
 		this.y = y;
 		this.width = 1;
 		this.height = 1;
+		this.tileWidth = tileWidth;
+		this.tileHeight = tileHeight;
 		this.cell = cell;
 	}
 }
