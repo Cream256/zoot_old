@@ -100,6 +100,19 @@ public class PhysicsBodyController implements Controller
 		body.setLinearVelocity(setX ? vx : velocity.x, setY ? vy : velocity.y);	
 	}
 	
+	public Fixture addFixture(FixtureDef fixtureDef)
+	{
+		Fixture fixture = body.createFixture(fixtureDef);
+		fixtures.add(fixture);
+		return fixture;
+	}
+	
+	public void removeFixture(Fixture fixture)
+	{
+		body.destroyFixture(fixture);
+		fixtures.remove(fixture);		
+	}
+	
 	protected BodyDef createBodyDef(ZootActor actor) 
 	{
 		BodyDef bodyDef = new BodyDef();
@@ -161,4 +174,6 @@ public class PhysicsBodyController implements Controller
 	{
 		return height == 0.0f ? actor.getHeight() : height * scene.getUnitScale();
 	}
+
+
 }

@@ -117,7 +117,7 @@ public class ControllerFactory
     
     private void assignParamsToClassFields(Controller controller, Map<String, Object> params) throws IllegalArgumentException, IllegalAccessException 
     {
-    	List<Field> annotatedFields = ControllerAnnotations.getAnnotatedFields(controller);     	
+    	List<Field> annotatedFields = ControllerAnnotations.getControllerParameterFields(controller);     	
     	for(Field field : annotatedFields)
     	{
 			String fieldName = field.getName();

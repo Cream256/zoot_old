@@ -18,7 +18,7 @@ public class ZootStateMachine implements EventListener
 	private ZootActor owner = null;
 	private ZootState previousState = null;
 	private ZootState currentState = NullState.INSTANCE;	
-	private Map<Class<? extends ZootState>, ZootState> states = new HashMap<Class<? extends ZootState>, ZootState>();
+	private Map<Integer, ZootState> states = new HashMap<Integer, ZootState>();
 	
 	public void init(ZootState state)
 	{
@@ -30,7 +30,7 @@ public class ZootStateMachine implements EventListener
 	
 	public void addState(ZootState state)
 	{
-		states.put(state.getClass(), state);		
+		states.put(state.getId(), state);		
 	}
 	
 	public Set<ZootState> getStates()
@@ -38,12 +38,12 @@ public class ZootStateMachine implements EventListener
 		return new HashSet<ZootState>(states.values());
 	}
 	
-	public ZootState getStateByClass(Class<? extends ZootState> clazz)
+	public ZootState getStateById(int id)
 	{
-		ZootState state = states.get(clazz);
+		ZootState state = states.get(id);
 		if(state == null)
 		{
-			throw new RuntimeZootException("No state for class: " + clazz.getSimpleName());
+			throw new RuntimeZootException("No state for id: " + id);
 		}
 		return state;
 	}

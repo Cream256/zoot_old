@@ -49,7 +49,6 @@ public class ZootTiledScene implements ZootScene
 	private boolean isDebugMode;
 	private Box2DDebugRenderer debugRender;
 	
-	
 	public ZootTiledScene(ZootTiledMap map, AssetManager assetManager, float viewportWidth, float viewportHeight, float worldUnitPerTile)
 	{						
     	this.unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());

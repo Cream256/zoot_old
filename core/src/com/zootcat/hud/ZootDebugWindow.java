@@ -93,7 +93,7 @@ public class ZootDebugWindow extends Window
 		for(Controller ctrl : actor.getControllers())
 		{
 			ZootPropertiesTree tree = new ZootPropertiesTree(ctrl.getClass().getSimpleName(), getSkin(), this);			
-			for(Field field : ControllerAnnotations.getAnnotatedFields(ctrl))
+			for(Field field : ControllerAnnotations.getControllerDebugFields(ctrl))
 			{								
 				field.setAccessible(true);
 				tree.addProperty(field.getName(), new ZootDynamicLabel(getSkin(), () -> getFieldValue(field, ctrl).toString()));

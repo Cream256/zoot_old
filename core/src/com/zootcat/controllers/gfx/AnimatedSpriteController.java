@@ -15,6 +15,7 @@ import com.zootcat.gfx.ZootAnimation;
 import com.zootcat.gfx.ZootAnimationFile;
 import com.zootcat.gfx.ZootAnimationOffset;
 import com.zootcat.scene.ZootActor;
+import com.zootcat.scene.ZootDirection;
 import com.zootcat.scene.ZootScene;
 
 public class AnimatedSpriteController implements RenderController 
@@ -117,6 +118,9 @@ public class AnimatedSpriteController implements RenderController
 		float x = actor.getX() + offset.right.x * scale;
 		float y = actor.getY() + offset.right.y * scale;
 		
+		ZootDirection direction = getDirection(actor);		
+		sprite.setFlip(direction == ZootDirection.Left, false);
+		
 		if(useActorSize)
 		{
 			sprite.setBounds(x, y, actor.getWidth(), actor.getHeight());
@@ -128,6 +132,16 @@ public class AnimatedSpriteController implements RenderController
 		
 		sprite.setOriginCenter();
 		sprite.setRotation(actor.getRotation());
+	}
+
+	private ZootDirection getDirection(ZootActor actor)
+	{
+		DirectionController ctrl = actor.tryGetController(DirectionController.class);
+		if(ctrl != null)
+		{
+			return ctrl.getDirection();
+		}
+		return ZootDirection.Right;
 	}
 
 }

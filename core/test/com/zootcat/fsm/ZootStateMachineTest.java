@@ -15,8 +15,7 @@ import org.junit.Test;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.zootcat.events.ZootEvent;
 import com.zootcat.exceptions.RuntimeZootException;
-import com.zootcat.fsm.states.IdleState;
-import com.zootcat.fsm.states.NamedState;
+import com.zootcat.fsm.states.BasicState;
 import com.zootcat.fsm.states.NullState;
 import com.zootcat.scene.ZootActor;
 
@@ -35,7 +34,7 @@ public class ZootStateMachineTest
 	@Test
 	public void addStateTest()
 	{
-		ZootState state1 = new NamedState("state1");
+		ZootState state1 = new BasicState("state1");
 		ZootState state2 = NullState.INSTANCE;
 		
 		sm.addState(state1);
@@ -54,25 +53,25 @@ public class ZootStateMachineTest
 	}
 	
 	@Test
-	public void getStateByClassTest()
+	public void getStateByIdTeset()
 	{
 		//given
-		ZootState state1 = NullState.INSTANCE;
-		ZootState state2 = new IdleState();
+		ZootState state1 = new BasicState("test");
+		ZootState state2 = new BasicState("test2");
 		
 		//when
 		sm.addState(state1);
 		sm.addState(state2);
 		
 		//then
-		assertEquals(state1, sm.getStateByClass(NullState.class));
-		assertEquals(state2, sm.getStateByClass(IdleState.class));		
+		assertEquals(state1, sm.getStateById(state1.getId()));
+		assertEquals(state2, sm.getStateById(state2.getId()));		
 	}
 	
 	@Test(expected = RuntimeZootException.class)
 	public void getStateByClassShouldThrowOnNotExistingIdTest()
 	{
-		sm.getStateByClass(NullState.class);
+		sm.getStateById(-1);
 	}
 	
 	@Test

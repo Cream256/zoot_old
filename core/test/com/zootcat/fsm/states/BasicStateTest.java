@@ -1,4 +1,4 @@
-package com.zootcat.fsm;
+package com.zootcat.fsm.states;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -9,17 +9,16 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import org.junit.Test;
 
 import com.zootcat.events.ZootEvent;
-import com.zootcat.fsm.states.NamedState;
 import com.zootcat.scene.ZootActor;
 
-public class NamedStateTest
+public class BasicStateTest
 {
 	@Test
 	public void hashCodeTest()
 	{
-		NamedState state1 = new NamedState("test");
-		NamedState state2 = new NamedState("test");
-		NamedState state3 = new NamedState("TEST");
+		BasicState state1 = new BasicState("test");
+		BasicState state2 = new BasicState("test");
+		BasicState state3 = new BasicState("TEST");
 		
 		assertEquals(state1.hashCode(), state2.hashCode());
 		assertFalse(state2.hashCode() == state3.hashCode());
@@ -28,9 +27,9 @@ public class NamedStateTest
 	@Test
 	public void equalsTest()
 	{
-		NamedState state1 = new NamedState("test");
-		NamedState state2 = new NamedState("test");
-		NamedState state3 = new NamedState("TEST");
+		BasicState state1 = new BasicState("test");
+		BasicState state2 = new BasicState("test");
+		BasicState state3 = new BasicState("TEST");
 		
 		assertTrue(state1.equals(state2));
 		assertTrue(state1.equals(state1));
@@ -47,24 +46,46 @@ public class NamedStateTest
 	}
 	
 	@Test
+	public void getIdTest()
+	{
+		BasicState state1 = new BasicState("test");
+		BasicState state2 = new BasicState("test");
+		BasicState state3 = new BasicState("TEST");
+		
+		assertEquals("test".hashCode(), state1.getId());
+		assertEquals("test".hashCode(), state2.getId());
+		assertEquals("TEST".hashCode(), state3.getId());
+		assertEquals(state1.getId(), state2.getId());
+		assertFalse(state2.getId() == state3.getId());
+	}
+	
+	@Test
+	public void getNameTest()
+	{
+		assertEquals("ABC", new BasicState("ABC").getName());
+		assertEquals("test", new BasicState("test").getName());
+		assertEquals("", new BasicState("").getName());
+	}
+	
+	@Test
 	public void toStringTest()
 	{
-		assertEquals("ABC", new NamedState("ABC").toString());
-		assertEquals("test", new NamedState("test").toString());
-		assertEquals("", new NamedState("").toString());		
+		assertEquals("ABC", new BasicState("ABC").toString());
+		assertEquals("test", new BasicState("test").toString());
+		assertEquals("", new BasicState("").toString());		
 	}
 	
 	@Test
 	public void handleTest()
 	{
-		assertFalse("NamedState should always return false", new NamedState("").handle(new ZootEvent()));
+		assertFalse("NamedState should always return false", new BasicState("").handle(new ZootEvent()));
 	}
 	
 	@Test
 	public void actionsShouldNotCauseAnySideEffectsTest()
 	{
 		//given
-		NamedState state = new NamedState("test");
+		BasicState state = new BasicState("test");
 		ZootActor actor = mock(ZootActor.class);
 		
 		//when

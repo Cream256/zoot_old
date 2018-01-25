@@ -1,19 +1,18 @@
 package com.zootcat.fsm.states;
 
 import com.zootcat.events.ZootEvent;
-import com.zootcat.events.ZootEventType;
 import com.zootcat.scene.ZootActor;
 
 //TODO add test
-public class WalkState extends BasicState
-{	
-	public static final int ID = WalkState.class.hashCode();
+public class JumpState extends BasicState
+{
+	public static final int ID = JumpState.class.hashCode();
 	
-	public WalkState()
+	public JumpState()
 	{
-		super("Walk");
+		super("Jump");
 	}
-
+	
 	@Override
 	public void onEnter(ZootActor actor)
 	{
@@ -23,10 +22,6 @@ public class WalkState extends BasicState
 	@Override
 	public boolean handle(ZootEvent event)
 	{
-		if(event.getType() == ZootEventType.Stop)
-		{
-			changeState(event, IdleState.ID);
-		}
 		return true;
 	}
 	
@@ -35,5 +30,4 @@ public class WalkState extends BasicState
 	{
 		return ID;
 	}
-	
 }

@@ -10,7 +10,21 @@ import com.zootcat.controllers.Controller;
 
 public class ControllerAnnotations
 {
-	public static List<Field> getAnnotatedFields(Controller controller)
+	public static List<Field> getControllerParameterFields(Controller controller)
+	{
+		return getAllFields(controller).stream().filter(field -> field.isAnnotationPresent(CtrlParam.class)).collect(Collectors.toList());
+	}
+	
+	public static List<Field> getControllerDebugFields(Controller controller)
+	{		
+		return getAllFields(controller)
+				.stream()
+				.filter((field -> (field.isAnnotationPresent(CtrlParam.class) && field.getAnnotation(CtrlParam.class).debug()) 
+						|| field.isAnnotationPresent(CtrlDebug.class)))
+				.collect(Collectors.toList());
+	}
+	
+	private static List<Field> getAllFields(Controller controller)
 	{
 		List<Field> allClassFields = new ArrayList<Field>();    	
 		Class<?> currentClass = controller.getClass();
@@ -18,7 +32,7 @@ public class ControllerAnnotations
 		{
 			allClassFields.addAll(Arrays.asList(currentClass.getDeclaredFields()));
 			currentClass = currentClass.getSuperclass();
-		}					
-		return allClassFields.stream().filter(field -> field.isAnnotationPresent(CtrlParam.class)).collect(Collectors.toList());
+		}	
+		return allClassFields;
 	}
 }

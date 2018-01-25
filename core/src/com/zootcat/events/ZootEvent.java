@@ -24,6 +24,11 @@ public class ZootEvent extends Event
 		return type;
 	}
 	
+	public void setType(ZootEventType type)
+	{
+		this.type = type;
+	}
+	
 	public ZootActor getTargetZootActor()
 	{
 		Actor target = getTarget();

@@ -36,4 +36,10 @@ public class NullState implements ZootState
 	{
 		return false;
 	}
+
+	@Override
+	public int getId()
+	{
+		return 0;
+	}
 }

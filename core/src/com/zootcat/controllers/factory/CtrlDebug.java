@@ -7,9 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface CtrlParam 
+public @interface CtrlDebug
 {
-	boolean required() default false;
-	boolean global() default false;
-	boolean debug() default false;
+	//this will show in debug window
 }

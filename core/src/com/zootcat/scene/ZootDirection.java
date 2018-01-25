@@ -4,26 +4,26 @@ import com.badlogic.gdx.math.MathUtils;
 
 public enum ZootDirection
 {
-    NONE, UP, DOWN, LEFT, RIGHT;
+    None, Up, Down, Left, Right;
 
     public ZootDirection invert()
     {
         switch(this) 
         {
-        case UP:
-            return DOWN;
+        case Up:
+            return Down;
             
-        case DOWN:
-            return UP;
+        case Down:
+            return Up;
             
-        case LEFT:
-            return RIGHT;
+        case Left:
+            return Right;
             
-        case RIGHT:
-            return LEFT;
+        case Right:
+            return Left;
             
         default:
-            return NONE;
+            return None;
         }
     }
     
@@ -44,7 +44,7 @@ public enum ZootDirection
             }
         }
         
-        return NONE;
+        return None;
     }
     
     public boolean isOpposite(ZootDirection other)
@@ -55,7 +55,7 @@ public enum ZootDirection
     private static ZootDirection getRandomLeftRight()
     {
     	int randomNumber = MathUtils.random(1, 100);
-    	if(randomNumber <= 50) return ZootDirection.LEFT;
-    	else return ZootDirection.RIGHT;
+    	if(randomNumber <= 50) return ZootDirection.Left;
+    	else return ZootDirection.Right;
     }
 }
