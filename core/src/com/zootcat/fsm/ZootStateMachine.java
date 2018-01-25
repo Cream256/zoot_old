@@ -25,7 +25,7 @@ public class ZootStateMachine implements EventListener
 		previousState = null;
 		currentState = state;
 		addState(state);		
-		currentState.onEnter(owner);		
+		currentState.onEnter(owner, null);		
 	}
 	
 	public void addState(ZootState state)
@@ -73,7 +73,7 @@ public class ZootStateMachine implements EventListener
 		currentState.onUpdate(owner, delta);
 	}
 
-	public void changeState(ZootState newState)
+	public void changeState(ZootState newState, ZootEvent event)
 	{
         if(newState == null)
         {
@@ -82,10 +82,10 @@ public class ZootStateMachine implements EventListener
         
         if(newState != currentState)
         {
-            currentState.onLeave(owner);
+            currentState.onLeave(owner, event);
             previousState = currentState;
             currentState = newState;
-            newState.onEnter(owner);            
+            newState.onEnter(owner, event);            
         }
 	}
 	

@@ -14,13 +14,13 @@ public class NullState implements ZootState
 	}
 	
 	@Override
-	public void onEnter(ZootActor actor)
+	public void onEnter(ZootActor actor, ZootEvent event)
 	{
 		//noop	
 	}
 
 	@Override
-	public void onLeave(ZootActor actor)
+	public void onLeave(ZootActor actor, ZootEvent event)
 	{
 		//noop
 	}

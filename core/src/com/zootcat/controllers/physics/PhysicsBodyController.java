@@ -24,20 +24,20 @@ import com.zootcat.scene.ZootScene;
 
 public class PhysicsBodyController implements Controller
 {
-	@CtrlParam protected float density = 1.0f;
-	@CtrlParam protected float friction = 0.0f;
-	@CtrlParam protected float restitution = 0.0f;
-	@CtrlParam protected float linearDamping = 0.0f;
-	@CtrlParam protected float angularDamping = 0.0f;	
-	@CtrlParam protected float gravityScale = 1.0f;
-	@CtrlParam protected float width = 0.0f;
-	@CtrlParam protected float height = 0.0f;
-	@CtrlParam protected boolean sensor = false;	
-	@CtrlParam protected boolean bullet = false;
-	@CtrlParam protected boolean canRotate = true;
-	@CtrlParam protected boolean canSleep = true;
-	@CtrlParam protected BodyType type = BodyType.DynamicBody;
-	@CtrlParam protected ZootBodyShape shape = ZootBodyShape.BOX;
+	@CtrlParam(debug = true) protected float density = 1.0f;
+	@CtrlParam(debug = true) protected float friction = 0.0f;
+	@CtrlParam(debug = true) protected float restitution = 0.0f;
+	@CtrlParam(debug = true) protected float linearDamping = 0.0f;
+	@CtrlParam(debug = true) protected float angularDamping = 0.0f;	
+	@CtrlParam(debug = true) protected float gravityScale = 1.0f;
+	@CtrlParam(debug = true) protected float width = 0.0f;
+	@CtrlParam(debug = true) protected float height = 0.0f;
+	@CtrlParam(debug = true) protected boolean sensor = false;	
+	@CtrlParam(debug = true) protected boolean bullet = false;
+	@CtrlParam(debug = true) protected boolean canRotate = true;
+	@CtrlParam(debug = true) protected boolean canSleep = true;
+	@CtrlParam(debug = true) protected BodyType type = BodyType.DynamicBody;
+	@CtrlParam(debug = true) protected ZootBodyShape shape = ZootBodyShape.BOX;
 	@CtrlParam(global = true) protected ZootScene scene;	
 	
 	private Body body;
@@ -88,10 +88,10 @@ public class PhysicsBodyController implements Controller
 	{
 		fixtures.forEach((fixture) -> fixture.setFilterData(collisionFilter));
 	}	
-	
+		
 	public void setVelocity(float vx, float vy)
 	{
-		setVelocity(vx, vy);
+		setVelocity(vx, vy, true, true);
 	}
 	
 	public void setVelocity(float vx, float vy, boolean setX, boolean setY)
@@ -174,6 +174,4 @@ public class PhysicsBodyController implements Controller
 	{
 		return height == 0.0f ? actor.getHeight() : height * scene.getUnitScale();
 	}
-
-
 }

@@ -76,7 +76,7 @@ public class ZootPropertiesTree extends Tree
 	
 	public void addProperty(Label name, Label value)
 	{		
-		table.add(name).minWidth(100).maxWidth(250).prefWidth(150);
+		table.add(name).minWidth(100).maxWidth(300).prefWidth(200);
 		table.add(value).minWidth(200).maxWidth(350).prefWidth(300);
 		table.row();
 	}

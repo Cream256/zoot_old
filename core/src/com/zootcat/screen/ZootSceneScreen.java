@@ -116,9 +116,7 @@ public class ZootSceneScreen implements Screen
     	
     	//character input    	
     	ZootActor player = scene.getActors((act) -> act.getName().equalsIgnoreCase("Frisker")).get(0);
-    	GameCharacterInputProcessor characterInputProcessor = new GameCharacterInputProcessor(player);
-    	characterInputProcessor.setMovementVelocity(1.0f);
-    	characterInputProcessor.setJumpVelocity(5.0f);    	
+    	GameCharacterInputProcessor characterInputProcessor = new GameCharacterInputProcessor(player);    	
     	player.addController(new InputProcessorController(characterInputProcessor));
     	scene.setFocusedActor(player);
     	

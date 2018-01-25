@@ -85,7 +85,7 @@ public class ZootStateMachineTest
 		sm.init(initialState);
 		
 		//then
-		verify(initialState, times(1)).onEnter(owner);
+		verify(initialState, times(1)).onEnter(owner, null);
 		assertEquals("Initial state should be current", initialState, sm.getCurrentState());		
 		assertEquals("Previous state should reset", null, sm.getPreviousState());
 		assertEquals("Initial state should be added to state machine", 1, sm.getStates().size());
@@ -104,7 +104,7 @@ public class ZootStateMachineTest
 	@Test(expected = RuntimeZootException.class)
 	public void changeStateShouldThrowOnNullStateTest()
 	{
-		sm.changeState(null);
+		sm.changeState(null, null);
 	}
 	
 	@Test
@@ -119,11 +119,11 @@ public class ZootStateMachineTest
 		sm.addState(secondState);
 		
 		//when
-		sm.changeState(secondState);
+		sm.changeState(secondState, null);
 		
 		//then
-		verify(firstState, times(1)).onLeave(owner);
-		verify(secondState, times(1)).onEnter(owner);		
+		verify(firstState, times(1)).onLeave(owner, null);
+		verify(secondState, times(1)).onEnter(owner, null);		
 		assertEquals(secondState, sm.getCurrentState());
 		assertEquals(firstState, sm.getPreviousState());
 	}

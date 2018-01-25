@@ -40,14 +40,14 @@ public class IdleStateTest
 	@Test
 	public void onEnterShouldSetIdleAnimationTest()
 	{
-		idleState.onEnter(actor);
+		idleState.onEnter(actor, null);
 		verify(animatedSpriteCtrlMock).setAnimation(idleState.getName());
 	}
 	
 	@Test
 	public void handleWalkEventTest()
 	{
-		assertTrue(idleState.handle(createEvent(ZootEventType.Walk)));
+		assertTrue(idleState.handle(createEvent(ZootEventType.WalkRight)));
 		assertEquals(WalkState.ID, actor.getStateMachine().getCurrentState().getId());
 	}
 	

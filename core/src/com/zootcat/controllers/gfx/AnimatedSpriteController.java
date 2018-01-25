@@ -20,9 +20,9 @@ import com.zootcat.scene.ZootScene;
 
 public class AnimatedSpriteController implements RenderController 
 {
-	@CtrlParam(required = true) private String file;
-	@CtrlParam private boolean useActorSize = true;
-	@CtrlParam private String startingAnimation = "";
+	@CtrlParam(required = true, debug = true) private String file;
+	@CtrlParam(debug = true) private boolean useActorSize = true;
+	@CtrlParam(debug = true) private String startingAnimation = "";
 	@CtrlParam(global = true) private ZootScene scene;
 	@CtrlParam(global = true) private AssetManager assetManager;
 	

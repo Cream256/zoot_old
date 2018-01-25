@@ -89,9 +89,9 @@ public class BasicStateTest
 		ZootActor actor = mock(ZootActor.class);
 		
 		//when
-		state.onEnter(actor);
+		state.onEnter(actor, null);
 		state.onUpdate(actor, 0.0f);
-		state.onLeave(actor);
+		state.onLeave(actor, null);
 		
 		//then
 		verifyZeroInteractions(actor);		

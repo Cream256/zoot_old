@@ -36,10 +36,8 @@ public class ZootActor extends Actor
 	@Override
 	public void act(float delta)
 	{				
-		//update
 		controllers.forEach(ctrl -> ctrl.onUpdate(delta, this));
-				
-		//act
+		stateMachine.update(delta);
 		super.act(delta);
 	}
 	

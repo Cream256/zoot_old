@@ -7,7 +7,7 @@ import com.zootcat.scene.ZootDirection;
 
 public class DirectionController implements Controller
 {
-	@CtrlParam private ZootDirection direction = ZootDirection.Right;
+	@CtrlParam(debug = true) private ZootDirection direction = ZootDirection.Right;
 		
 	@Override
 	public void init(ZootActor actor)
