@@ -2,9 +2,12 @@ package com.zootcat.scene;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -74,6 +77,34 @@ public class ZootActor extends Actor
 							.forEach(ctrl -> ctrl.onRotationChange(this));
 	}
 
+	@SuppressWarnings("unchecked")
+	public <T extends Controller> void controllerAction(Class<T> clazz, Consumer<T> action)
+	{		
+		Controller ctrl = tryGetController(clazz);
+		if(ctrl != null)
+		{
+			action.accept((T) ctrl);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends Controller> boolean controllerCondition(Class<T> clazz, Function<T, Boolean> func)
+	{		
+		Controller ctrl = tryGetController(clazz);
+		if(ctrl != null)
+		{
+			return func.apply((T) ctrl);
+		}
+		return false;
+	}
+	
+	//TODO add test
+	public void addControllers(Collection<Controller> newControllers)
+	{
+		newControllers.forEach((ctrl) -> controllers.add(ctrl));
+		newControllers.forEach((ctrl) -> ctrl.onAdd(this));
+	}
+	
 	public void addController(Controller controller)
 	{
 		controllers.add(controller);

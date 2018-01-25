@@ -18,7 +18,7 @@ public class IdleState extends BasicState
 	public void onEnter(ZootActor actor, ZootEvent event)
 	{
 		setAnimationBasedOnStateName(actor);
-		controllerAction(actor, PhysicsBodyController.class, (ctrl) -> ctrl.setVelocity(0.0f, 0.0f, true, false));
+		actor.controllerAction(PhysicsBodyController.class, (ctrl) -> ctrl.setVelocity(0.0f, 0.0f, true, false));
 	}
 	
 	@Override
@@ -29,10 +29,13 @@ public class IdleState extends BasicState
 			changeState(event, WalkState.ID);			
 		}
 		else if(event.getType() == ZootEventType.Jump)
-		{
+		{		
 			changeState(event, JumpState.ID);
 		}
-		
+		else if(event.getType() == ZootEventType.Fall)
+		{
+			changeState(event, FallState.ID);
+		}
 		return true;
 	}
 	

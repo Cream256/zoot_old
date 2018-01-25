@@ -8,36 +8,25 @@ import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootDirection;
 
 //TODO add test
-public class JumpState extends BasicState
+public class FallState extends BasicState
 {
-	public static final int ID = JumpState.class.hashCode();
-		
-	public JumpState()
-	{
-		super("Jump");
-	}
+	public static final int ID = FallState.class.hashCode();
 	
+	public FallState()
+	{
+		super("Fall");
+	}
+
 	@Override
 	public void onEnter(ZootActor actor, ZootEvent event)
 	{
 		setAnimationBasedOnStateName(actor);
-		actor.controllerAction(MoveableController.class, (ctrl) -> ctrl.jump());
 	}
 	
 	@Override
-	public void onUpdate(ZootActor actor, float delta)
-	{
-		//noop
-	}
-
-	@Override
 	public boolean handle(ZootEvent event)
 	{
-		if(event.getType() == ZootEventType.Fall)
-		{
-			changeState(event, FallState.ID);
-		}		
-		else if(event.getType() == ZootEventType.Ground)
+		if(event.getType() == ZootEventType.Ground)
 		{
 			changeState(event, IdleState.ID);
 		}

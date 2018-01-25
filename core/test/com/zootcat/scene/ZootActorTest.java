@@ -25,6 +25,7 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.zootcat.controllers.ChangeListenerController;
 import com.zootcat.controllers.Controller;
+import com.zootcat.controllers.factory.mocks.CountingController;
 import com.zootcat.controllers.factory.mocks.SimpleController;
 import com.zootcat.controllers.gfx.RenderController;
 import com.zootcat.exceptions.RuntimeZootException;
@@ -63,6 +64,24 @@ public class ZootActorTest
 		assertNotNull("Should have state machine", actor.getStateMachine());
 		assertEquals("State machine should listen to events", 1, actor.getListeners().size);
 		assertTrue("State machine should listen to events", actor.getListeners().contains(actor.getStateMachine(), true));
+	}
+	
+	@Test
+	public void actShouldUpdateControllersAndStateMachineTest()
+	{
+		//given
+		Controller ctrl1 = mock(Controller.class);
+		Controller ctrl2 = mock(Controller.class);		
+		ZootActor actor = new ZootActor();
+		
+		//when
+		actor.addController(ctrl1);
+		actor.addController(ctrl2);		
+		actor.act(0.5f);
+		
+		//then
+		verify(ctrl1, times(1)).onUpdate(0.5f, actor);
+		verify(ctrl2, times(1)).onUpdate(0.5f, actor);
 	}
 	
     @Test
@@ -193,7 +212,7 @@ public class ZootActorTest
 	}
 	
 	@Test
-	public void addControllerShouldInitializeControllersAfterSceneIsReadyAndActIsInvokedTest()
+	public void addControllerShouldInvokeOnAddMethodTest()
 	{
 		//given
 		ZootActor actor = new ZootActor();
@@ -212,7 +231,7 @@ public class ZootActorTest
 	}
 	
 	@Test
-	public void removeControllerShouldDeinitializeControllersAfterActIsInvokedTest()
+	public void removeControllerShouldInvokeOnRemoveMethodTest()
 	{
 		//given
 		ZootActor actor = new ZootActor();
@@ -348,5 +367,68 @@ public class ZootActorTest
 	{
 		ZootActor actor = new ZootActor();
 		assertNull(actor.tryGetController(SimpleController.class));
+	}
+	
+	@Test
+	public void controllerActionShouldNotThrowIfControllerIsNotFoundTest()
+	{
+		ZootActor actor = new ZootActor();
+		actor.controllerAction(SimpleController.class, (ctrl) -> {});
+	}
+	
+	@Test
+	public void controllerActionTest()
+	{
+		//given
+		ZootActor actor = new ZootActor();		
+		SimpleController ctrl = new SimpleController();
+		
+		//when
+		actor.addController(ctrl);
+		actor.controllerAction(SimpleController.class, (c) -> c.set(100));
+		
+		//then
+		assertEquals(100, ctrl.get());
+	}
+	
+	@Test
+	public void controllerConditionTest()
+	{
+		//given
+		ZootActor actor = new ZootActor();		
+		SimpleController ctrl = new SimpleController();		
+		
+		//when
+		ctrl.set(100);
+		actor.addController(ctrl);
+		
+		//then
+		assertTrue(actor.controllerCondition(SimpleController.class, (c) -> c.get() == 100));
+		assertFalse(actor.controllerCondition(SimpleController.class, (c) -> c.get() == 0));
+	}
+	
+	@Test
+	public void controllerConditionShouldReturnFalseIfControllerIsNotFoundTest()
+	{
+		ZootActor actor = new ZootActor();
+		assertFalse(actor.controllerCondition(SimpleController.class, (c) -> true));
+	}
+	
+	@Test
+	public void addControllersShouldAddFirstThenInvokeOnAddMethodsTest()
+	{
+		//given
+		CountingController ctrl1 = new CountingController();
+		CountingController ctrl2 = new CountingController();
+		CountingController ctrl3 = new CountingController();
+		ZootActor actor = new ZootActor();
+		
+		//when
+		actor.addControllers(Arrays.asList(ctrl1, ctrl2, ctrl3));
+		
+		//then
+		assertEquals(3, ctrl1.getControllersCountOnAdd());
+		assertEquals(3, ctrl2.getControllersCountOnAdd());
+		assertEquals(3, ctrl3.getControllersCountOnAdd());
 	}
 }

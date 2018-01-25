@@ -2,6 +2,7 @@ package com.zootcat.controllers.ai;
 
 import com.zootcat.controllers.ControllerAdapter;
 import com.zootcat.fsm.ZootStateMachine;
+import com.zootcat.fsm.states.FallState;
 import com.zootcat.fsm.states.IdleState;
 import com.zootcat.fsm.states.JumpState;
 import com.zootcat.fsm.states.WalkState;
@@ -17,5 +18,6 @@ public class BasicAI extends ControllerAdapter
 		sm.init(new IdleState());
 		sm.addState(new WalkState());
 		sm.addState(new JumpState());
+		sm.addState(new FallState());
 	}
 }

@@ -1,5 +1,6 @@
 package com.zootcat.map.tiled;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -96,6 +97,8 @@ public class ZootTiledMapActorFactory
 
 	protected void setActorControllers(final MapProperties actorProperties, ZootActor actor)
 	{		
+		List<Controller> createdControllers = new ArrayList<Controller>();
+		
 		actorProperties.getKeys().forEachRemaining(ctrlName ->
 		{								
 			if(controllerFactory.contains(ctrlName))
@@ -103,9 +106,11 @@ public class ZootTiledMapActorFactory
 				String controllerParams = actorProperties.get(ctrlName, String.class);
 				Controller controller = controllerFactory.create(ctrlName, controllerParams);
 				controller.init(actor);		//initialize first, then assign
-				actor.addController(controller);
+				createdControllers.add(controller);
 			}
 		});
+		
+		actor.addControllers(createdControllers);
 	}
 		
 	protected String getPropertyOrDefault(MapObject mapObject, String key, String defaultValue)

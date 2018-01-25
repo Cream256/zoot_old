@@ -16,6 +16,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.zootcat.controllers.Controller;
+import com.zootcat.controllers.factory.CtrlDebug;
 import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.physics.ZootBodyShape;
@@ -39,6 +40,8 @@ public class PhysicsBodyController implements Controller
 	@CtrlParam(debug = true) protected BodyType type = BodyType.DynamicBody;
 	@CtrlParam(debug = true) protected ZootBodyShape shape = ZootBodyShape.BOX;
 	@CtrlParam(global = true) protected ZootScene scene;	
+	@CtrlDebug private float velocityX = 0.0f;
+	@CtrlDebug private float velocityY = 0.0f;
 	
 	private Body body;
 	private List<Fixture> fixtures;
@@ -72,6 +75,10 @@ public class PhysicsBodyController implements Controller
 		float bottomLeftY = body.getPosition().y - actor.getHeight() * 0.5f;
 		actor.setPosition(bottomLeftX, bottomLeftY);
 		actor.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
+		
+		Vector2 velocity = body.getLinearVelocity();
+		velocityX = velocity.x;
+		velocityY = velocity.y;
 	}
 		
 	public Body getBody()
@@ -112,7 +119,7 @@ public class PhysicsBodyController implements Controller
 		body.destroyFixture(fixture);
 		fixtures.remove(fixture);		
 	}
-	
+		
 	protected BodyDef createBodyDef(ZootActor actor) 
 	{
 		BodyDef bodyDef = new BodyDef();

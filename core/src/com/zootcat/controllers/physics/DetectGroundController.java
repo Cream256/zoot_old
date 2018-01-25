@@ -9,38 +9,37 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
+import com.zootcat.controllers.factory.CtrlDebug;
 import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
-import com.zootcat.controllers.factory.CtrlDebug;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
-import com.zootcat.utils.ZootUtils;
 
-public class JumpableController extends PhysicsCollisionController
+//TODO add tests
+public class DetectGroundController extends PhysicsCollisionController
 {
-	@CtrlParam private int feetWidth = 0;		
-	@CtrlParam private int jumpTimeout = 0;
-	@CtrlParam(debug = true) private float jumpForce = 1.0f;	
-	@CtrlParam(global = true) private ZootScene scene;	
-	@CtrlDebug private int feetContactCount = 0;
-	@CtrlDebug private int currentJumpTimeout = 0;
-	@CtrlDebug private ZootActor actorWithFeet;
+	@CtrlParam private int sensorWidth = 0;		
+	@CtrlParam(global = true) private ZootScene scene;		
+	@CtrlDebug private int contactCount = 0;
+	@CtrlDebug private boolean isOnGround = false;
+		
 	private Fixture feet;
+	private ZootEvent groundEvent;
+	private ZootActor actorWithSensor;
 	private PhysicsBodyController physicsCtrl;
-	private ZootEvent landEvent;
-	
+		
 	@Override
 	public void init(ZootActor actor)
 	{
-		landEvent = new ZootEvent(ZootEventType.Land);
+		groundEvent = new ZootEvent(ZootEventType.Ground);
 	}
 
 	@Override
 	public void onAdd(ZootActor actor)
 	{
 		super.onAdd(actor);
-		actorWithFeet = actor;
+		actorWithSensor = actor;
 		physicsCtrl = actor.getController(PhysicsBodyController.class);
 				
 		//create feet shape		
@@ -65,20 +64,23 @@ public class JumpableController extends PhysicsCollisionController
 	@Override
 	public void onUpdate(float delta, ZootActor actor)
 	{
-		currentJumpTimeout = Math.max(0, currentJumpTimeout - ZootUtils.trunc(delta*1000.0f));
+		boolean nowOnGround = contactCount > 0;
+		
+		if(nowOnGround && !isOnGround)
+		{
+			groundEvent.reset();
+			groundEvent.setType(ZootEventType.Ground);
+			actorWithSensor.fire(groundEvent);			
+		}
+		isOnGround = nowOnGround;
 	}
 	
 	@Override
 	public boolean beginContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
-		if(contactWithFeetSensor(actorA, actorB, contact))
+		if(isContactWithGroundSensor(actorA, actorB, contact))
 		{
-			if(++feetContactCount == 1)
-			{
-				landEvent.reset();
-				landEvent.setType(ZootEventType.Land);
-				actorWithFeet.fire(landEvent);
-			}
+			++contactCount;
 			return true;
 		}
 		return false;
@@ -87,9 +89,9 @@ public class JumpableController extends PhysicsCollisionController
 	@Override
 	public boolean endContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
-		if(contactWithFeetSensor(actorA, actorB, contact))
+		if(isContactWithGroundSensor(actorA, actorB, contact))
 		{
-			--feetContactCount;
+			--contactCount;
 			return true;
 		}
 		return false;
@@ -107,34 +109,26 @@ public class JumpableController extends PhysicsCollisionController
 		return false;
 	}
 	
-	public boolean canJump()
+	public boolean isOnGround()
 	{
-		return feetContactCount > 0 && currentJumpTimeout == 0;
+		return isOnGround;
 	}
-	
-	public void jump()
-	{
-		if(!canJump()) return;
-		
-		physicsCtrl.setVelocity(0.0f, jumpForce, false, true);
-		currentJumpTimeout = jumpTimeout;
-	}
-	
-	private boolean contactWithFeetSensor(ZootActor actorA, ZootActor actorB, Contact contact)
+
+	private boolean isContactWithGroundSensor(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
 		boolean contactWithFeet = contact.getFixtureA() == feet || contact.getFixtureB() == feet;
-		boolean contactWithActor = actorA == actorWithFeet || actorB == actorWithFeet;
+		boolean contactWithActor = actorA == actorWithSensor || actorB == actorWithSensor;
 		boolean notSensors = !contact.getFixtureA().isSensor() || !contact.getFixtureB().isSensor();
 		return contactWithFeet && contactWithActor && notSensors;
 	}
 
 	private float calculateWidth(ZootActor actor)
 	{
-		if(feetWidth == 0)
+		if(sensorWidth == 0)
 		{
 			return actor.getWidth() / 2.0f;
 		}
-		return (feetWidth / 2.0f) * scene.getUnitScale();
+		return (sensorWidth / 2.0f) * scene.getUnitScale();
 	}
 	
 	private Shape createFeetShape(ZootActor actor)
