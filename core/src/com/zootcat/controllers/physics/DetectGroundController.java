@@ -16,9 +16,10 @@ import com.zootcat.events.ZootEventType;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
-//TODO add tests
 public class DetectGroundController extends PhysicsCollisionController
 {
+	public static final float SENSOR_HEIGHT_PERCENT = 0.2f;
+	
 	@CtrlParam private int sensorWidth = 0;		
 	@CtrlParam(global = true) private ZootScene scene;		
 	@CtrlDebug private int contactCount = 0;
@@ -136,7 +137,7 @@ public class DetectGroundController extends PhysicsCollisionController
 		Vector2 center = new Vector2(0.0f, -actor.getHeight() / 2.0f);		
 		
 		float feetWidth = calculateWidth(actor);
-		float feetHeight = actor.getHeight() * 0.1f;	//10% of actor height
+		float feetHeight = (actor.getHeight() * SENSOR_HEIGHT_PERCENT) / 2.0f;	//10% of actor height
 		
 		PolygonShape feetShape = new PolygonShape();
 		feetShape.setAsBox(feetWidth, feetHeight, center, 0.0f);				

@@ -2,37 +2,23 @@ package com.zootcat.fsm.states;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import com.zootcat.controllers.gfx.AnimatedSpriteController;
-import com.zootcat.controllers.physics.PhysicsBodyController;
-import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
-import com.zootcat.scene.ZootActor;
+import com.zootcat.testing.ZootStateTestCase;
 
-public class IdleStateTest
+public class IdleStateTest extends ZootStateTestCase
 {
-	private ZootActor actor;
 	private IdleState idleState;	
-	@Mock private AnimatedSpriteController animatedSpriteCtrlMock;
-	@Mock private PhysicsBodyController physicsBodyCtrlMock;
 		
 	@Before
 	public void setup()
-	{
-		MockitoAnnotations.initMocks(this);
-		
+	{		
+		super.setup();
 		idleState = new IdleState();
-		actor = new ZootActor();
-		actor.addController(animatedSpriteCtrlMock);
-		actor.addController(physicsBodyCtrlMock);		
-		actor.getStateMachine().addState(new WalkState());
-		actor.getStateMachine().addState(new JumpState());
 	}
 	
 	@Test
@@ -44,15 +30,19 @@ public class IdleStateTest
 	@Test
 	public void onEnterShouldSetIdleAnimationTest()
 	{
+		//first invocation is done by DefaultStateMachineController
+		verify(animatedSpriteCtrlMock, times(1)).setAnimation(idleState.getName());
 		idleState.onEnter(actor, null);
-		verify(animatedSpriteCtrlMock).setAnimation(idleState.getName());
+		verify(animatedSpriteCtrlMock, times(2)).setAnimation(idleState.getName());
 	}
 	
 	@Test
 	public void onEnterShouldZeroHoritontalVelocityActorTest()
 	{
+		//first invocation is done by DefaultStateMachineController
+		verify(animatedSpriteCtrlMock, times(1)).setAnimation(idleState.getName());
 		idleState.onEnter(actor, null);
-		verify(physicsBodyCtrlMock).setVelocity(0.0f, 0.0f, true, false);
+		verify(physicsBodyCtrlMock, times(2)).setVelocity(0.0f, 0.0f, true, false);
 	}
 	
 	@Test
@@ -69,13 +59,5 @@ public class IdleStateTest
 	{
 		assertTrue(idleState.handle(createEvent(ZootEventType.Jump)));
 		assertEquals(JumpState.ID, actor.getStateMachine().getCurrentState().getId());
-	}
-	
-	private ZootEvent createEvent(ZootEventType type)
-	{
-		ZootEvent event = new ZootEvent(type);
-		event.setTarget(actor);
-		return event;
-	}
-	
+	}	
 }

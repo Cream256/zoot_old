@@ -78,7 +78,7 @@ public class ZootPhysics implements Disposable
 	}
 	
 	public void dispose() 
-	{
+	{		
 		world.dispose();
 		world = null;
 	}

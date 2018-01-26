@@ -23,7 +23,7 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 		bindUp(Input.Keys.LEFT, () -> stop());
 		bindDown(Input.Keys.LEFT, () -> walk(ZootDirection.Left));
 		
-		bindUp(Input.Keys.SPACE, () -> jump());
+		bindDown(Input.Keys.SPACE, () -> jump());
 	}
 	
 	public void setPlayer(ZootActor actor)

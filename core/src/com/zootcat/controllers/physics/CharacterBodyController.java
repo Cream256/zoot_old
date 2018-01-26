@@ -5,16 +5,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.utils.ZootUtils;
 
-//TODO make circles only in the lower half of the body to avoid getting stuck on objects
-//TODO make the number of circles configurable
 public class CharacterBodyController extends PhysicsBodyController
 {	
 	@CtrlParam private boolean vertical = true;
@@ -70,7 +68,7 @@ public class CharacterBodyController extends PhysicsBodyController
 	
 	private List<FixtureDef> createHorizontalCharacterFixtures(ZootActor actor) 
 	{		
-		float circleRadius = actor.getHeight() / 2.0f;		
+		float circleRadius = actor.getHeight() / 4.0f;		
 		int circleCount = ZootUtils.trunc(actor.getWidth() / circleRadius);			
 		List<FixtureDef> fixtureDefs = new ArrayList<FixtureDef>(circleCount + 1);
 		
@@ -115,5 +113,4 @@ public class CharacterBodyController extends PhysicsBodyController
 		//result
 		return fixtureDefs;
 	}
-	
 }

@@ -7,7 +7,6 @@ import com.zootcat.events.ZootEventType;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootDirection;
 
-//TODO add test
 public class WalkState extends BasicState
 {	
 	public static final int ID = WalkState.class.hashCode();

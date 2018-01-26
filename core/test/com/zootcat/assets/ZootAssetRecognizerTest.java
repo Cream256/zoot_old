@@ -59,6 +59,12 @@ public class ZootAssetRecognizerTest
 	}
 	
 	@Test
+	public void getAssetTypeShouldReturnNullIfNoExtensionIsProvidedTest()
+	{
+		assertNull(recognizer.getAssetType("FileWithNoExtension"));
+	}
+	
+	@Test
 	public void getAssetDescriptorTest()
 	{
 		recognizer.setAssetType(".png", Texture.class);

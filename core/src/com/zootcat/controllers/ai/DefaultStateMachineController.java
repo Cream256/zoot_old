@@ -8,8 +8,7 @@ import com.zootcat.fsm.states.JumpState;
 import com.zootcat.fsm.states.WalkState;
 import com.zootcat.scene.ZootActor;
 
-//TODO rename this class
-public class BasicAI extends ControllerAdapter
+public class DefaultStateMachineController extends ControllerAdapter
 {
 	@Override
 	public void init(ZootActor actor) 

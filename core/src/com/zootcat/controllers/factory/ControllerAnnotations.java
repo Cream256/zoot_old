@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.zootcat.controllers.Controller;
+import com.zootcat.exceptions.RuntimeZootException;
 
 public class ControllerAnnotations
 {
@@ -22,6 +23,22 @@ public class ControllerAnnotations
 				.filter((field -> (field.isAnnotationPresent(CtrlParam.class) && field.getAnnotation(CtrlParam.class).debug()) 
 						|| field.isAnnotationPresent(CtrlDebug.class)))
 				.collect(Collectors.toList());
+	}
+	
+	public static void setControllerParameter(Controller controller, String paramName, Object value)
+	{
+		try
+		{
+			Field field = getControllerParameterFields(controller)
+				.stream().filter(f -> f.getName().equalsIgnoreCase(paramName))
+				.findFirst().orElseThrow(() -> new RuntimeZootException("Controller param not found: " + paramName));	
+			field.setAccessible(true);
+			field.set(controller, value);
+		} 
+		catch (IllegalArgumentException | IllegalAccessException e)
+		{
+			throw new RuntimeZootException(e);
+		}
 	}
 	
 	private static List<Field> getAllFields(Controller controller)

@@ -98,7 +98,6 @@ public class ZootActor extends Actor
 		return false;
 	}
 	
-	//TODO add test
 	public void addControllers(Collection<Controller> newControllers)
 	{
 		newControllers.forEach((ctrl) -> controllers.add(ctrl));

@@ -11,7 +11,7 @@ public class MoveableController implements Controller
 {
 	@CtrlParam(debug = true) private float moveForce = 1.0f;
 	@CtrlParam(debug = true) private float jumpForce = 1.0f;
-	@CtrlParam private int jumpTimeout = 0;
+	@CtrlParam(debug = true) private int jumpTimeout = 0;
 	@CtrlDebug private int timeout = 0;
 	
 	private PhysicsBodyController physicsCtrl;
@@ -40,15 +40,16 @@ public class MoveableController implements Controller
 	@Override
 	public void onUpdate(float delta, ZootActor actor)
 	{
-		jumpTimeout = Math.max(0, jumpTimeout - ZootUtils.trunc(delta * 1000));
+		timeout = Math.max(0, timeout - ZootUtils.trunc(delta * 1000));
 	}
 	
 	public void jump()
 	{
-		if(jumpTimeout > 0) return;
+		if(timeout > 0) return;
 		if(!groundCtrl.isOnGround()) return;
 		
 		physicsCtrl.setVelocity(0.0f, jumpForce, false, true);
+		timeout = jumpTimeout;
 	}
 	
 	public void move(ZootDirection direction)
