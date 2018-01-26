@@ -2,12 +2,15 @@ package com.zootcat.fsm.states;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zootcat.events.ZootEventType;
+import com.zootcat.scene.ZootDirection;
 import com.zootcat.testing.ZootStateTestCase;
 
 public class IdleStateTest extends ZootStateTestCase
@@ -46,12 +49,43 @@ public class IdleStateTest extends ZootStateTestCase
 	}
 	
 	@Test
-	public void handleWalkEventTest()
+	public void handleWalkEventAtTheSameDirectionTest()
 	{
+		//when
+		when(directionCtrlMock.getDirection()).thenReturn(ZootDirection.Right);		
+		idleState.onEnter(actor, null);
+		
+		//then
 		assertTrue(idleState.handle(createEvent(ZootEventType.WalkRight)));
 		assertEquals(WalkState.ID, actor.getStateMachine().getCurrentState().getId());
+		
+		//when
+		when(directionCtrlMock.getDirection()).thenReturn(ZootDirection.Left);
+		idleState.onEnter(actor, null);
+		
+		//then
 		assertTrue(idleState.handle(createEvent(ZootEventType.WalkLeft)));
 		assertEquals(WalkState.ID, actor.getStateMachine().getCurrentState().getId());
+	}
+	
+	@Test
+	public void handleWalkEventAtDifferentDirectionTest()
+	{
+		//when
+		when(directionCtrlMock.getDirection()).thenReturn(ZootDirection.Left);		
+		idleState.onEnter(actor, null);
+		
+		//then
+		assertTrue(idleState.handle(createEvent(ZootEventType.WalkRight)));
+		assertEquals(TurnState.ID, actor.getStateMachine().getCurrentState().getId());
+		
+		//when
+		when(directionCtrlMock.getDirection()).thenReturn(ZootDirection.Right);
+		idleState.onEnter(actor, null);
+		
+		//then
+		assertTrue(idleState.handle(createEvent(ZootEventType.WalkLeft)));
+		assertEquals(TurnState.ID, actor.getStateMachine().getCurrentState().getId());		
 	}
 		
 	@Test

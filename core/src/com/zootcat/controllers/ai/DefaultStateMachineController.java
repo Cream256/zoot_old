@@ -5,6 +5,7 @@ import com.zootcat.fsm.ZootStateMachine;
 import com.zootcat.fsm.states.FallState;
 import com.zootcat.fsm.states.IdleState;
 import com.zootcat.fsm.states.JumpState;
+import com.zootcat.fsm.states.TurnState;
 import com.zootcat.fsm.states.WalkState;
 import com.zootcat.scene.ZootActor;
 
@@ -18,5 +19,6 @@ public class DefaultStateMachineController extends ControllerAdapter
 		sm.addState(new WalkState());
 		sm.addState(new JumpState());
 		sm.addState(new FallState());
+		sm.addState(new TurnState());
 	}
 }

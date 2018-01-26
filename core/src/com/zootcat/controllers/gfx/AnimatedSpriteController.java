@@ -86,6 +86,17 @@ public class AnimatedSpriteController implements RenderController
 		sprite.draw(batch);
 	}
 	
+	public ZootAnimation getCurrentAnimation()
+	{
+		return currentAnimation;
+	}
+	
+	public ZootAnimation getAnimation(String animationName)
+	{
+		int newId = ZootAnimation.getAnimationId(animationName);				
+		return animations.get(newId);
+	}
+	
 	public void setAnimation(String animationName)
 	{
 		if(currentAnimation != null)
@@ -93,8 +104,7 @@ public class AnimatedSpriteController implements RenderController
 			currentAnimation.stop();
 		}
 		
-		int newId = ZootAnimation.getAnimationId(animationName);				
-		currentAnimation = animations.get(newId);
+		currentAnimation = getAnimation(animationName);
 		
 		if(currentAnimation != null)
 		{
@@ -143,5 +153,4 @@ public class AnimatedSpriteController implements RenderController
 		}
 		return ZootDirection.Right;
 	}
-
 }

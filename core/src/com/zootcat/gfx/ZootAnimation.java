@@ -116,6 +116,11 @@ public class ZootAnimation
 		return playing;
 	}
 	
+	public boolean isFinished()
+	{
+		return animation.isAnimationFinished(animationTime);
+	}
+	
 	public int getId()
 	{
 		return getAnimationId(name);

@@ -71,13 +71,13 @@ public class BasicState implements ZootState
 		return name;
 	}
 	
-	protected static void changeState(ZootActor actor, int stateId)
+	protected void changeState(ZootActor actor, int stateId)
 	{
 		ZootStateMachine sm = actor.getStateMachine();
 		sm.changeState(sm.getStateById(stateId), null);
 	}
 	
-	protected static void changeState(ZootEvent event, int stateId)
+	protected void changeState(ZootEvent event, int stateId)
 	{
 		ZootStateMachine sm = event.getTargetZootActor().getStateMachine();
 		sm.changeState(sm.getStateById(stateId), event);
