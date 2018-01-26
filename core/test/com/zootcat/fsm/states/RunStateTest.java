@@ -90,4 +90,11 @@ public class RunStateTest extends ZootStateTestCase
 		assertTrue(runState.handle(createEvent(ZootEventType.Fall)));
 		assertEquals(FallState.ID, actor.getStateMachine().getCurrentState().getId());
 	}	
+	
+	@Test
+	public void handleHurtEventTest()
+	{
+		assertTrue(runState.handle(createEvent(ZootEventType.Hurt)));
+		assertEquals(HurtState.ID, actor.getStateMachine().getCurrentState().getId());
+	}
 }

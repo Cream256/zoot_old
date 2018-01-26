@@ -120,4 +120,11 @@ public class TurnStateTest extends ZootStateTestCase
 		assertTrue(turnState.handle(createEvent(ZootEventType.Jump)));
 		assertEquals(JumpState.ID, actor.getStateMachine().getCurrentState().getId());
 	}
+	
+	@Test
+	public void handleHurtEventTest()
+	{
+		assertTrue(turnState.handle(createEvent(ZootEventType.Hurt)));
+		assertEquals(HurtState.ID, actor.getStateMachine().getCurrentState().getId());
+	}
 }

@@ -2,6 +2,7 @@ package com.zootcat.fsm.states;
 
 import com.zootcat.controllers.physics.PhysicsBodyController;
 import com.zootcat.events.ZootEvent;
+import com.zootcat.events.ZootEventType;
 import com.zootcat.scene.ZootActor;
 
 public class AttackState extends AnimationBasedState
@@ -28,6 +29,10 @@ public class AttackState extends AnimationBasedState
 	@Override
 	public boolean handle(ZootEvent event)
 	{	
+		if(event.getType() == ZootEventType.Hurt)
+		{
+			changeState(event, HurtState.ID);
+		}
 		return true;
 	}
 	

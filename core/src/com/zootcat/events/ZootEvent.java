@@ -66,7 +66,8 @@ public class ZootEvent extends Event
 	public void reset() 
 	{
 		super.reset();
-		type = ZootEventType.None;
+		userObject = null;
+		type = ZootEventType.None;		
 	}
 	
 	@Override

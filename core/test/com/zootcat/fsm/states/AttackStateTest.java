@@ -1,6 +1,7 @@
 package com.zootcat.fsm.states;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -10,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import com.zootcat.events.ZootEventType;
 import com.zootcat.gfx.ZootAnimation;
 import com.zootcat.scene.ZootDirection;
 import com.zootcat.testing.ZootStateTestCase;
@@ -109,5 +111,12 @@ public class AttackStateTest extends ZootStateTestCase
 		
 		//then
 		assertEquals(IdleState.ID, actor.getStateMachine().getCurrentState().getId());
+	}
+	
+	@Test
+	public void handleHurtEventTest()
+	{
+		assertTrue(attackState.handle(createEvent(ZootEventType.Hurt)));
+		assertEquals(HurtState.ID, actor.getStateMachine().getCurrentState().getId());
 	}
 }

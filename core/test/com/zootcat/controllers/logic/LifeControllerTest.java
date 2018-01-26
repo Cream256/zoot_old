@@ -1,6 +1,8 @@
 package com.zootcat.controllers.logic;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +25,22 @@ public class LifeControllerTest
 	{
 		assertEquals(LifeController.DEFAULT_LIFE, ctrl.getLife());
 		assertEquals(LifeController.DEFAULT_LIFE, ctrl.getMaxLife());		
+	}
+	
+	@Test
+	public void isAliveTest()
+	{
+		ctrl.setLife(3);
+		assertTrue(ctrl.isAlive());
+		
+		ctrl.setLife(1);
+		assertTrue(ctrl.isAlive());
+		
+		ctrl.setLife(0);
+		assertFalse(ctrl.isAlive());
+		
+		ctrl.setLife(-1);
+		assertFalse(ctrl.isAlive());
 	}
 	
 	@Test

@@ -69,4 +69,9 @@ public class LifeController extends ControllerAdapter
 		maxLife = MathUtils.clamp(value, 1, Integer.MAX_VALUE);
 		life = MathUtils.clamp(life, 0, maxLife);
 	}
+	
+	public boolean isAlive()
+	{
+		return life > 0;
+	}
 }

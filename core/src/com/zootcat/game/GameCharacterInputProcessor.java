@@ -38,15 +38,21 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	
 	private boolean hurt()
 	{
-		sendEventToActor(player, ZootEventType.Hurt);
+		sendEventToActor(player, ZootEventType.Hurt, -1);
 		return true;
 	}
 	
 	private void sendEventToActor(ZootActor actor, ZootEventType eventType)
 	{
+		sendEventToActor(actor, eventType, null);
+	}
+	
+	private void sendEventToActor(ZootActor actor, ZootEventType eventType, Object userObj)
+	{
 		ZootEvent event = eventPool.obtain();
 		event.setType(eventType);				
-		actor.fire(event);
+		event.setUserObject(userObj);
+		actor.fire(event);		
 		eventPool.free(event);
 	}
 	

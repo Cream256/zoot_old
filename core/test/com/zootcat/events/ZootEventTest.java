@@ -48,9 +48,11 @@ public class ZootEventTest
 	public void resetTest()
 	{
 		ZootEvent event = new ZootEvent(ZootEventType.Attack);
+		event.setUserObject("UserObj");
 		
 		event.reset();
-		assertEquals(ZootEventType.None, event.getType());		
+		assertEquals(ZootEventType.None, event.getType());
+		assertNull(event.getUserObject(String.class));
 	}
 	
 	@Test
