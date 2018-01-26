@@ -51,7 +51,11 @@ public class WalkState extends BasicState
 		if(event.getType() == ZootEventType.Fall)
 		{
 			changeState(event, FallState.ID);
-		}		
+		}
+		else if(event.getType() == ZootEventType.Attack)
+		{
+			changeState(event, AttackState.ID);
+		}	
 		return true;
 	}
 	

@@ -24,6 +24,9 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 		bindDown(Input.Keys.LEFT, () -> run(ZootDirection.Left));
 		
 		bindDown(Input.Keys.SPACE, () -> jump());
+		
+		bindDown(Input.Keys.CONTROL_LEFT, () -> attack());
+		bindDown(Input.Keys.CONTROL_RIGHT, () -> attack());
 	}
 	
 	public void setPlayer(ZootActor actor)
@@ -37,6 +40,12 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 		event.setType(eventType);				
 		actor.fire(event);
 		eventPool.free(event);
+	}
+	
+	private boolean attack()
+	{
+		sendEventToActor(player, ZootEventType.Attack);
+		return true;
 	}
 	
 	private boolean jump()

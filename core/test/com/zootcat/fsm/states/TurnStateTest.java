@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
+import com.zootcat.events.ZootEventType;
 import com.zootcat.gfx.ZootAnimation;
 import com.zootcat.scene.ZootDirection;
 import com.zootcat.testing.ZootStateTestCase;
@@ -111,5 +112,12 @@ public class TurnStateTest extends ZootStateTestCase
 		
 		//then
 		verify(directionCtrlMock, times(1)).setDirection(ZootDirection.Right);
+	}
+	
+	@Test
+	public void handleJumpEventTest()
+	{
+		assertTrue(turnState.handle(createEvent(ZootEventType.Jump)));
+		assertEquals(JumpState.ID, actor.getStateMachine().getCurrentState().getId());
 	}
 }
