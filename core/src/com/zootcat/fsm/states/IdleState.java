@@ -31,11 +31,12 @@ public class IdleState extends BasicState
 	@Override
 	public boolean handle(ZootEvent event)
 	{		
-		if(event.getType() == ZootEventType.WalkRight || event.getType() == ZootEventType.WalkLeft)
-		{		
+		if(ZootStateUtils.isMoveEvent(event))
+		{
 			ZootDirection eventDirection = ZootStateUtils.getDirectionFromEvent(event);
-			int nextStateId = eventDirection == actorDirection || actorDirection == ZootDirection.None ? WalkState.ID : TurnState.ID;
-			changeState(event, nextStateId);	
+			boolean turn = eventDirection != actorDirection && actorDirection != ZootDirection.None;			
+			int nextStateId = turn ? TurnState.ID : (ZootStateUtils.isRunEvent(event) ? RunState.ID : WalkState.ID);
+			changeState(event, nextStateId);
 		}
 		else if(event.getType() == ZootEventType.Jump)
 		{		

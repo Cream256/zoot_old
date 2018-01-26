@@ -20,6 +20,19 @@ public class ZootStateUtils
 		}
 	}
 	
+	public static boolean isRunEvent(ZootEvent event)
+	{
+		switch(event.getType())
+		{
+		case RunRight:
+		case RunLeft:
+			return true;
+		
+		default:
+			return false;
+		}	
+	}
+	
 	public static ZootDirection getDirectionFromEvent(ZootEvent event)
 	{
 		switch(event.getType())

@@ -47,4 +47,17 @@ public class ZootStateUtilsTest
 		assertEquals(ZootDirection.None, ZootStateUtils.getDirectionFromEvent(new ZootEvent(ZootEventType.Stop)));
 		assertEquals(ZootDirection.None, ZootStateUtils.getDirectionFromEvent(new ZootEvent(ZootEventType.Update)));	
 	}
+	
+	@Test
+	public void isRunEventTest()
+	{
+		assertTrue(ZootStateUtils.isRunEvent(new ZootEvent(ZootEventType.RunLeft)));
+		assertTrue(ZootStateUtils.isRunEvent(new ZootEvent(ZootEventType.RunRight)));
+		assertFalse(ZootStateUtils.isRunEvent(new ZootEvent(ZootEventType.WalkLeft)));
+		assertFalse(ZootStateUtils.isRunEvent(new ZootEvent(ZootEventType.WalkRight)));
+		assertFalse(ZootStateUtils.isRunEvent(new ZootEvent(ZootEventType.Attack)));
+		assertFalse(ZootStateUtils.isRunEvent(new ZootEvent(ZootEventType.Collide)));
+		assertFalse(ZootStateUtils.isRunEvent(new ZootEvent(ZootEventType.Stop)));
+		assertFalse(ZootStateUtils.isRunEvent(new ZootEvent(ZootEventType.Update)));
+	}
 }

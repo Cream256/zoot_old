@@ -9,7 +9,8 @@ import com.zootcat.utils.ZootUtils;
 
 public class MoveableController implements Controller
 {
-	@CtrlParam(debug = true) private float moveForce = 1.0f;
+	@CtrlParam(debug = true) private float walkForce = 1.0f;
+	@CtrlParam(debug = true) private float runForce = 2.0f;
 	@CtrlParam(debug = true) private float jumpForce = 1.0f;
 	@CtrlParam(debug = true) private int jumpTimeout = 0;
 	@CtrlDebug private int timeout = 0;
@@ -52,9 +53,15 @@ public class MoveableController implements Controller
 		timeout = jumpTimeout;
 	}
 	
-	public void move(ZootDirection direction)
+	public void walk(ZootDirection direction)
 	{
-		float vx = direction == ZootDirection.Right ? moveForce : -moveForce;		
+		float vx = direction == ZootDirection.Right ? walkForce : -walkForce;		
+		physicsCtrl.setVelocity(vx, 0.0f, true, false);
+	}
+
+	public void run(ZootDirection direction)
+	{
+		float vx = direction == ZootDirection.Right ? runForce : -runForce;
 		physicsCtrl.setVelocity(vx, 0.0f, true, false);
 	}
 }

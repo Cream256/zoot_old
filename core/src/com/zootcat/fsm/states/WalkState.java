@@ -11,11 +11,16 @@ public class WalkState extends BasicState
 {	
 	public static final int ID = WalkState.class.hashCode();
 	
-	private ZootDirection moveDirection = ZootDirection.None;
-	
+	protected ZootDirection moveDirection = ZootDirection.None;
+		
 	public WalkState()
 	{
 		super("Walk");
+	}
+	
+	protected WalkState(String name)
+	{
+		super(name);
 	}
 
 	@Override
@@ -29,7 +34,7 @@ public class WalkState extends BasicState
 	@Override
 	public void onUpdate(ZootActor actor, float delta)
 	{
-		actor.controllerAction(MoveableController.class, (mvCtrl) -> mvCtrl.move(moveDirection));		
+		actor.controllerAction(MoveableController.class, (mvCtrl) -> mvCtrl.walk(moveDirection));		
 	}
 	
 	@Override

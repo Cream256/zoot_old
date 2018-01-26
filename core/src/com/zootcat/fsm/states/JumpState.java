@@ -43,7 +43,7 @@ public class JumpState extends BasicState
 		else if(ZootStateUtils.isMoveEvent(event))
 		{
 			ZootDirection dir = ZootStateUtils.getDirectionFromEvent(event);
-			event.getTargetZootActor().controllerAction(MoveableController.class, (ctrl) -> ctrl.move(dir));
+			event.getTargetZootActor().controllerAction(MoveableController.class, (ctrl) -> ctrl.walk(dir));
 			event.getTargetZootActor().controllerAction(DirectionController.class, (ctrl) -> ctrl.setDirection(dir));
 		}
 		return true;

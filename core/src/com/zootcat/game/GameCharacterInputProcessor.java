@@ -18,10 +18,10 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	{
 		setPlayer(player);
 		bindUp(Input.Keys.RIGHT, () -> stop());
-		bindDown(Input.Keys.RIGHT, () -> walk(ZootDirection.Right));
+		bindDown(Input.Keys.RIGHT, () -> run(ZootDirection.Right));
 		
 		bindUp(Input.Keys.LEFT, () -> stop());
-		bindDown(Input.Keys.LEFT, () -> walk(ZootDirection.Left));
+		bindDown(Input.Keys.LEFT, () -> run(ZootDirection.Left));
 		
 		bindDown(Input.Keys.SPACE, () -> jump());
 	}
@@ -48,6 +48,12 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	private boolean stop()
 	{
 		sendEventToActor(player, ZootEventType.Stop);
+		return true;
+	}
+	
+	private boolean run(ZootDirection direction)
+	{		
+		sendEventToActor(player, direction == ZootDirection.Right ? ZootEventType.RunRight : ZootEventType.RunLeft);	
 		return true;
 	}
 	
