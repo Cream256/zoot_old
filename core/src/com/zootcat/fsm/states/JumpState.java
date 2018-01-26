@@ -1,6 +1,6 @@
 package com.zootcat.fsm.states;
 
-import com.zootcat.controllers.gfx.DirectionController;
+import com.zootcat.controllers.logic.DirectionController;
 import com.zootcat.controllers.physics.MoveableController;
 import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;

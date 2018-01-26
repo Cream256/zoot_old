@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.zootcat.controllers.factory.CtrlParam;
+import com.zootcat.controllers.logic.DirectionController;
 import com.zootcat.exceptions.RuntimeZootException;
 import com.zootcat.gfx.ZootAnimation;
 import com.zootcat.gfx.ZootAnimationFile;

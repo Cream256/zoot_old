@@ -27,13 +27,21 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 		
 		bindDown(Input.Keys.CONTROL_LEFT, () -> attack());
 		bindDown(Input.Keys.CONTROL_RIGHT, () -> attack());
+		
+		bindDown(Input.Keys.F8, () -> hurt());
 	}
 	
 	public void setPlayer(ZootActor actor)
 	{
 		player = actor;
 	}
-				
+	
+	private boolean hurt()
+	{
+		sendEventToActor(player, ZootEventType.Hurt);
+		return true;
+	}
+	
 	private void sendEventToActor(ZootActor actor, ZootEventType eventType)
 	{
 		ZootEvent event = eventPool.obtain();

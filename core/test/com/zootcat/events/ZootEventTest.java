@@ -1,6 +1,7 @@
 package com.zootcat.events;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
@@ -64,5 +65,23 @@ public class ZootEventTest
 		ZootActor zootActor = new ZootActor();
 		event.setTarget(zootActor);
 		assertEquals(zootActor, event.getTargetZootActor());
-	}	
+	}
+	
+	@Test
+	public void setUserObjectTest()
+	{
+		ZootEvent event = new ZootEvent();
+		assertNull("Should return null if nothing was set", event.getUserObject(String.class));
+		
+		event.setUserObject("TestObj");
+		assertEquals("TestObj", event.getUserObject(String.class));
+		
+		event.setUserObject(new Integer(128));
+		assertEquals(new Integer(128), event.getUserObject(Integer.class));
+		
+		assertNull("Should return null on invalid cast", event.getUserObject(String.class));
+		
+		assertEquals("Should return default value on invalid cast", "default", event.getUserObject(String.class, "default"));
+		assertEquals("Should return value on valid cast", new Integer(128), event.getUserObject(Integer.class, 128));
+	}
 }

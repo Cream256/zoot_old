@@ -6,7 +6,8 @@ import org.mockito.MockitoAnnotations;
 
 import com.zootcat.controllers.ai.DefaultStateMachineController;
 import com.zootcat.controllers.gfx.AnimatedSpriteController;
-import com.zootcat.controllers.gfx.DirectionController;
+import com.zootcat.controllers.logic.DirectionController;
+import com.zootcat.controllers.logic.LifeController;
 import com.zootcat.controllers.physics.MoveableController;
 import com.zootcat.controllers.physics.PhysicsBodyController;
 import com.zootcat.events.ZootEvent;
@@ -20,6 +21,7 @@ public class ZootStateTestCase
 	@Mock protected AnimatedSpriteController animatedSpriteCtrlMock;
 	@Mock protected DirectionController directionCtrlMock;
 	@Mock protected MoveableController moveableCtrlMock;
+	@Mock protected LifeController lifeCtrlMock;
 	
 	@Before
 	public void setup()
@@ -30,16 +32,23 @@ public class ZootStateTestCase
 		actor.addController(physicsBodyCtrlMock);
 		actor.addController(directionCtrlMock);
 		actor.addController(moveableCtrlMock);
+		actor.addController(lifeCtrlMock);
 		
 		DefaultStateMachineController smCtrl = new DefaultStateMachineController();
 		smCtrl.init(actor);
 		actor.addController(smCtrl);
 	}
 	
-	public ZootEvent createEvent(ZootEventType type)
+	public ZootEvent createEvent(ZootEventType type, Object userObject)
 	{
 		ZootEvent event = new ZootEvent(type);
 		event.setTarget(actor);
-		return event;
+		event.setUserObject(userObject);
+		return event;		
+	}
+	
+	public ZootEvent createEvent(ZootEventType type)
+	{
+		return createEvent(type, null);
 	}
 }

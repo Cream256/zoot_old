@@ -1,4 +1,4 @@
-package com.zootcat.controllers.gfx;
+package com.zootcat.controllers.logic;
 
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.CtrlParam;

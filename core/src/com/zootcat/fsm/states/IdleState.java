@@ -1,6 +1,6 @@
 package com.zootcat.fsm.states;
 
-import com.zootcat.controllers.gfx.DirectionController;
+import com.zootcat.controllers.logic.DirectionController;
 import com.zootcat.controllers.physics.PhysicsBodyController;
 import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
@@ -49,7 +49,12 @@ public class IdleState extends BasicState
 		else if(event.getType() == ZootEventType.Attack)
 		{
 			changeState(event, AttackState.ID);
-		}		
+		}
+		else if(event.getType() == ZootEventType.Hurt)
+		{
+			changeState(event, HurtState.ID);
+		}
+		
 		return true;
 	}
 	

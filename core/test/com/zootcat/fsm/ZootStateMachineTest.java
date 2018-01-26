@@ -3,7 +3,9 @@ package com.zootcat.fsm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -85,7 +87,7 @@ public class ZootStateMachineTest
 		sm.init(initialState);
 		
 		//then
-		verify(initialState, times(1)).onEnter(owner, null);
+		verify(initialState, times(1)).onEnter(eq(owner), any(ZootEvent.class));
 		assertEquals("Initial state should be current", initialState, sm.getCurrentState());		
 		assertEquals("Previous state should reset", null, sm.getPreviousState());
 		assertEquals("Initial state should be added to state machine", 1, sm.getStates().size());

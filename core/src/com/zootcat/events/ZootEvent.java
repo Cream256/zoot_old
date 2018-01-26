@@ -7,8 +7,9 @@ import com.zootcat.scene.ZootActor;
 
 public class ZootEvent extends Event
 {
+	private Object userObject;
 	private ZootEventType type;
-	
+		
 	public ZootEvent()
 	{
 		this(ZootEventType.None);
@@ -17,6 +18,7 @@ public class ZootEvent extends Event
 	public ZootEvent(ZootEventType type)
 	{
 		this.type = type;
+		this.userObject = null;
 	}
 		
 	public ZootEventType getType()
@@ -37,6 +39,27 @@ public class ZootEvent extends Event
 			return (ZootActor)target;
 		}
 		return null;
+	}
+	
+	public void setUserObject(Object obj)
+	{
+		userObject = obj;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getUserObject(Class<T> clazz)
+	{
+		if(ClassReflection.isInstance(clazz, userObject))
+		{		
+			return (T)userObject;
+		}
+		return null;
+	}
+	
+	public <T> T getUserObject(Class<T> clazz, T defaultValue)
+	{
+		T result = getUserObject(clazz);
+		return result != null ? result : defaultValue;
 	}
 	
 	@Override
