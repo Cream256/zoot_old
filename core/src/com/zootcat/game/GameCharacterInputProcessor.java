@@ -3,8 +3,11 @@ package com.zootcat.game;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import com.zootcat.controllers.physics.PhysicsBodyScale;
 import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
+import com.zootcat.fsm.states.CrouchState;
+import com.zootcat.fsm.states.DownState;
 import com.zootcat.input.ZootBindableInputProcessor;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootDirection;
@@ -23,14 +26,37 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 		bindUp(Input.Keys.LEFT, () -> stop());
 		bindDown(Input.Keys.LEFT, () -> run(ZootDirection.Left));
 		
+		bindDown(Input.Keys.DOWN, () -> down());
+		bindUp(Input.Keys.DOWN, () -> up());
+		
 		bindDown(Input.Keys.SPACE, () -> jump());
 		
 		bindDown(Input.Keys.CONTROL_LEFT, () -> attack());
 		bindDown(Input.Keys.CONTROL_RIGHT, () -> attack());
 		
 		bindDown(Input.Keys.F8, () -> hurt());
+		
+		PhysicsBodyScale crouchingScale = new PhysicsBodyScale(1.0f, 0.5f, 1.0f, false);
+		
+		DownState downState = (DownState)player.getStateMachine().getStateById(DownState.ID);
+		downState.setBodyScaling(crouchingScale);
+		
+		CrouchState crouchState = (CrouchState)player.getStateMachine().getStateById(CrouchState.ID);
+		crouchState.setBodyScaling(crouchingScale);
 	}
 	
+	private boolean up()
+	{
+		sendEventToActor(player, ZootEventType.Up);
+		return true;
+	}
+
+	private boolean down()
+	{
+		sendEventToActor(player, ZootEventType.Down);
+		return true;
+	}
+
 	public void setPlayer(ZootActor actor)
 	{
 		player = actor;
@@ -77,12 +103,6 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	private boolean run(ZootDirection direction)
 	{		
 		sendEventToActor(player, direction == ZootDirection.Right ? ZootEventType.RunRight : ZootEventType.RunLeft);	
-		return true;
-	}
-	
-	private boolean walk(ZootDirection direction)
-	{		
-		sendEventToActor(player, direction == ZootDirection.Right ? ZootEventType.WalkRight : ZootEventType.WalkLeft);	
 		return true;
 	}
 }

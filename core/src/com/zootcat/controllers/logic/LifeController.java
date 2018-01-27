@@ -23,6 +23,8 @@ public class LifeController extends ControllerAdapter
 	public void init(ZootActor actor) 
 	{
 		deadEvent = new ZootEvent();
+		setMaxLife(maxLife);
+		setLife(life);
 	}
 	
 	@Override

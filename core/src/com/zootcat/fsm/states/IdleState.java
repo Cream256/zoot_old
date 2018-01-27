@@ -54,6 +54,10 @@ public class IdleState extends BasicState
 		{
 			changeState(event, HurtState.ID);
 		}
+		else if(event.getType() == ZootEventType.Down)
+		{
+			changeState(event, DownState.ID);
+		}
 		
 		return true;
 	}

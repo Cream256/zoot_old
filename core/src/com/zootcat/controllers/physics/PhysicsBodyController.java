@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
+import com.badlogic.gdx.physics.box2d.Shape.Type;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.CtrlDebug;
 import com.zootcat.controllers.factory.CtrlParam;
@@ -42,7 +43,7 @@ public class PhysicsBodyController implements Controller
 	@CtrlParam(global = true) protected ZootScene scene;	
 	@CtrlDebug private float velocityX = 0.0f;
 	@CtrlDebug private float velocityY = 0.0f;
-	
+		
 	private Body body;
 	private List<Fixture> fixtures;
 	
@@ -118,6 +119,38 @@ public class PhysicsBodyController implements Controller
 	{
 		body.destroyFixture(fixture);
 		fixtures.remove(fixture);		
+	}
+	
+	public void scale(PhysicsBodyScale bodyScale)
+	{
+		fixtures.forEach(f ->
+		{
+			if(f.isSensor() && !bodyScale.scaleSensors) return;
+			
+			Shape shape = f.getShape();
+			if(shape.getType() == Type.Circle)
+			{
+				CircleShape circle = (CircleShape)shape;
+				
+				Vector2 pos = circle.getPosition();			
+				circle.setPosition(pos.scl(bodyScale.radiusScale, bodyScale.radiusScale));
+				circle.setRadius(shape.getRadius() * bodyScale.radiusScale);
+			}
+			else if(shape.getType() == Type.Polygon)
+			{
+				PolygonShape poly = (PolygonShape)shape;
+				
+				Vector2[] vertices = new Vector2[poly.getVertexCount()];
+				for(int i = 0; i < poly.getVertexCount(); ++i)
+				{
+					vertices[i] = new Vector2();					
+					poly.getVertex(i, vertices[i]);
+					vertices[i].x *= bodyScale.scaleX;
+					vertices[i].y *= bodyScale.scaleY;
+				}
+				poly.set(vertices);
+			}
+		});
 	}
 		
 	protected BodyDef createBodyDef(ZootActor actor) 

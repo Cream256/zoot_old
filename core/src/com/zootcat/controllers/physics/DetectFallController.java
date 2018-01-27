@@ -40,7 +40,7 @@ public class DetectFallController implements Controller
 		boolean fallingNow = actor.controllerCondition(PhysicsBodyController.class,	(c) -> c.getBody().getLinearVelocity().y < threshold);		
 		boolean onGround = groundCtrl.isOnGround();
 		
-		if(fallingNow && !falling && !onGround)
+		if(fallingNow && !onGround)
 		{
 			fallEvent.reset();
 			fallEvent.setType(ZootEventType.Fall);

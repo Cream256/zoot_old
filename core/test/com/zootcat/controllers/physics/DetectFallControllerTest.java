@@ -122,7 +122,7 @@ public class DetectFallControllerTest
 	}
 	
 	@Test
-	public void onUpdateShouldFireEventOnlyWhenStateChangesTest()
+	public void onUpdateShouldFireEventContinouslyWhenFallingTest()
 	{
 		when(bodyMock.getLinearVelocity()).thenReturn(DOWN_VELOCITY);
 		when(groundCtrlMock.isOnGround()).thenReturn(false);
@@ -133,16 +133,16 @@ public class DetectFallControllerTest
 		assertEquals("First event should be fired", 1, eventCounter.getCount());
 		
 		ctrl.onUpdate(0.0f, actor);
-		assertEquals("State the same, should not fire next event", 1, eventCounter.getCount());
+		assertEquals("Second event should be fired", 2, eventCounter.getCount());
 		
 		when(bodyMock.getLinearVelocity()).thenReturn(DOWN_VELOCITY);
 		when(groundCtrlMock.isOnGround()).thenReturn(true);
 		ctrl.onUpdate(0.0f, actor);
-		assertEquals("Has landed, no event should be fired", 1, eventCounter.getCount());
+		assertEquals("Has landed, no event should be fired", 2, eventCounter.getCount());
 		
 		when(bodyMock.getLinearVelocity()).thenReturn(DOWN_VELOCITY);
 		when(groundCtrlMock.isOnGround()).thenReturn(false);
 		ctrl.onUpdate(0.0f, actor);
-		assertEquals("Falling again, second event should be fired", 2, eventCounter.getCount());
+		assertEquals("Falling again, third event should be fired", 3, eventCounter.getCount());
 	}
 }

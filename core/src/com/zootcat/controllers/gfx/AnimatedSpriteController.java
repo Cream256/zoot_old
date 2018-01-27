@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.controllers.logic.DirectionController;
 import com.zootcat.exceptions.RuntimeZootException;
@@ -125,9 +126,12 @@ public class AnimatedSpriteController implements RenderController
 		sprite.setRegion(frame);				
 		
 		ZootAnimationOffset offset = currentAnimation.getFrameOffset();
+		boolean leftOffset = actor.controllerCondition(DirectionController.class, c -> c.getDirection() == ZootDirection.Left);			
+		Vector2 directionOffset = leftOffset ? offset.left : offset.right;
+		
 		float scale = scene.getUnitScale();
-		float x = actor.getX() + offset.right.x * scale;
-		float y = actor.getY() + offset.right.y * scale;
+		float x = actor.getX() + directionOffset.x * scale;
+		float y = actor.getY() + directionOffset.y * scale;
 		
 		ZootDirection direction = getDirection(actor);		
 		sprite.setFlip(direction == ZootDirection.Left, false);
