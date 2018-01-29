@@ -41,6 +41,10 @@ public class ZootDirectionTest
         assertEquals(ZootDirection.Down, ZootDirection.Up.invert());        
         assertEquals(ZootDirection.Left, ZootDirection.Right.invert());
         assertEquals(ZootDirection.Right, ZootDirection.Left.invert());
+        assertEquals(ZootDirection.DownRight, ZootDirection.UpLeft.invert());
+        assertEquals(ZootDirection.DownLeft, ZootDirection.UpRight.invert());
+        assertEquals(ZootDirection.UpRight, ZootDirection.DownLeft.invert());
+        assertEquals(ZootDirection.UpLeft, ZootDirection.DownRight.invert());
         assertEquals(ZootDirection.None, ZootDirection.None.invert());
     }
     
@@ -71,6 +75,64 @@ public class ZootDirectionTest
         assertEquals(ZootDirection.None, ZootDirection.fromString(" "));
         assertEquals(ZootDirection.None, ZootDirection.fromString("1"));
         assertEquals(ZootDirection.None, ZootDirection.fromString("!@#4"));
+    }
+    
+    @Test
+    public void isVerticalTest()
+    {
+    	assertTrue(ZootDirection.Up.isVertical());
+    	assertTrue(ZootDirection.Down.isVertical());
+    	assertTrue(ZootDirection.UpRight.isVertical());
+    	assertTrue(ZootDirection.UpLeft.isVertical());
+    	assertTrue(ZootDirection.DownRight.isVertical());
+    	assertTrue(ZootDirection.DownLeft.isVertical());
+    
+    	assertFalse(ZootDirection.None.isVertical());
+    	assertFalse(ZootDirection.Left.isVertical());
+    	assertFalse(ZootDirection.Right.isVertical());
+    }
+    
+    @Test
+    public void isHorizontalTest()
+    {
+    	assertTrue(ZootDirection.Left.isHorizontal());
+    	assertTrue(ZootDirection.Right.isHorizontal());
+    	assertTrue(ZootDirection.UpRight.isHorizontal());
+    	assertTrue(ZootDirection.UpLeft.isHorizontal());
+    	assertTrue(ZootDirection.DownRight.isHorizontal());
+    	assertTrue(ZootDirection.DownLeft.isHorizontal());
+    
+    	assertFalse(ZootDirection.None.isHorizontal());
+    	assertFalse(ZootDirection.Up.isHorizontal());
+    	assertFalse(ZootDirection.Down.isHorizontal());
+    }
+    
+    @Test
+    public void getHorizontalValueTest()
+    {
+    	assertEquals(0, ZootDirection.None.getHorizontalValue());
+    	assertEquals(0, ZootDirection.Up.getHorizontalValue());
+    	assertEquals(0, ZootDirection.Down.getHorizontalValue());
+    	assertEquals(-1, ZootDirection.Left.getHorizontalValue());
+    	assertEquals(1, ZootDirection.Right.getHorizontalValue());
+    	assertEquals(-1, ZootDirection.UpLeft.getHorizontalValue());
+    	assertEquals(1, ZootDirection.UpRight.getHorizontalValue());
+    	assertEquals(-1, ZootDirection.DownLeft.getHorizontalValue());
+    	assertEquals(1, ZootDirection.DownRight.getHorizontalValue());
+    }
+    
+    @Test
+    public void getVerticalValueTest()
+    {
+    	assertEquals(0, ZootDirection.None.getVerticalValue());
+    	assertEquals(1, ZootDirection.Up.getVerticalValue());
+    	assertEquals(-1, ZootDirection.Down.getVerticalValue());
+    	assertEquals(0, ZootDirection.Left.getVerticalValue());
+    	assertEquals(0, ZootDirection.Right.getVerticalValue());
+    	assertEquals(1, ZootDirection.UpLeft.getVerticalValue());
+    	assertEquals(1, ZootDirection.UpRight.getVerticalValue());
+    	assertEquals(-1, ZootDirection.DownLeft.getVerticalValue());
+    	assertEquals(-1, ZootDirection.DownRight.getVerticalValue());
     }
     
 	@Test
