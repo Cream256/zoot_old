@@ -27,8 +27,9 @@ public class ZootActor extends Actor
 	private Set<String> types = new HashSet<String>();	
 	private float opacity = 1.0f;
 	private int id = 0;
+	private int gid = -1;
 	private ZootStateMachine stateMachine = new ZootStateMachine();
-			
+
 	public ZootActor()
 	{
 		setName(DEFAULT_NAME);
@@ -202,6 +203,16 @@ public class ZootActor extends Actor
     {
     	this.id = id;
     }
+    
+	public void setGid(int gid)
+	{
+		this.gid = gid;
+	}
+	
+	public int getGid()
+	{
+		return gid;
+	}
     
     @Override
     public String toString()

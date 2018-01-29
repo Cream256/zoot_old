@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.zootcat.controllers.factory.ControllerFactory;
 import com.zootcat.gfx.ZootRender;
+import com.zootcat.map.ZootMap;
 import com.zootcat.map.tiled.ZootTiledMap;
 import com.zootcat.map.tiled.ZootTiledMapActorFactory;
 import com.zootcat.map.tiled.ZootTiledMapRender;
@@ -75,6 +76,12 @@ public class ZootTiledScene implements ZootScene
 	public ZootRender getRender() 
 	{
 		return mapRender;
+	}
+	
+	@Override
+	public ZootMap getMap()
+	{
+		return map;
 	}
 	
 	@Override

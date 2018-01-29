@@ -465,4 +465,24 @@ public class ZootActorTest
 		verify(mockCtrl3, times(1)).onRemove(actor);
 		assertEquals(0, actor.getControllers().size());
 	}
+	
+	@Test
+	public void setIdTest()
+	{
+		ZootActor actor = new ZootActor();
+		assertEquals(0, actor.getId());
+		
+		actor.setId(1);
+		assertEquals(1, actor.getId());
+	}
+	
+	@Test
+	public void setGidTest()
+	{
+		ZootActor actor = new ZootActor();
+		assertEquals(-1, actor.getGid());
+		
+		actor.setGid(1);
+		assertEquals(1, actor.getGid());		
+	}
 }

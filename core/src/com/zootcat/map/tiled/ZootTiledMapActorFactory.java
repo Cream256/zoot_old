@@ -85,6 +85,7 @@ public class ZootTiledMapActorFactory
 		actor.setOpacity(mapObject.getOpacity());
 		
 		int id = Integer.valueOf(getPropertyOrThrow(mapObject, "id"));
+		int gid = Integer.valueOf(getPropertyOrDefault(mapObject, "gid", "-1"));
 		float x = Float.valueOf(getPropertyOrThrow(mapObject, "x")) * scale;
 		float y = Float.valueOf(getPropertyOrThrow(mapObject, "y")) * scale;
 		float width = Float.valueOf(getPropertyOrThrow(mapObject, "width")) * scale;
@@ -93,6 +94,7 @@ public class ZootTiledMapActorFactory
 		actor.setBounds(x, y, width, height);
 		actor.setRotation(rotation);
 		actor.setId(id);
+		actor.setGid(gid);
 	}
 
 	protected void setActorControllers(final MapProperties actorProperties, ZootActor actor)

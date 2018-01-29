@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.utils.Disposable;
 import com.zootcat.gfx.ZootRender;
+import com.zootcat.map.ZootMap;
 import com.zootcat.physics.ZootPhysics;
 
 public interface ZootScene extends Disposable
@@ -26,8 +27,9 @@ public interface ZootScene extends Disposable
 	OrthographicCamera getCamera();
 	ZootPhysics getPhysics();
 	ZootRender getRender();
+	ZootMap getMap();
 	InputProcessor getInputProcessor();
-	
+		
 	boolean isDebugMode();
 	void setDebugMode(boolean debug);
 	

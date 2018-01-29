@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.zootcat.assets.ZootAssetRecognizer;
-import com.zootcat.map.tiled.ZootTiledMap;
+import com.zootcat.map.ZootMap;
 import com.zootcat.map.tiled.ZootTiledMapLoader;
 import com.zootcat.testing.GdxTestRunner;
 import com.zootcat.testing.ZootTestUtils;
@@ -23,8 +23,8 @@ public class ZootLayerOptimizerTest
 	{
 		//given
 		String mapFile = ZootTestUtils.getResourcePath("testResources/tiled/SingleVerticalTiles.tmx", this);		
-		ZootTiledMap map = new ZootTiledMapLoader(new ZootAssetRecognizer()).load(mapFile);		
-		TiledMapTileLayer layer = map.getLayer("Layer1");
+		ZootMap map = new ZootTiledMapLoader(new ZootAssetRecognizer()).load(mapFile);		
+		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayer("Layer1");
 		ZootTiledCellTileComparator comparator = new ZootTiledCellTileComparator();		
 		
 		//when
@@ -46,8 +46,8 @@ public class ZootLayerOptimizerTest
 	{
 		//given
 		String mapFile = ZootTestUtils.getResourcePath("testResources/tiled/BoxTiles.tmx", this);		
-		ZootTiledMap map = new ZootTiledMapLoader(new ZootAssetRecognizer()).load(mapFile);		
-		TiledMapTileLayer layer = map.getLayer("Layer1");
+		ZootMap map = new ZootTiledMapLoader(new ZootAssetRecognizer()).load(mapFile);		
+		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayer("Layer1");
 		ZootTiledCellTileComparator comparator = new ZootTiledCellTileComparator();		
 		
 		//when
@@ -77,8 +77,8 @@ public class ZootLayerOptimizerTest
 	{
 		//given
 		String mapFile = ZootTestUtils.getResourcePath("testResources/tiled/VerticalTiles.tmx", this);		
-		ZootTiledMap map = new ZootTiledMapLoader(new ZootAssetRecognizer()).load(mapFile);		
-		TiledMapTileLayer layer = map.getLayer("Layer1");
+		ZootMap map = new ZootTiledMapLoader(new ZootAssetRecognizer()).load(mapFile);		
+		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayer("Layer1");
 		ZootTiledCellTileComparator comparator = new ZootTiledCellTileComparator();		
 		
 		//when
