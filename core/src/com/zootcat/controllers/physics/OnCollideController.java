@@ -14,7 +14,7 @@ public abstract class OnCollideController extends PhysicsCollisionController
 	@CtrlParam private String category = null;
 	@CtrlDebug private int categoryBits = -1;
 	
-	protected ZootActor controllerActor;
+	private ZootActor controllerActor;
 	
 	@Override
 	public void init(ZootActor actor)
@@ -26,38 +26,58 @@ public abstract class OnCollideController extends PhysicsCollisionController
 		}
 	}
 	
+	@Override
 	public void beginContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{				
 		if(collides(actorA, actorB, contact))
 		{
-			onEnter(actorA, actorB);
+			onEnter(actorA, actorB, contact);
 		}
 	}
 	
+	@Override
 	public void endContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
 		if(collides(actorA, actorB, contact))
 		{
-			onLeave(actorA, actorB);
+			onLeave(actorA, actorB, contact);
 		}
 	}
 	
+	@Override
 	public void preSolve(ZootActor actorA, ZootActor actorB, Contact contact, Manifold manifold)
 	{
 		//noop
 	}
 	
+	@Override
 	public void postSolve(ZootActor actorA, ZootActor actorB, ContactImpulse contactImpulse)
 	{
 		//noop
 	}
+		
+	public ZootActor getControllerActor()
+	{
+		return controllerActor;
+	}
+
+	public abstract void onEnter(ZootActor actorA, ZootActor actorB, Contact contact);
+	
+	public abstract void onLeave(ZootActor actorA, ZootActor actorB, Contact contact);
+	
+	protected Fixture getOtherFixture(ZootActor actorA, ZootActor actorB, Contact contact)
+	{
+		return (actorA == controllerActor) ? contact.getFixtureB() : contact.getFixtureA();
+	}
+	
+	protected Fixture getControllerActorFixture(ZootActor actorA, ZootActor actorB, Contact contact)
+	{
+		return (actorA == controllerActor) ? contact.getFixtureA() : contact.getFixtureB();
+	}
 	
 	private boolean collides(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
-		Fixture otherFixture = (actorA == controllerActor) ? contact.getFixtureB() : contact.getFixtureA();		
+		Fixture otherFixture = getOtherFixture(actorA, actorB, contact);	
 		return categoryBits == -1 || otherFixture.getFilterData().categoryBits == categoryBits;
 	}
-	
-	public abstract void onEnter(ZootActor actorA, ZootActor actorB);
-	public abstract void onLeave(ZootActor actorA, ZootActor actorB);
 }

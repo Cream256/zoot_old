@@ -19,16 +19,16 @@ import com.zootcat.utils.BitMaskConverter;
 
 public class OnCollideControllerTest
 {
-	private int enterCount = 0;
-	private int leaveCount = 0;
-	private OnCollideController ctrl;
-	private Filter ctrlActorFilter;
-	private Filter otherActorFilter;
-	@Mock private ZootActor ctrlActor;
-	@Mock private ZootActor otherActor;
-	@Mock private Fixture ctrlActorFixture;
-	@Mock private Fixture otherActorFixture;
-	@Mock private Contact contact;
+	protected int enterCount = 0;
+	protected int leaveCount = 0;
+	protected OnCollideController ctrl;
+	protected Filter ctrlActorFilter;
+	protected Filter otherActorFilter;
+	@Mock protected ZootActor ctrlActor;
+	@Mock protected ZootActor otherActor;
+	@Mock protected Fixture ctrlActorFixture;
+	@Mock protected Fixture otherActorFixture;
+	@Mock protected Contact contact;
 	
 	@Before
 	public void setup()
@@ -40,13 +40,13 @@ public class OnCollideControllerTest
 		otherActorFilter = new Filter();		
 		ctrl = new OnCollideController(){
 			@Override
-			public void onEnter(ZootActor actorA, ZootActor actorB)
+			public void onEnter(ZootActor actorA, ZootActor actorB, Contact contact)
 			{
 				++enterCount;
 			}
 
 			@Override
-			public void onLeave(ZootActor actorA, ZootActor actorB)
+			public void onLeave(ZootActor actorA, ZootActor actorB, Contact contact)
 			{
 				++leaveCount;
 			}};
@@ -55,6 +55,16 @@ public class OnCollideControllerTest
 		when(contact.getFixtureB()).thenReturn(otherActorFixture);
 		when(ctrlActorFixture.getFilterData()).thenReturn(ctrlActorFilter);
 		when(otherActorFixture.getFilterData()).thenReturn(otherActorFilter);
+	}
+	
+	@Test
+	public void getControllerActorTest()
+	{
+		//when
+		ctrl.init(ctrlActor);
+		
+		//then
+		assertEquals(ctrlActor, ctrl.getControllerActor());
 	}
 	
 	@Test
@@ -166,5 +176,4 @@ public class OnCollideControllerTest
 		verifyZeroInteractions(actorB);
 		verifyZeroInteractions(contactImpulse);
 	}
-	
 }

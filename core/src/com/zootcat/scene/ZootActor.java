@@ -45,6 +45,13 @@ public class ZootActor extends Actor
 	}
 	
 	@Override
+	public boolean remove() 
+	{
+		removeAllControllers();
+		return super.remove();
+	}
+	
+	@Override
 	public void draw(Batch batch, float parentAlpha) 
 	{
 		float delta = Gdx.graphics.getDeltaTime();
@@ -114,6 +121,12 @@ public class ZootActor extends Actor
 	{
 		controller.onRemove(this);
 		controllers.removeAll(Arrays.asList(controller));
+	}
+	
+	public void removeAllControllers()
+	{
+		controllers.forEach(ctrl -> ctrl.onRemove(this));
+		controllers.clear();
 	}
 	
 	public List<Controller> getControllers()

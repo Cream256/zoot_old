@@ -8,6 +8,7 @@ import com.zootcat.physics.ZootDefaultContactFilter;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
+//TODO move this to logic package
 public class OneWayPlatformController implements Controller, ContactFilter
 {
 	@CtrlParam(global = true) private ZootScene scene;

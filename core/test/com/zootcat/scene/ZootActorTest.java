@@ -431,4 +431,38 @@ public class ZootActorTest
 		assertEquals(3, ctrl2.getControllersCountOnAdd());
 		assertEquals(3, ctrl3.getControllersCountOnAdd());
 	}
+	
+	@Test
+	public void removeTest()
+	{
+		//given
+		ZootActor actor = new ZootActor();
+		actor.addControllers(Arrays.asList(mockCtrl1, mockCtrl2, mockCtrl3));
+		
+		//when
+		actor.remove();		
+		
+		//then
+		verify(mockCtrl1, times(1)).onRemove(actor);
+		verify(mockCtrl2, times(1)).onRemove(actor);
+		verify(mockCtrl3, times(1)).onRemove(actor);
+		assertEquals(0, actor.getControllers().size());
+	}
+	
+	@Test
+	public void removeAllControllersTest()
+	{
+		//given
+		ZootActor actor = new ZootActor();
+		actor.addControllers(Arrays.asList(mockCtrl1, mockCtrl2, mockCtrl3));
+		
+		//when
+		actor.removeAllControllers();
+		
+		//then
+		verify(mockCtrl1, times(1)).onRemove(actor);
+		verify(mockCtrl2, times(1)).onRemove(actor);
+		verify(mockCtrl3, times(1)).onRemove(actor);
+		assertEquals(0, actor.getControllers().size());
+	}
 }
