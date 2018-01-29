@@ -2,7 +2,7 @@ package com.zootcat.controllers.physics;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -161,7 +161,7 @@ public class DetectGroundControllerTest
 	}
 	
 	@Test
-	public void beginContactTest()
+	public void onUpdateTest()
 	{
 		//given
 		Fixture fixtureB = mock(Fixture.class);
@@ -176,42 +176,24 @@ public class DetectGroundControllerTest
 		when(contactMock.getFixtureA()).thenReturn(groundSensorFixture);
 		
 		//then
-		assertTrue("Should detect contact", groundCtrl.beginContact(actor, otherActor, contactMock));
-		assertFalse("Should not detect contact between invalid actors", groundCtrl.beginContact(otherActor, otherActor, contactMock));
+		groundCtrl.beginContact(actor, otherActor, contactMock);
+		groundCtrl.onUpdate(1.0f, actor);
+		assertTrue("Should detect contact", groundCtrl.isOnGround());
+		groundCtrl.endContact(actor, otherActor, contactMock);
+		
+		groundCtrl.beginContact(otherActor, otherActor, contactMock);
+		groundCtrl.onUpdate(1.0f, actor);
+		assertFalse("Should not detect contact between invalid actors", groundCtrl.isOnGround()); 
 				
 		//when
 		when(fixtureB.isSensor()).thenReturn(true);
 		
 		//then
-		assertFalse("Should not detect contact between two sensors", groundCtrl.beginContact(actor, otherActor, contactMock));
+		groundCtrl.beginContact(actor, otherActor, contactMock);
+		groundCtrl.onUpdate(1.0f, actor);
+		assertFalse("Should not detect contact between two sensors", groundCtrl.isOnGround()); 
 	}
-	
-	@Test
-	public void endContactTest()
-	{
-		//given
-		Fixture fixtureB = mock(Fixture.class);
-		Contact contactMock = mock(Contact.class);
-		when(contactMock.getFixtureB()).thenReturn(fixtureB);
 		
-		//when
-		groundCtrl.init(actor);
-		groundCtrl.onAdd(actor);
-		
-		Fixture groundSensorFixture = physicsCtrl.getFixtures().get(1);		
-		when(contactMock.getFixtureA()).thenReturn(groundSensorFixture);
-		
-		//then
-		assertTrue("Should detect contact", groundCtrl.endContact(actor, otherActor, contactMock));
-		assertFalse("Should not detect contact between invalid actors", groundCtrl.endContact(otherActor, otherActor, contactMock));
-				
-		//when
-		when(fixtureB.isSensor()).thenReturn(true);
-		
-		//then
-		assertFalse("Should not detect contact between two sensors", groundCtrl.endContact(actor, otherActor, contactMock));
-	}
-	
 	@Test
 	public void isOnGroundTest()
 	{
@@ -266,13 +248,29 @@ public class DetectGroundControllerTest
 	@Test
 	public void preSolveTest()
 	{
-		assertFalse("Should return false", groundCtrl.preSolve(actor, otherActor, mock(Contact.class), mock(Manifold.class)));
+		ZootActor actorA = mock(ZootActor.class);
+		ZootActor actorB = mock(ZootActor.class);
+		Contact contact =  mock(Contact.class);
+		Manifold manifold = mock(Manifold.class);
+					
+		groundCtrl.preSolve(actorA, actorB, contact, manifold);
+		verifyZeroInteractions(actorA);
+		verifyZeroInteractions(actorB);
+		verifyZeroInteractions(contact);
+		verifyZeroInteractions(manifold);		
 	}
 	
 	@Test
 	public void postSolveTest()
 	{
-		assertFalse("Should return false", groundCtrl.postSolve(actor, otherActor, mock(ContactImpulse.class)));
+		ZootActor actorA = mock(ZootActor.class);
+		ZootActor actorB = mock(ZootActor.class);
+		ContactImpulse contactImpulse = mock(ContactImpulse.class);
+				
+		groundCtrl.postSolve(actorA, actorB, contactImpulse);
+		verifyZeroInteractions(actorA);
+		verifyZeroInteractions(actorB);
+		verifyZeroInteractions(contactImpulse);
 	}
 
 }

@@ -77,37 +77,27 @@ public class DetectGroundController extends PhysicsCollisionController
 	}
 	
 	@Override
-	public boolean beginContact(ZootActor actorA, ZootActor actorB, Contact contact)
+	public void beginContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
-		if(isContactWithGroundSensor(actorA, actorB, contact))
-		{
-			++contactCount;
-			return true;
-		}
-		return false;
+		if(isContactWithGroundSensor(actorA, actorB, contact)) ++contactCount;
 	}
 
 	@Override
-	public boolean endContact(ZootActor actorA, ZootActor actorB, Contact contact)
+	public void endContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
-		if(isContactWithGroundSensor(actorA, actorB, contact))
-		{
-			--contactCount;
-			return true;
-		}
-		return false;
+		if(isContactWithGroundSensor(actorA, actorB, contact)) --contactCount;
 	}
 
 	@Override
-	public boolean preSolve(ZootActor actorA, ZootActor actorB, Contact contact, Manifold manifold)
+	public void preSolve(ZootActor actorA, ZootActor actorB, Contact contact, Manifold manifold)
 	{
-		return false;
+		//noop
 	}
 
 	@Override
-	public boolean postSolve(ZootActor actorA, ZootActor actorB, ContactImpulse contactImpulse)
+	public void postSolve(ZootActor actorA, ZootActor actorB, ContactImpulse contactImpulse)
 	{
-		return false;
+		//noop
 	}
 	
 	public boolean isOnGround()

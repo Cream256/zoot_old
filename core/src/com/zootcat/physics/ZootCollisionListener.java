@@ -15,44 +15,35 @@ public abstract class ZootCollisionListener implements EventListener
 	{
 		if (!(e instanceof ZootCollisionEvent)) return false;
 		ZootCollisionEvent event = (ZootCollisionEvent)e;
-				
-		ZootActor eventActor = getEventActor(event);
-		ZootActor otherActor = getOtherActor(event);
-		
+
 		switch(event.getType())
 		{
 		case BeginContact:
-			return beginContact(eventActor, otherActor, event.getContact());			
+			beginContact(event.getActorA(), event.getActorB(), event.getContact());
+			return true;
 		
 		case EndContact:
-			return endContact(eventActor, otherActor, event.getContact());
+			endContact(event.getActorA(), event.getActorB(), event.getContact());
+			return true;
 			
 		case PreSolve:
-			return preSolve(eventActor, otherActor, event.getContact(), event.getManifold());
+			preSolve(event.getActorA(), event.getActorB(), event.getContact(), event.getManifold());
+			return true;
 		
 		case PostSolve:
-			return postSolve(eventActor, otherActor, event.getContactImpulse());
+			postSolve(event.getActorA(), event.getActorB(), event.getContactImpulse());
+			return true;
 			
 		default:
 			throw new RuntimeZootException("Unsupported collision event type: " + event.getType());
 		}
 	}
 
-	public abstract boolean beginContact(ZootActor actorA, ZootActor actorB, Contact contact); 	
+	public abstract void beginContact(ZootActor actorA, ZootActor actorB, Contact contact); 	
 	
-	public abstract boolean endContact(ZootActor actorA, ZootActor actorB, Contact contact);	
+	public abstract void endContact(ZootActor actorA, ZootActor actorB, Contact contact);	
 	
-	public abstract boolean preSolve(ZootActor actorA, ZootActor actorB, Contact contact, Manifold manifold);
+	public abstract void preSolve(ZootActor actorA, ZootActor actorB, Contact contact, Manifold manifold);
 	
-	public abstract boolean postSolve(ZootActor actorA, ZootActor actorB, ContactImpulse contactImpulse);
-	
-	private ZootActor getEventActor(ZootCollisionEvent event)
-	{
-		return event.getTarget() == event.getActorA() ? event.getActorA() : event.getActorB();
-	}
-	
-	private ZootActor getOtherActor(ZootCollisionEvent event)
-	{
-		return event.getTarget() == event.getActorA() ? event.getActorB() : event.getActorA();
-	}
+	public abstract void postSolve(ZootActor actorA, ZootActor actorB, ContactImpulse contactImpulse);
 }

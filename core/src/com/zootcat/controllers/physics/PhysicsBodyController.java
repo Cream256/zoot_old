@@ -24,6 +24,7 @@ import com.zootcat.physics.ZootBodyShape;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
+//TODO add tests
 public class PhysicsBodyController implements Controller
 {
 	@CtrlParam(debug = true) protected float density = 1.0f;
@@ -121,6 +122,7 @@ public class PhysicsBodyController implements Controller
 		fixtures.remove(fixture);		
 	}
 	
+	//TODO this is not full working, add tests
 	public void scale(PhysicsBodyScale bodyScale)
 	{
 		fixtures.forEach(f ->
@@ -151,6 +153,7 @@ public class PhysicsBodyController implements Controller
 				poly.set(vertices);
 			}
 		});
+		body.setAwake(true);
 	}
 		
 	protected BodyDef createBodyDef(ZootActor actor) 

@@ -7,7 +7,14 @@ import com.zootcat.exceptions.RuntimeZootException;
 
 public class BitMaskConverter
 {	
+	public static final BitMaskConverter Instance = new BitMaskConverter();
+	
 	private Map<String, Short> values = new HashMap<String, Short>();
+	
+	private BitMaskConverter()
+	{
+		//use instance
+	}
 		
 	public short fromString(String str)
 	{
@@ -21,5 +28,10 @@ public class BitMaskConverter
 			values.put(str, (short) ZootUtils.trunc(value));				
 		}		
 		return values.get(str);
+	}
+	
+	public void clear()
+	{
+		values.clear();
 	}
 }

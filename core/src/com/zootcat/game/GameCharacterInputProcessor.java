@@ -36,7 +36,7 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 		
 		bindDown(Input.Keys.F8, () -> hurt());
 		
-		PhysicsBodyScale crouchingScale = new PhysicsBodyScale(1.0f, 0.5f, 1.0f, false);
+		PhysicsBodyScale crouchingScale = new PhysicsBodyScale(1.0f, 0.4f, 0.75f, false);
 		
 		DownState downState = (DownState)player.getStateMachine().getStateById(DownState.ID);
 		downState.setBodyScaling(crouchingScale);
