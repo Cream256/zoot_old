@@ -1,14 +1,14 @@
-package com.zootcat.controllers.physics;
+package com.zootcat.controllers.logic;
 
 import com.badlogic.gdx.physics.box2d.ContactFilter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.CtrlParam;
+import com.zootcat.controllers.physics.PhysicsBodyController;
 import com.zootcat.physics.ZootDefaultContactFilter;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
-//TODO move this to logic package
 public class OneWayPlatformController implements Controller, ContactFilter
 {
 	@CtrlParam(global = true) private ZootScene scene;
