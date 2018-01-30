@@ -42,6 +42,7 @@ public class MovingPlatformController extends OnCollideFromAboveController
 		if(!enabled)
 		{
 			actor.controllerAction(PhysicsBodyController.class, ctrl -> ctrl.setVelocity(0.0f, 0.0f));
+			return;
 		}
 		
 		current.x = actor.getX();
@@ -54,24 +55,10 @@ public class MovingPlatformController extends OnCollideFromAboveController
 		}
 		
 		platformVx = (direction.isHorizontal() ? speed : 0.0f) * direction.getHorizontalValue();
-		platformVy = (direction.isVertical() ? speed : 0.0f) * direction.getVerticalValue();
-		
+		platformVy = (direction.isVertical() ? speed : 0.0f) * direction.getVerticalValue();		
 		actor.controllerAction(PhysicsBodyController.class, ctrl -> ctrl.setVelocity(platformVx, platformVy));
-	
+		
 		updateConnectedActors();
-	}
-
-	private void updateConnectedActors()
-	{
-		for(ZootActor actor : connectedActors)
-		{
-			PhysicsBodyController bodyCtrl = actor.getController(PhysicsBodyController.class);						
-			Vector2 actorVelocity = bodyCtrl.getBody().getLinearVelocity();
-						
-			if(platformVx >= 0.0f && Math.abs(actorVelocity.x) < platformVx) actorVelocity.x = Math.max(actorVelocity.x, platformVx);
-			else if(platformVx < 0.0f && Math.abs(actorVelocity.x) < Math.abs(platformVx)) actorVelocity.x = Math.min(actorVelocity.x, platformVx);		
-			bodyCtrl.getBody().setLinearVelocity(actorVelocity);
-		}
 	}
 	
 	public void setEnabled(boolean value)
@@ -94,5 +81,23 @@ public class MovingPlatformController extends OnCollideFromAboveController
 	public void onLeave(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
 		connectedActors.remove(getControllerActor() == actorA ? actorB : actorA);
+	}
+	
+	private void updateConnectedActors()
+	{
+		for(ZootActor actor : connectedActors)
+		{
+			PhysicsBodyController bodyCtrl = actor.getController(PhysicsBodyController.class);						
+			Vector2 actorVelocity = bodyCtrl.getBody().getLinearVelocity();
+			
+			//horizontal velocity
+			if(platformVx >= 0.0f && Math.abs(actorVelocity.x) < platformVx) actorVelocity.x = Math.max(actorVelocity.x, platformVx);
+			else if(platformVx < 0.0f && Math.abs(actorVelocity.x) < Math.abs(platformVx)) actorVelocity.x = Math.min(actorVelocity.x, platformVx);		
+			
+			//vertical velocity
+			if(platformVy < 0.0f && (actorVelocity.y <= 0.0f || actorVelocity.y <= Math.abs(platformVy))) actorVelocity.y = platformVy;
+			
+			bodyCtrl.getBody().setLinearVelocity(actorVelocity);
+		}
 	}
 }
