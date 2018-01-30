@@ -103,6 +103,11 @@ public class PhysicsBodyController implements Controller
 		setVelocity(vx, vy, true, true);
 	}
 	
+	public Vector2 getVelocity()
+	{
+		return body.getLinearVelocity();
+	}
+	
 	public void setVelocity(float vx, float vy, boolean setX, boolean setY)
 	{
 		Vector2 velocity = body.getLinearVelocity();

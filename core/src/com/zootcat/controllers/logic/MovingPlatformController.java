@@ -11,7 +11,6 @@ import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootDirection;
 import com.zootcat.scene.ZootScene;
 
-//TODO add test
 public class MovingPlatformController extends OnCollideFromAboveController
 {
 	@CtrlParam(debug = true) private float range = 0.0f;
@@ -31,6 +30,8 @@ public class MovingPlatformController extends OnCollideFromAboveController
 	@Override
 	public void init(ZootActor actor) 
 	{
+		super.init(actor);
+		
 		start = new Vector2(actor.getX(), actor.getY());
 		current = start.cpy();
 		worldRange = range * scene.getUnitScale();
@@ -66,9 +67,24 @@ public class MovingPlatformController extends OnCollideFromAboveController
 		enabled = value;
 	}
 	
-	public boolean getEnabled()
+	public boolean isEnabled()
 	{
 		return enabled;
+	}
+	
+	public void setComeback(boolean value)
+	{
+		comeback = value;
+	}
+	
+	public boolean getComeback()
+	{
+		return comeback;
+	}
+	
+	public ZootDirection getDirection()
+	{
+		return direction;
 	}
 
 	@Override
@@ -88,7 +104,7 @@ public class MovingPlatformController extends OnCollideFromAboveController
 		for(ZootActor actor : connectedActors)
 		{
 			PhysicsBodyController bodyCtrl = actor.getController(PhysicsBodyController.class);						
-			Vector2 actorVelocity = bodyCtrl.getBody().getLinearVelocity();
+			Vector2 actorVelocity = bodyCtrl.getVelocity();
 			
 			//horizontal velocity
 			if(platformVx >= 0.0f && Math.abs(actorVelocity.x) < platformVx) actorVelocity.x = Math.max(actorVelocity.x, platformVx);
@@ -97,7 +113,7 @@ public class MovingPlatformController extends OnCollideFromAboveController
 			//vertical velocity
 			if(platformVy < 0.0f && (actorVelocity.y <= 0.0f || actorVelocity.y <= Math.abs(platformVy))) actorVelocity.y = platformVy;
 			
-			bodyCtrl.getBody().setLinearVelocity(actorVelocity);
+			bodyCtrl.setVelocity(actorVelocity.x, actorVelocity.y);
 		}
 	}
 }
