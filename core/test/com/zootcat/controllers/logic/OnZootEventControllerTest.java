@@ -1,16 +1,16 @@
 package com.zootcat.controllers.logic;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
 
-import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
 import com.zootcat.events.ZootEvents;
-import com.zootcat.scene.ZootActor;
 
 public class OnZootEventControllerTest
 {

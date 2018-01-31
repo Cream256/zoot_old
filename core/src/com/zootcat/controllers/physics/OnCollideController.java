@@ -60,10 +60,15 @@ public abstract class OnCollideController extends PhysicsCollisionController
 	{
 		return controllerActor;
 	}
-
+	
 	public abstract void onEnter(ZootActor actorA, ZootActor actorB, Contact contact);
 	
 	public abstract void onLeave(ZootActor actorA, ZootActor actorB, Contact contact);
+	
+	protected ZootActor getOtherActor(ZootActor actorA, ZootActor actorB)
+	{
+		return actorA == controllerActor ? actorB : actorA;
+	}
 	
 	protected Fixture getOtherFixture(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
