@@ -7,6 +7,7 @@ import java.util.List;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -17,6 +18,7 @@ import com.zootcat.map.ZootMap;
 
 public class ZootTiledMap implements ZootMap
 {	
+	public static final String POLYGON_PROPERTY = "PolygonMapObject";
 	public static final String COLLISION_LAYER_NAME = "Collision";
 	public static final String BACKGROUND_COLOR_PROPERTY = "backgroundcolor";
 	public static final String TILE_WIDTH_PROPERTY = "tilewidth";
@@ -56,6 +58,22 @@ public class ZootTiledMap implements ZootMap
 	public TiledMap getTiledMap()
 	{
 		return tiledMap;
+	}
+	
+	@Override
+	public MapObject getObjectById(int id)
+	{
+		for(MapLayer layer : tiledMap.getLayers())
+		{
+			for(MapObject obj : layer.getObjects())
+			{
+				if(obj.getProperties().get("id", -1, Integer.class) == id)
+				{
+					return obj;
+				}
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -126,13 +144,21 @@ public class ZootTiledMap implements ZootMap
 		result.setOpacity(obj.getOpacity());
 		result.setVisible(obj.isVisible());
 		
+		//add tile properties
 		int gid = obj.getProperties().get("gid", -1, Integer.class);
 		TiledMapTile tile = tiledMap.getTileSets().getTile(gid);
 		if(tile != null)
 		{
 			result.getProperties().putAll(tile.getProperties());	
 		}
-		result.getProperties().putAll(obj.getProperties());		
+		result.getProperties().putAll(obj.getProperties());
+		
+		//add polygon to property
+		if(ClassReflection.isInstance(PolygonMapObject.class, obj))
+		{
+			result.getProperties().put(POLYGON_PROPERTY, ((PolygonMapObject)obj).getPolygon());
+		}
+		
 		return result;
 	}
 }

@@ -2,5 +2,5 @@ package com.zootcat.physics;
 
 public enum ZootBodyShape
 {
-	NONE, BOX, CIRCLE;
+	NONE, BOX, CIRCLE, POLYGON;
 }

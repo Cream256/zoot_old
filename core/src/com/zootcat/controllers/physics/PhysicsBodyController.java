@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -28,7 +30,7 @@ import com.zootcat.scene.ZootScene;
 public class PhysicsBodyController implements Controller
 {
 	@CtrlParam(debug = true) protected float density = 1.0f;
-	@CtrlParam(debug = true) protected float friction = 0.0f;
+	@CtrlParam(debug = true) protected float friction = 0.2f;
 	@CtrlParam(debug = true) protected float restitution = 0.0f;
 	@CtrlParam(debug = true) protected float linearDamping = 0.0f;
 	@CtrlParam(debug = true) protected float angularDamping = 0.0f;	
@@ -197,17 +199,48 @@ public class PhysicsBodyController implements Controller
 	{		
 		if(shape == ZootBodyShape.BOX)
 		{
-			PolygonShape polygon = new PolygonShape();
-			polygon.setAsBox(getBodyWidth(actor) / 2, getBodyHeight(actor) / 2);			
-			return polygon;
+			PolygonShape boxPoly = new PolygonShape();
+			boxPoly.setAsBox(getBodyWidth(actor) / 2, getBodyHeight(actor) / 2);			
+			return boxPoly;
 		}
-		else if (shape == ZootBodyShape.CIRCLE)
+		else if(shape == ZootBodyShape.CIRCLE)
 		{
 			CircleShape circle = new CircleShape();
 			circle.setRadius(getBodyWidth(actor));
 			return circle;
 		}
-		else
+		else if(shape == ZootBodyShape.POLYGON)
+		{			
+			PolygonMapObject polygonObj = (PolygonMapObject) scene.getMap().getObjectById(actor.getId());
+			
+			Rectangle boundingRect = polygonObj.getPolygon().getBoundingRectangle();
+			float polyWidth = boundingRect.getWidth() * scene.getUnitScale();
+			float polyHeight = boundingRect.getHeight() * scene.getUnitScale();
+									
+			float[] polygonVertices = polygonObj.getPolygon().getTransformedVertices();			
+			float[] vertices = new float[polygonVertices.length];
+			System.arraycopy(polygonVertices, 0, vertices, 0, vertices.length);			
+			
+			for(int i = 0; i < vertices.length; ++i)
+			{								
+				//scale to world
+				vertices[i] *= scene.getUnitScale();
+				
+				//translate by actor position
+				boolean isX = i % 2 == 0;
+				if(isX) vertices[i] -= actor.getX();
+				else vertices[i] -= actor.getY();
+								
+				//translate by actor half size
+				if(isX) vertices[i] -= polyWidth / 2;
+				else vertices[i] -= polyHeight / 2;
+			}
+						
+			PolygonShape polygonShape = new PolygonShape();
+			polygonShape.set(vertices);
+			return polygonShape;
+		}
+		else 
 		{
 			throw new RuntimeZootException("Unknown fixture type for for actor: " + actor);
 		}

@@ -18,6 +18,7 @@ public interface ZootMap extends Disposable
 	MapLayer getLayer(String layerName);
 	TiledMapTileSets getTilesets();
 	
+	MapObject getObjectById(int id);
 	List<MapObject> getAllObjects();
-	List<ZootTiledMapCell> getLayerCells(String layerName);
+	List<ZootTiledMapCell> getLayerCells(String layerName);	
 }
