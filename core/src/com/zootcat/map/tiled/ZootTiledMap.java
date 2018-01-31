@@ -17,12 +17,11 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.zootcat.map.ZootMap;
 
 public class ZootTiledMap implements ZootMap
-{	
-	public static final String POLYGON_PROPERTY = "PolygonMapObject";
+{
 	public static final String COLLISION_LAYER_NAME = "Collision";
 	public static final String BACKGROUND_COLOR_PROPERTY = "backgroundcolor";
 	public static final String TILE_WIDTH_PROPERTY = "tilewidth";
-	public static final String TILE_HEIGHT_PROPERTY = "tilewidth";
+	public static final String TILE_HEIGHT_PROPERTY = "tileheight";
 		
 	private TiledMap tiledMap;
 	
@@ -138,7 +137,9 @@ public class ZootTiledMap implements ZootMap
 	
 	private MapObject createMapObjectWithProperties(final MapObject obj, final MapLayer layer) 
 	{
-		MapObject result = new MapObject();
+		boolean isPolygon = ClassReflection.isInstance(PolygonMapObject.class, obj);				
+		MapObject result = isPolygon ? new PolygonMapObject(((PolygonMapObject)obj).getPolygon()) : new MapObject();
+		
 		result.setName(obj.getName());
 		result.setColor(obj.getColor());
 		result.setOpacity(obj.getOpacity());
@@ -152,13 +153,7 @@ public class ZootTiledMap implements ZootMap
 			result.getProperties().putAll(tile.getProperties());	
 		}
 		result.getProperties().putAll(obj.getProperties());
-		
-		//add polygon to property
-		if(ClassReflection.isInstance(PolygonMapObject.class, obj))
-		{
-			result.getProperties().put(POLYGON_PROPERTY, ((PolygonMapObject)obj).getPolygon());
-		}
-		
+				
 		return result;
 	}
 }

@@ -96,7 +96,7 @@ public class ZootSceneScreen implements Screen
 	{
 		//debug input
     	final float camMove = 0.1f;
-    	final float zoom = 0.01f;
+    	final float zoom = 0.05f;
     	OrthographicCamera camera = scene.getCamera();
     	ZootBindableInputProcessor debugInputProcessor = new ZootBindableInputProcessor();
     	debugInputProcessor.bindDown(Input.Keys.NUMPAD_8, () -> { camera.translate(0, camMove, 0); return true; });

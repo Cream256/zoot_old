@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
@@ -27,22 +28,29 @@ import com.zootcat.map.tiled.ZootTiledMap;
 public class ZootTiledMapTest 
 {	
 	private TiledMap tiledMapMock;
-	private TiledMapTileSets tilesetsMock;
-	private MapLayers mapLayersMock;
+	private TiledMapTileSets tilesets;
+	private MapLayers mapLayers;
+	private MapLayer layer1;
+	private MapLayer layer2;
 	private ZootTiledMap map;
+	private MapProperties tiledMapProperties;
 	
 	@Before
 	public void setup()
-	{		
-		mapLayersMock = new MapLayers();
-		tilesetsMock = new TiledMapTileSets();
+	{				
+		tilesets = new TiledMapTileSets();
 		tiledMapMock = mock(TiledMap.class);	
+		tiledMapProperties = new MapProperties();
 		
-		mapLayersMock.add(new MapLayer());
-		mapLayersMock.add(new MapLayer());
+		layer1 = new MapLayer();
+		layer2 = new MapLayer();
+		mapLayers = new MapLayers();
+		mapLayers.add(layer1);
+		mapLayers.add(layer2);
 		
-		when(tiledMapMock.getLayers()).thenReturn(mapLayersMock);
-		when(tiledMapMock.getTileSets()).thenReturn(tilesetsMock);
+		when(tiledMapMock.getLayers()).thenReturn(mapLayers);
+		when(tiledMapMock.getTileSets()).thenReturn(tilesets);
+		when(tiledMapMock.getProperties()).thenReturn(tiledMapProperties);
 		
 		map = new ZootTiledMap(tiledMapMock);
 	}
@@ -56,6 +64,62 @@ public class ZootTiledMapTest
 	}
 	
 	@Test
+	public void getTileWidthTest()
+	{
+		tiledMapProperties.put(ZootTiledMap.TILE_WIDTH_PROPERTY, 32);
+		assertEquals(32, map.getTileWidth());
+	}
+	
+	@Test
+	public void getTileHeightTest()
+	{
+		tiledMapProperties.put(ZootTiledMap.TILE_HEIGHT_PROPERTY, 48);
+		assertEquals(48, map.getTileHeight());
+	}
+	
+	@Test
+	public void getBackgroundColorTest()
+	{		
+		tiledMapProperties.put(ZootTiledMap.BACKGROUND_COLOR_PROPERTY, "#FF0000");
+		assertEquals(Color.RED, map.getBackgroundColor());
+	}
+	
+	@Test
+	public void getTilesetsTest()
+	{
+		assertEquals(tilesets, map.getTilesets());
+	}
+	
+	@Test
+	public void getObjectByIdShouldReturnNullForNotExistingIdTest()
+	{
+		assertNull(map.getObjectById(0));
+	}
+	
+	@Test
+	public void getObjectByIdTest()
+	{
+		//given
+		MapObject obj1 = new MapObject();
+		MapObject obj2 = new MapObject();
+		MapObject obj3 = new MapObject();
+		
+		obj1.getProperties().put("id", 1);
+		obj2.getProperties().put("id", 2);
+		obj3.getProperties().put("id", 3);
+
+		//when
+		layer1.getObjects().add(obj1);
+		layer2.getObjects().add(obj2);
+		layer2.getObjects().add(obj3);
+		
+		//then
+		assertEquals(obj1, map.getObjectById(1));
+		assertEquals(obj2, map.getObjectById(2));
+		assertEquals(obj3, map.getObjectById(3));
+	}
+	
+	@Test
 	public void getAllObjectsShouldReturnValidObjects()
 	{
 		//given
@@ -64,7 +128,7 @@ public class ZootTiledMapTest
 		mapObject.setColor(Color.RED);
 		mapObject.setOpacity(0.5f);
 		mapObject.setVisible(false);		
-		mapLayersMock.get(0).getObjects().add(mapObject);
+		mapLayers.get(0).getObjects().add(mapObject);
 		
 		//when
 		List<MapObject> mapObjects = map.getAllObjects();
@@ -86,7 +150,7 @@ public class ZootTiledMapTest
 		mapObject.getProperties().put("LocalProp", "1");
 		mapObject.getProperties().put("GlobalProp", "A");
 		mapObject.getProperties().put("gid", 1);		
-		mapLayersMock.get(0).getObjects().add(mapObject);
+		mapLayers.get(0).getObjects().add(mapObject);
 		
 		TiledMapTile tile = new StaticTiledMapTile(mock(TextureRegion.class));
 		tile.setId(1);
@@ -96,7 +160,7 @@ public class ZootTiledMapTest
 		TiledMapTileSet tileset = new TiledMapTileSet();
 		tileset.putTile(1, tile);
 		
-		tilesetsMock.addTileSet(tileset);
+		tilesets.addTileSet(tileset);
 		
 		//when
 		List<MapObject> mapObjects = map.getAllObjects();
@@ -121,8 +185,8 @@ public class ZootTiledMapTest
 		MapObject obj2 = new MapObject();
 		obj2.setName("Obj2");
 		
-		mapLayersMock.get(0).getObjects().add(obj1);
-		mapLayersMock.get(1).getObjects().add(obj2);
+		mapLayers.get(0).getObjects().add(obj1);
+		mapLayers.get(1).getObjects().add(obj2);
 		
 		//when
 		List<MapObject> mapObjects = map.getAllObjects();
@@ -132,6 +196,4 @@ public class ZootTiledMapTest
 		assertEquals("Obj1", mapObjects.get(0).getName());
 		assertEquals("Obj2", mapObjects.get(1).getName());
 	}
-	
-	
 }

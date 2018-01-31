@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.objects.PolygonMapObject;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.ControllerFactory;
 import com.zootcat.exceptions.RuntimeZootException;
@@ -83,18 +86,28 @@ public class ZootTiledMapActorFactory
 		actor.setColor(mapObject.getColor());
 		actor.setVisible(mapObject.isVisible());
 		actor.setOpacity(mapObject.getOpacity());
-		
-		int id = Integer.valueOf(getPropertyOrThrow(mapObject, "id"));
-		int gid = Integer.valueOf(getPropertyOrDefault(mapObject, "gid", "-1"));
-		float x = Float.valueOf(getPropertyOrThrow(mapObject, "x")) * scale;
-		float y = Float.valueOf(getPropertyOrThrow(mapObject, "y")) * scale;
-		float width = Float.valueOf(getPropertyOrThrow(mapObject, "width")) * scale;
-		float height = Float.valueOf(getPropertyOrThrow(mapObject, "height")) * scale; 		
-		float rotation = Float.valueOf(getPropertyOrDefault(mapObject, "rotation", "0.0f"));
-		actor.setBounds(x, y, width, height);
-		actor.setRotation(rotation);
-		actor.setId(id);
-		actor.setGid(gid);
+		actor.setId(Integer.valueOf(getPropertyOrThrow(mapObject, "id")));
+		actor.setGid(Integer.valueOf(getPropertyOrDefault(mapObject, "gid", "-1")));		
+		actor.setRotation(Float.valueOf(getPropertyOrDefault(mapObject, "rotation", "0.0f")));
+				
+		boolean isPolygon = ClassReflection.isInstance(PolygonMapObject.class, mapObject);
+		if(isPolygon)
+		{
+			Rectangle boundingRectangle = ((PolygonMapObject)mapObject).getPolygon().getBoundingRectangle();
+			float x = boundingRectangle.getX() * scale;
+			float y = boundingRectangle.getY() * scale;
+			float width = boundingRectangle.getWidth() * scale;
+			float height = boundingRectangle.getHeight() * scale;
+			actor.setBounds(x, y, width, height);
+		}
+		else
+		{
+			float x = Float.valueOf(getPropertyOrThrow(mapObject, "x")) * scale;
+			float y = Float.valueOf(getPropertyOrThrow(mapObject, "y")) * scale;
+			float width = Float.valueOf(getPropertyOrThrow(mapObject, "width")) * scale;
+			float height = Float.valueOf(getPropertyOrThrow(mapObject, "height")) * scale;
+			actor.setBounds(x, y, width, height);
+		}
 	}
 
 	protected void setActorControllers(final MapProperties actorProperties, ZootActor actor)
@@ -114,7 +127,7 @@ public class ZootTiledMapActorFactory
 		
 		actor.addControllers(createdControllers);
 	}
-		
+			
 	protected String getPropertyOrDefault(MapObject mapObject, String key, String defaultValue)
 	{
 		Object value = mapObject.getProperties().get(key);
