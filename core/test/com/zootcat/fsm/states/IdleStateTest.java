@@ -122,4 +122,11 @@ public class IdleStateTest extends ZootStateTestCase
 		assertTrue(idleState.handle(createEvent(ZootEventType.Down)));
 		assertEquals(DownState.ID, actor.getStateMachine().getCurrentState().getId());
 	}
+	
+	@Test
+	public void handleDeadEventTest()
+	{
+		assertTrue(idleState.handle(createEvent(ZootEventType.Dead)));
+		assertEquals(DeadState.ID, actor.getStateMachine().getCurrentState().getId());
+	}
 }

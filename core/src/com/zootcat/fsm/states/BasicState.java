@@ -66,6 +66,7 @@ public class BasicState implements ZootState
 		return name;
 	}
 		
+	@Override
 	public String getName()
 	{
 		return name;
