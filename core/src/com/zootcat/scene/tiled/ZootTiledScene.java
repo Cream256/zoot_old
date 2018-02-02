@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.zootcat.camera.ZootCamera;
 import com.zootcat.controllers.factory.ControllerFactory;
 import com.zootcat.gfx.ZootRender;
 import com.zootcat.map.ZootMap;
@@ -39,10 +40,11 @@ public class ZootTiledScene implements ZootScene
 	private ZootTiledMap map;
 	private ZootPhysics physics;	
 	private AssetManager assetManager;
-	private OrthographicCamera camera;
+	private ZootCamera camera;
 	private ZootTiledMapRender mapRender;
 		
 	private float unitScale;
+	private float worldUnitPerTile;
 	private float viewportWidth;
 	private float viewportHeight;
 	private float timeAccumulator = 0.0f;	
@@ -52,7 +54,8 @@ public class ZootTiledScene implements ZootScene
 	
 	public ZootTiledScene(ZootTiledMap map, AssetManager assetManager, float viewportWidth, float viewportHeight, float worldUnitPerTile)
 	{						
-    	this.unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
+    	this.worldUnitPerTile = worldUnitPerTile;
+		this.unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
     	this.viewportWidth = viewportWidth;
     	this.viewportHeight = viewportHeight;
     	this.assetManager = assetManager;
@@ -61,7 +64,7 @@ public class ZootTiledScene implements ZootScene
 	}
 	
 	@Override
-	public OrthographicCamera getCamera()
+	public ZootCamera getCamera()
 	{
 		return camera;
 	}
@@ -124,7 +127,7 @@ public class ZootTiledScene implements ZootScene
 			physics.step(FIXED_TIME_STEP);
 			timeAccumulator -= FIXED_TIME_STEP;
 		}
-		stage.getCamera().update();
+		camera.update(delta, true);
 	}
 	
 	@Override
@@ -199,6 +202,12 @@ public class ZootTiledScene implements ZootScene
 	}
 
 	@Override
+	public Viewport getViewport()
+	{
+		return stage.getViewport();
+	}
+	
+	@Override
 	public float getUnitScale()
 	{
 		return unitScale;
@@ -224,8 +233,8 @@ public class ZootTiledScene implements ZootScene
 		mapRender = new ZootTiledMapRender(map, renderConfig);
 				
 		//stage
-		Viewport viewport = new StretchViewport(viewportWidth, viewportHeight);
-		camera = (OrthographicCamera) viewport.getCamera();
+		camera = new ZootCamera(map.getMapWidth() * worldUnitPerTile, map.getMapHeight() * worldUnitPerTile);		
+		Viewport viewport = new StretchViewport(viewportWidth, viewportHeight, camera);
 		stage = new Stage(viewport);
 		
 		//cell actors

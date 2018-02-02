@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.zootcat.camera.ZootCamera;
 import com.zootcat.gfx.ZootRender;
 import com.zootcat.map.ZootMap;
 import com.zootcat.physics.ZootPhysics;
@@ -24,12 +25,13 @@ public interface ZootScene extends Disposable
 	List<ZootActor> getActors();
 	List<ZootActor> getActors(Predicate<Actor> filter);
 	
-	OrthographicCamera getCamera();
+	ZootCamera getCamera();
 	ZootPhysics getPhysics();
 	ZootRender getRender();
 	ZootMap getMap();
 	InputProcessor getInputProcessor();
-		
+	Viewport getViewport();
+	
 	boolean isDebugMode();
 	void setDebugMode(boolean debug);
 	

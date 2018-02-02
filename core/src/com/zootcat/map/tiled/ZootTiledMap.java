@@ -48,6 +48,18 @@ public class ZootTiledMap implements ZootMap
 		return Color.valueOf(tiledMap.getProperties().get(BACKGROUND_COLOR_PROPERTY, String.class));
 	}
 	
+	//TODO add test
+	public int getMapWidth()
+	{
+		return tiledMap.getProperties().get("width", Integer.class);
+	}
+
+	//TODO add test
+	public int getMapHeight()
+	{
+		return tiledMap.getProperties().get("height", Integer.class);
+	}
+	
 	@Override
 	public TiledMapTileSets getTilesets()
 	{
@@ -96,7 +108,6 @@ public class ZootTiledMap implements ZootMap
 		return (TiledMapTileLayer) tiledMap.getLayers().get(layerName);		
 	}
 	
-
 	@Override
 	public List<ZootTiledMapCell> getLayerCells(String layerName)
 	{

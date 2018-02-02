@@ -3,7 +3,8 @@ package com.zootcat.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.zootcat.camera.ZootCamera;
+import com.zootcat.camera.ZootCameraBoundaryStrategy;
 import com.zootcat.controllers.input.InputProcessorController;
 import com.zootcat.game.GameCharacterInputProcessor;
 import com.zootcat.hud.ZootDebugHud;
@@ -97,15 +98,15 @@ public class ZootSceneScreen implements Screen
 		//debug input
     	final float camMove = 0.1f;
     	final float zoom = 0.05f;
-    	OrthographicCamera camera = scene.getCamera();
+    	ZootCamera camera = scene.getCamera();
     	ZootBindableInputProcessor debugInputProcessor = new ZootBindableInputProcessor();
     	debugInputProcessor.bindDown(Input.Keys.NUMPAD_8, () -> { camera.translate(0, camMove, 0); return true; });
     	debugInputProcessor.bindDown(Input.Keys.NUMPAD_2, () -> { camera.translate(0, -camMove, 0); return true; });
     	debugInputProcessor.bindDown(Input.Keys.NUMPAD_4, () -> { camera.translate(-camMove, 0, 0); return true; });
     	debugInputProcessor.bindDown(Input.Keys.NUMPAD_6, () -> { camera.translate(camMove, 0, 0); return true; });
-    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_5, () -> { camera.zoom -= zoom; return true; });
-    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_0, () -> { camera.zoom += zoom; return true; });
-    	debugInputProcessor.bindDown(Input.Keys.PERIOD, () -> { camera.zoom = 1.0f; return true; });    	
+    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_5, () -> { camera.zoom(-zoom); return true; });
+    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_0, () -> { camera.zoom(zoom); return true; });
+    	debugInputProcessor.bindDown(Input.Keys.PERIOD, () -> { camera.setZoom(1.0f); return true; });    	
     	debugInputProcessor.bindUp(Input.Keys.F9, () -> 
     	{ 
     		scene.setDebugMode(!scene.isDebugMode()); 
@@ -119,7 +120,11 @@ public class ZootSceneScreen implements Screen
     	GameCharacterInputProcessor characterInputProcessor = new GameCharacterInputProcessor(player);    	
     	player.addController(new InputProcessorController(characterInputProcessor));
     	scene.setFocusedActor(player);
+    	camera.setTarget(player);
+    	camera.setClipToBoundary(true);
     	
+    	camera.setStrategy(new ZootCameraBoundaryStrategy(scene.getViewport()));
+    	    	
     	//input  	
     	inputManager = new ZootInputManager();    	
     	inputManager.addProcessor(debugInputProcessor);
