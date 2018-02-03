@@ -28,12 +28,11 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-public class GdxTestRunner extends BlockJUnit4ClassRunner implements ApplicationListener 
+public class WindowedGdxTestRunner extends BlockJUnit4ClassRunner implements ApplicationListener 
 {
-
 	private Map<FrameworkMethod, RunNotifier> invokeInRender = new HashMap<FrameworkMethod, RunNotifier>();
 
-	public GdxTestRunner(Class<?> klass) throws InitializationError 
+	public WindowedGdxTestRunner(Class<?> klass) throws InitializationError 
 	{
 		super(klass);
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();

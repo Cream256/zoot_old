@@ -2,14 +2,14 @@ package com.zootcat.camera;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.zootcat.scene.ZootActor;
 
-//TODO add test
 public class ZootCamera extends OrthographicCamera
 {
 	private ZootActor target;
 	private boolean clipToLevel = false;
-	private ZootCameraStrategy movementStrategy = ZootCameraNullStrategy.Instance;
+	private ZootCameraScrollingStrategy movementStrategy = ZootNullScrollingStrategy.Instance;
 	private float worldWidth;
 	private float worldHeight;
 	
@@ -31,39 +31,69 @@ public class ZootCamera extends OrthographicCamera
 	
 	public void zoom(float amount)
 	{
-		this.zoom += amount;
+		zoom += amount;
 	}
 	
-	public void setZoom(float zoom)
+	public void setZoom(float newZoom)
 	{
-		this.zoom = zoom;
+		zoom = newZoom;
+	}
+	
+	public float getZoom()
+	{
+		return zoom;
 	}
 	
 	public void update(float delta, boolean updateFrustum)
 	{
-		movementStrategy.calculateCameraPosition(target, position, delta);		
-		
-		if(isClippingToBoundary()) clipCameraToBoundary();
-				
+		movementStrategy.scrollCamera(this, delta);
 		super.update(updateFrustum);
 	}
 		
-	public void setStrategy(ZootCameraStrategy strategy)
+	public void setScrollingStrategy(ZootCameraScrollingStrategy strategy)
 	{
-		movementStrategy = strategy != null ? strategy : ZootCameraNullStrategy.Instance;
+		movementStrategy = strategy != null ? strategy : ZootNullScrollingStrategy.Instance;
 	}
 	
-	public void setClipToBoundary(boolean value)
+	public void setEdgeSnapping(boolean value)
 	{
 		clipToLevel = value;
 	}
 	
-	public boolean isClippingToBoundary()
+	public boolean isEdgeSnapping()
 	{
 		return clipToLevel;
 	}
 	
-	private void clipCameraToBoundary()
+	public void setViewportSize(float width, float height)
+	{
+		viewportWidth = width;
+		viewportHeight = height;
+	}
+	
+	public float getViewportWidth()
+	{
+		return viewportWidth;
+	}
+	
+	public float getViewportHeight()
+	{
+		return viewportHeight;
+	}
+	
+	public void setPosition(float x, float y)
+	{
+		position.x = x;
+		position.y = y;
+		if(isEdgeSnapping()) snapToEdges();
+	}
+	
+	public Vector3 getPosition()
+	{
+		return position.cpy();
+	}
+		
+	private void snapToEdges()
 	{		
 		float minX = zoom * (viewportWidth / 2.0f);
 		float maxX = worldWidth - minX;		
@@ -72,5 +102,5 @@ public class ZootCamera extends OrthographicCamera
 		
 		position.x = MathUtils.clamp(position.x, minX, maxX);
 		position.y = MathUtils.clamp(position.y, minY, maxY);		
-	}	
+	}
 }

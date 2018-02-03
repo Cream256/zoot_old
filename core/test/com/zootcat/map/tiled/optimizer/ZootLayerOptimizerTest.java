@@ -12,10 +12,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.zootcat.assets.ZootAssetRecognizer;
 import com.zootcat.map.ZootMap;
 import com.zootcat.map.tiled.ZootTiledMapLoader;
-import com.zootcat.testing.GdxTestRunner;
+import com.zootcat.testing.WindowedGdxTestRunner;
 import com.zootcat.testing.ZootTestUtils;
 
-@RunWith(GdxTestRunner.class)
+@RunWith(WindowedGdxTestRunner.class)
 public class ZootLayerOptimizerTest
 {	
 	@Test
