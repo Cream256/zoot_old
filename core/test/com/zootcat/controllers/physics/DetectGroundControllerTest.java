@@ -226,7 +226,7 @@ public class DetectGroundControllerTest
 		
 		//then
 		assertTrue("Ground still should be detected", groundCtrl.isOnGround());
-		assertEquals("No event should be send", 1, eventCounter.getCount());
+		assertEquals("Event should be sent", 2, eventCounter.getCount());
 		
 		//when
 		groundCtrl.endContact(actor, otherActor, contactMock);
@@ -234,7 +234,7 @@ public class DetectGroundControllerTest
 		
 		//then
 		assertFalse("Ground should not be detected", groundCtrl.isOnGround());
-		assertEquals("No event should be send", 1, eventCounter.getCount());
+		assertEquals("No event should be sent", 2, eventCounter.getCount());
 		
 		//when
 		groundCtrl.beginContact(actor, otherActor, contactMock);
@@ -242,7 +242,7 @@ public class DetectGroundControllerTest
 		
 		//then
 		assertTrue("Ground should be detected", groundCtrl.isOnGround());
-		assertEquals("Event should be sent to actor", 2, eventCounter.getCount());
+		assertEquals("Event should be sent", 3, eventCounter.getCount());
 	}
 	
 	@Test
@@ -254,10 +254,7 @@ public class DetectGroundControllerTest
 		Manifold manifold = mock(Manifold.class);
 					
 		groundCtrl.preSolve(actorA, actorB, contact, manifold);
-		verifyZeroInteractions(actorA);
-		verifyZeroInteractions(actorB);
-		verifyZeroInteractions(contact);
-		verifyZeroInteractions(manifold);		
+		verifyZeroInteractions(actorA, actorB, contact, manifold);
 	}
 	
 	@Test
@@ -268,9 +265,6 @@ public class DetectGroundControllerTest
 		ContactImpulse contactImpulse = mock(ContactImpulse.class);
 				
 		groundCtrl.postSolve(actorA, actorB, contactImpulse);
-		verifyZeroInteractions(actorA);
-		verifyZeroInteractions(actorB);
-		verifyZeroInteractions(contactImpulse);
+		verifyZeroInteractions(actorA, actorB, contactImpulse);
 	}
-
 }

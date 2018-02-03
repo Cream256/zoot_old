@@ -11,8 +11,8 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.zootcat.controllers.factory.CtrlDebug;
 import com.zootcat.controllers.factory.CtrlParam;
-import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
+import com.zootcat.events.ZootEvents;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
@@ -26,15 +26,8 @@ public class DetectGroundController extends PhysicsCollisionController
 	@CtrlDebug private boolean isOnGround = false;
 		
 	private Fixture feet;
-	private ZootEvent groundEvent;
 	private ZootActor actorWithSensor;
 	private PhysicsBodyController physicsCtrl;
-		
-	@Override
-	public void init(ZootActor actor)
-	{
-		groundEvent = new ZootEvent(ZootEventType.Ground);
-	}
 
 	@Override
 	public void onAdd(ZootActor actor)
@@ -65,13 +58,10 @@ public class DetectGroundController extends PhysicsCollisionController
 	@Override
 	public void onUpdate(float delta, ZootActor actor)
 	{
-		boolean nowOnGround = contactCount > 0;
-		
-		if(nowOnGround && !isOnGround)
+		boolean nowOnGround = contactCount > 0;		
+		if(nowOnGround)
 		{
-			groundEvent.reset();
-			groundEvent.setType(ZootEventType.Ground);
-			actorWithSensor.fire(groundEvent);			
+			ZootEvents.fireAndFree(actorWithSensor, ZootEventType.Ground);
 		}
 		isOnGround = nowOnGround;
 	}

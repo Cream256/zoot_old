@@ -15,11 +15,7 @@ import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootDirection;
 
 public class GameCharacterInputProcessor extends ZootBindableInputProcessor
-{
-	private static final float SCROLLING_SPEED = 6.0f;
-	private static final float CAMERA_OFFSET_X = 2.0f;
-	private static final float CAMERA_OFFSET_Y = 0.0f;
-	
+{	
 	private ZootActor player;
 	private ZootWindowScrollingStrategy scrolling;
 	
@@ -53,9 +49,9 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 		crouchState.setBodyScaling(crouchingScale);
 		
 		//camera		
-		scrolling = new ZootWindowScrollingStrategy(1.0f, 1.0f, 1.0f, 1.0f);		
-		scrolling.setOffset(CAMERA_OFFSET_X, CAMERA_OFFSET_Y);		
-		scrolling.setScrollingSpeed(SCROLLING_SPEED);		
+		scrolling = new ZootWindowScrollingStrategy(0.5f, 0.5f, 0.5f, 0.5f);		
+		scrolling.setOffset(0.0f, 0.0f);		
+		scrolling.setScrollingSpeed(4.0f);		
 		camera.setEdgeSnapping(true);
     	camera.setScrollingStrategy(scrolling);		
 		camera.setTarget(player);
