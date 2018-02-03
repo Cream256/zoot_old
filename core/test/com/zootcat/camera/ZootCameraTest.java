@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.badlogic.gdx.math.Vector3;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.testing.HeadlessGdxTestRunner;
 
@@ -141,21 +140,4 @@ public class ZootCameraTest
 		assertEquals(1.0f, camera.getViewportWidth(), 0.0f);
 		assertEquals(2.0f, camera.getViewportHeight(), 0.0f);
 	}
-	
-	@Test
-	public void getPositionShouldReturnDefensiveCopyTest()
-	{
-		//given
-		assertEquals(0.0f, camera.getPosition().x, 0.0f);
-		assertEquals(0.0f, camera.getPosition().y, 0.0f);
-		
-		//when
-		Vector3 pos = camera.getPosition();
-		pos.x = 1.0f;
-		pos.y = 2.0f;
-		
-		//then
-		assertEquals(0.0f, camera.getPosition().x, 0.0f);
-		assertEquals(0.0f, camera.getPosition().y, 0.0f);
-	}	
 }

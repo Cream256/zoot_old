@@ -11,17 +11,18 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.zootcat.scene.ZootActor;
 
 public class ZootWindowScrollingStrategyTest
 {
-	private static final float WINDOW_SCALE_X = 6;
-	private static final float WINDOW_SCALE_Y = 4;
-	private static final float VIEWPORT_WIDTH = 320.0f;
-	private static final float VIEWPORT_HEIGHT = 240.0f;
-	private static final float CAMERA_START_X = VIEWPORT_WIDTH / 2.0f;
-	private static final float CAMERA_START_Y = VIEWPORT_HEIGHT / 2.0f;
+	private static final float LEFT = 40.0f;
+	private static final float RIGHT = 60.0f;
+	private static final float TOP = 20.0f;
+	private static final float BOTTOM = 30.0f;
+	private static final float CAMERA_START_X = 0;
+	private static final float CAMERA_START_Y = 0;
 		
 	@Mock private ZootActor actor;
 	@Mock private ZootCamera camera;	
@@ -33,10 +34,9 @@ public class ZootWindowScrollingStrategyTest
 	{
 		MockitoAnnotations.initMocks(this);
 		cameraPosition = new Vector3(CAMERA_START_X, CAMERA_START_Y, 0.0f);		
-		strategy = new ZootWindowScrollingStrategy(WINDOW_SCALE_X, WINDOW_SCALE_Y);
+		strategy = new ZootWindowScrollingStrategy(LEFT, RIGHT, TOP, BOTTOM);
+		strategy.setScrollingSpeed(1.0f);
 		
-		when(camera.getViewportWidth()).thenReturn(VIEWPORT_WIDTH);
-		when(camera.getViewportHeight()).thenReturn(VIEWPORT_HEIGHT);
 		when(camera.getPosition()).thenReturn(cameraPosition);
 		when(camera.getTarget()).thenReturn(actor);
 	}
@@ -64,38 +64,35 @@ public class ZootWindowScrollingStrategyTest
 		strategy.scrollCamera(camera, 1.0f);
 		
 		//then
-		assertEquals("X position should not change", CAMERA_START_X, camera.getPosition().x, 0.0f);
-		assertEquals("Y position should not change", CAMERA_START_Y, camera.getPosition().y, 0.0f);
+		verify(camera, times(1)).setPosition(0.0f, 0.0f);
 	}
 	
 	@Test
 	public void scrollCameraActorOutsideOfLeftBoundaryTest()
 	{
 		//given		
-		when(actor.getX()).thenReturn(0.0f);
+		when(actor.getX()).thenReturn(-LEFT * 2);
 		when(actor.getY()).thenReturn(CAMERA_START_Y);
 		
 		//when
 		strategy.scrollCamera(camera, 1.0f);		
 		
 		//then
-		assertEquals("X position should tract actor X position", 53, camera.getPosition().x, 1.0f);
-		assertEquals("Y position should not change", CAMERA_START_Y, camera.getPosition().y, 0.0f);
+		verify(camera, times(1)).setPosition(-LEFT, CAMERA_START_Y);
 	}
 	
 	@Test
 	public void scrollCameraActorOutsideOfRightBoundaryTest()
 	{
 		//given		
-		when(actor.getX()).thenReturn(VIEWPORT_WIDTH);
+		when(actor.getX()).thenReturn(RIGHT * 2);
 		when(actor.getY()).thenReturn(CAMERA_START_Y);
 		
 		//when
 		strategy.scrollCamera(camera, 1.0f);		
 		
 		//then
-		assertEquals("X position should tract actor X position", 266.0f, camera.getPosition().x, 1.0f);
-		assertEquals("Y position should not change", CAMERA_START_Y, camera.getPosition().y, 0.0f);
+		verify(camera, times(1)).setPosition(RIGHT, CAMERA_START_Y);
 	}
 	
 	@Test
@@ -103,14 +100,13 @@ public class ZootWindowScrollingStrategyTest
 	{
 		//given		
 		when(actor.getX()).thenReturn(CAMERA_START_X);
-		when(actor.getY()).thenReturn(VIEWPORT_HEIGHT);
+		when(actor.getY()).thenReturn(TOP * 2);
 		
 		//when
 		strategy.scrollCamera(camera, 1.0f);		
 		
 		//then
-		assertEquals("X position should not change", CAMERA_START_X, camera.getPosition().x, 0.0f);
-		assertEquals("Y position should tract actor Y position", 180, camera.getPosition().y, 0.5f);		
+		verify(camera, times(1)).setPosition(CAMERA_START_X, TOP);
 	}
 	
 	@Test
@@ -118,13 +114,94 @@ public class ZootWindowScrollingStrategyTest
 	{
 		//given		
 		when(actor.getX()).thenReturn(CAMERA_START_X);
-		when(actor.getY()).thenReturn(-VIEWPORT_HEIGHT);
+		when(actor.getY()).thenReturn(-BOTTOM * 2);
 		
 		//when
 		strategy.scrollCamera(camera, 1.0f);		
 		
 		//then
-		assertEquals("X position should not change", CAMERA_START_X, camera.getPosition().x, 0.0f);
-		assertEquals("Y position should tract actor Y position", -180, camera.getPosition().y, 0.5f);		
+		verify(camera, times(1)).setPosition(CAMERA_START_X, -BOTTOM);
+	}
+	
+	@Test
+	public void scrollCameraShouldIncludeXOffsetTest()
+	{
+		//given		
+		when(actor.getX()).thenReturn(-LEFT * 2);
+		when(actor.getY()).thenReturn(CAMERA_START_Y);
+		
+		//when
+		strategy.setOffset(-LEFT, 0.0f);
+		strategy.scrollCamera(camera, 1.0f);		
+		
+		//then
+		verify(camera, times(1)).setPosition(0.0f, CAMERA_START_Y);	
+	}
+	
+	@Test
+	public void scrollCameraShouldIncludeYOffsetTest()
+	{
+		//given		
+		when(actor.getX()).thenReturn(CAMERA_START_X);
+		when(actor.getY()).thenReturn(-BOTTOM * 2);
+		
+		//when
+		strategy.setOffset(0.0f, -BOTTOM);
+		strategy.scrollCamera(camera, 1.0f);		
+		
+		//then
+		verify(camera, times(1)).setPosition(CAMERA_START_X, 0.0f);
+	}
+	
+	@Test
+	public void setOffsetTest()
+	{
+		strategy.setOffset(0.0f, 0.0f);
+		assertEquals(0.0f, strategy.getOffsetCopy().x, 0.0f);
+		assertEquals(0.0f, strategy.getOffsetCopy().y, 0.0f);
+		
+		strategy.setOffset(1.0f, 2.0f);
+		assertEquals(1.0f, strategy.getOffsetCopy().x, 0.0f);
+		assertEquals(2.0f, strategy.getOffsetCopy().y, 0.0f);
+		
+		strategy.setOffset(-1.0f, -2.0f);
+		assertEquals(-1.0f, strategy.getOffsetCopy().x, 0.0f);
+		assertEquals(-2.0f, strategy.getOffsetCopy().y, 0.0f);
+	}
+	
+	@Test
+	public void getOffsetCopyShouldReturnDefensiveCopyTest()
+	{
+		//given
+		assertEquals(0.0f, strategy.getOffsetCopy().x, 0.0f);
+		assertEquals(0.0f, strategy.getOffsetCopy().y, 0.0f);
+		
+		//when
+		Vector2 offset = strategy.getOffsetCopy();
+		offset.x = 1.0f;
+		offset.y = 2.0f;
+		
+		//then
+		assertEquals(0.0f, strategy.getOffsetCopy().x, 0.0f);
+		assertEquals(0.0f, strategy.getOffsetCopy().y, 0.0f);
+	}
+	
+	@Test
+	public void setScrollingSpeedTest()
+	{
+		strategy.setScrollingSpeed(0.0f);
+		assertEquals(0.0f, strategy.getScrollingSpeed(), 0.0f);
+		
+		strategy.setScrollingSpeed(1.0f);
+		assertEquals(1.0f, strategy.getScrollingSpeed(), 0.0f);
+		
+		strategy.setScrollingSpeed(-1.0f);
+		assertEquals(-1.0f, strategy.getScrollingSpeed(), 0.0f);
+		
+		strategy.setScrollingSpeed(5.0f);
+		assertEquals(5.0f, strategy.getScrollingSpeed(), 0.0f);
+		
+		strategy.setScrollingSpeed(-5.0f);
+		assertEquals(-5.0f, strategy.getScrollingSpeed(), 0.0f);
 	}
 }

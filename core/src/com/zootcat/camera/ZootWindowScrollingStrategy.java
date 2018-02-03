@@ -7,17 +7,39 @@ import com.zootcat.scene.ZootActor;
 
 public class ZootWindowScrollingStrategy implements ZootCameraScrollingStrategy
 {	
-	private static final float LERP_SPEED = 4.0f;
-	
-	private float windowSizeX = 4.0f;
-	private float windowSizeY = 4.0f;
-	private Vector2 topLeft = new Vector2();
-	private Vector2 bottomRight = new Vector2();
-	
-	public ZootWindowScrollingStrategy(float windowScaleX, float windowScaleY)
+	private static final float DEFAULT_SCROLLING_SPEED = 4.0f;
+
+	private Vector2 offset = new Vector2();
+	private float left, right, top, bottom;
+	private float scrollingSpeed = DEFAULT_SCROLLING_SPEED;
+		
+	public ZootWindowScrollingStrategy(float leftBorder, float rightBorder, float topBorder, float bottomBorder)
 	{
-		this.windowSizeX = windowScaleX;
-		this.windowSizeY = windowScaleY;
+		left = leftBorder;
+		right = rightBorder;
+		top = topBorder;
+		bottom = bottomBorder;
+	}
+	
+	public void setOffset(float x, float y)
+	{
+		offset.x = x;
+		offset.y = y;
+	}
+	
+	public Vector2 getOffsetCopy()
+	{
+		return offset.cpy();
+	}
+	
+	public void setScrollingSpeed(float speed)
+	{
+		scrollingSpeed = speed;
+	}
+	
+	public float getScrollingSpeed()
+	{
+		return scrollingSpeed;
 	}
 		
 	@Override
@@ -26,44 +48,43 @@ public class ZootWindowScrollingStrategy implements ZootCameraScrollingStrategy
 		ZootActor actor = camera.getTarget();
 		if(actor == null) return;
 								
-		//calculate window boundary
-		float screenWidth = camera.getViewportWidth();
-		float screenHeight = camera.getViewportHeight();
-		
-		Vector3 cameraPosition = camera.getPosition();
-		topLeft.x = cameraPosition.x - screenWidth / windowSizeX;
-		topLeft.y = cameraPosition.y + screenHeight / windowSizeY;
-		
-		bottomRight.x = cameraPosition.x + screenWidth / windowSizeX;
-		bottomRight.y = cameraPosition.y - screenHeight / windowSizeY;
+		//calculate window boundary		
+		Vector3 cameraPositionRef = camera.getPosition();
+		float topLeftX = cameraPositionRef.x - left + offset.x;
+		float topLeftY = cameraPositionRef.y + top + offset.y;		
+		float bottomRightX = cameraPositionRef.x + right + offset.x;
+		float bottomRightY = cameraPositionRef.y - bottom + offset.y;
 						
 		//check if actor is outside of boundary	
-		float actorX = actor.getX();
-		float actorY = actor.getY();
+		float actorLeft = actor.getX();
+		float actorRight = actorLeft + actor.getWidth();
+		float actorBottom = actor.getY();
+		float actorTop = actorBottom + actor.getHeight(); 
 		
-		Vector3 cameraLookAt = camera.getPosition();				
-		if(actorX > bottomRight.x)
+		float lookAtX = cameraPositionRef.x;
+		float lookAtY = cameraPositionRef.y;
+		if(actorRight > bottomRightX)
 		{
-			cameraLookAt.x += actorX - bottomRight.x;			
+			lookAtX += actorRight - bottomRightX;			
 		}
-		else if(actorX < topLeft.x)
+		else if(actorLeft < topLeftX)
 		{
-			cameraLookAt.x -= topLeft.x - actorX;
+			lookAtX -= topLeftX - actorLeft;
 		}
-		if(actorY < bottomRight.y)
+		if(actorBottom < bottomRightY)
 		{
-			cameraLookAt.y += actorY - bottomRight.y;
+			lookAtY += actorBottom - bottomRightY;
 		}
-		else if(actorY > topLeft.y)
+		else if(actorTop > topLeftY)
 		{
-			cameraLookAt.y -= topLeft.y - actorY;
+			lookAtY -= topLeftY - actorTop;
 		}
-							
+				
 		//lerp to new position
 		float dt = Math.min(1.0f, delta);	//so the camera won't wonder into space at first call		
-		float lerpProgress = Math.min(LERP_SPEED * dt, 1.0f);		
-		float newX = MathUtils.lerp(cameraPosition.x, cameraLookAt.x, lerpProgress);
-		float newY = MathUtils.lerp(cameraPosition.y, cameraLookAt.y, lerpProgress);		
+		float lerpProgress = Math.min(scrollingSpeed * dt, 1.0f);		
+		float newX = MathUtils.lerp(cameraPositionRef.x, lookAtX, lerpProgress);
+		float newY = MathUtils.lerp(cameraPositionRef.y, lookAtY, lerpProgress);		
 		camera.setPosition(newX, newY);
 	}
 }

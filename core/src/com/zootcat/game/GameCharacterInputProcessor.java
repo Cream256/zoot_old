@@ -3,6 +3,8 @@ package com.zootcat.game;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
+import com.zootcat.camera.ZootCamera;
+import com.zootcat.camera.ZootWindowScrollingStrategy;
 import com.zootcat.controllers.physics.PhysicsBodyScale;
 import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
@@ -14,10 +16,16 @@ import com.zootcat.scene.ZootDirection;
 
 public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 {
+	private static final float SCROLLING_SPEED = 6.0f;
+	private static final float CAMERA_OFFSET_X = 2.0f;
+	private static final float CAMERA_OFFSET_Y = 0.0f;
+	
 	private ZootActor player;
+	private ZootWindowScrollingStrategy scrolling;
+	
 	private Pool<ZootEvent> eventPool = Pools.get(ZootEvent.class);	
 		
-	public GameCharacterInputProcessor(ZootActor player)
+	public GameCharacterInputProcessor(ZootActor player, ZootCamera camera)
 	{
 		setPlayer(player);
 		bindUp(Input.Keys.RIGHT, () -> stop());
@@ -43,6 +51,14 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 		
 		CrouchState crouchState = (CrouchState)player.getStateMachine().getStateById(CrouchState.ID);
 		crouchState.setBodyScaling(crouchingScale);
+		
+		//camera		
+		scrolling = new ZootWindowScrollingStrategy(1.0f, 1.0f, 1.0f, 1.0f);		
+		scrolling.setOffset(CAMERA_OFFSET_X, CAMERA_OFFSET_Y);		
+		scrolling.setScrollingSpeed(SCROLLING_SPEED);		
+		camera.setEdgeSnapping(true);
+    	camera.setScrollingStrategy(scrolling);		
+		camera.setTarget(player);
 	}
 	
 	private boolean up()
@@ -102,6 +118,7 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	
 	private boolean run(ZootDirection direction)
 	{		
+		//scrolling.setOffset(direction.getHorizontalValue() * CAMERA_OFFSET_X, CAMERA_OFFSET_Y);
 		sendEventToActor(player, direction == ZootDirection.Right ? ZootEventType.RunRight : ZootEventType.RunLeft);	
 		return true;
 	}

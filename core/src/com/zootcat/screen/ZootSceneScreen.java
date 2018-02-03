@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.zootcat.camera.ZootCamera;
-import com.zootcat.camera.ZootWindowScrollingStrategy;
 import com.zootcat.controllers.input.InputProcessorController;
 import com.zootcat.game.GameCharacterInputProcessor;
 import com.zootcat.hud.ZootDebugHud;
@@ -117,14 +116,10 @@ public class ZootSceneScreen implements Screen
     	
     	//character input    	
     	ZootActor player = scene.getActors((act) -> act.getName().equalsIgnoreCase("Frisker")).get(0);
-    	GameCharacterInputProcessor characterInputProcessor = new GameCharacterInputProcessor(player);    	
+    	GameCharacterInputProcessor characterInputProcessor = new GameCharacterInputProcessor(player, camera);    	
     	player.addController(new InputProcessorController(characterInputProcessor));
-    	scene.setFocusedActor(player);
-    	camera.setTarget(player);
-    	camera.setEdgeSnapping(true);
+    	scene.setFocusedActor(player);    	
     	
-    	camera.setScrollingStrategy(new ZootWindowScrollingStrategy(6.0f, 6.0f));
-    	    	
     	//input  	
     	inputManager = new ZootInputManager();    	
     	inputManager.addProcessor(debugInputProcessor);

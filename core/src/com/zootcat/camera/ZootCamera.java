@@ -8,10 +8,10 @@ import com.zootcat.scene.ZootActor;
 public class ZootCamera extends OrthographicCamera
 {
 	private ZootActor target;
-	private boolean clipToLevel = false;
-	private ZootCameraScrollingStrategy movementStrategy = ZootNullScrollingStrategy.Instance;
 	private float worldWidth;
 	private float worldHeight;
+	private boolean clipToLevel = false;
+	private ZootCameraScrollingStrategy movementStrategy = ZootNullScrollingStrategy.Instance;
 	
 	public ZootCamera(float worldWidth, float worldHeight)
 	{
@@ -90,9 +90,9 @@ public class ZootCamera extends OrthographicCamera
 	
 	public Vector3 getPosition()
 	{
-		return position.cpy();
+		return position;
 	}
-		
+				
 	private void snapToEdges()
 	{		
 		float minX = zoom * (viewportWidth / 2.0f);
