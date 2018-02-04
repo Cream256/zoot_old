@@ -41,7 +41,11 @@ public class OneWayPlatformController extends PhysicsCollisionController
 	@Override
 	public void endContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
-		//noop
+		//This is necessary because contacts exists as long as the AABBs of two fixtures continue to overlap, 
+		//even if the fixtures themselves do not overlap. If the player jumps just high enough to clear the top of the platform,
+		//but not high enough for the AABBs to separate, the contact will remain disabled and he will fall back down again.
+		//https://www.iforce2d.net/b2dtut/one-way-walls		
+		contact.setEnabled(true);	
 	}
 
 	@Override
