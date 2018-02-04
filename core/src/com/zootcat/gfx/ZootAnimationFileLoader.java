@@ -48,8 +48,11 @@ public class ZootAnimationFileLoader extends AsynchronousAssetLoader<ZootAnimati
 		animationFile = loadFromFile(file);
 		Array<AssetDescriptor> dependencies = new Array<AssetDescriptor>(1);				
 		
-		String relativeSpriteSheetPath = file.parent().path() + "/" + animationFile.getSpriteSheetFileName();		
-		dependencies.add(assetRecognizer.getAssetDescriptor(relativeSpriteSheetPath));		
+		animationFile.getSpriteSheets().values().forEach(spriteSheet -> 
+		{
+			String relativeSpriteSheetPath = file.parent().path() + "/" + spriteSheet;		
+			dependencies.add(assetRecognizer.getAssetDescriptor(relativeSpriteSheetPath));	
+		});
 		return dependencies;
 	}
 	

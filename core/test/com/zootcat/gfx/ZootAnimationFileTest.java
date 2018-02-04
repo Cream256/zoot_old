@@ -1,13 +1,16 @@
 package com.zootcat.gfx;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -17,28 +20,44 @@ import com.zootcat.testing.ZootTestUtils;
 
 public class ZootAnimationFileTest
 {
-	private Texture textureMock;
+	private static final String FIRST_SPRITE_SHEET_NAME = "image1";
+	private static final String SECOND_SPRITE_SHEET_NAME = "image2";	
+	private static final String FIRST_SPRITE_SHEET = "/data/sprites/SpriteAnimation.png";
+	private static final String SECOND_SPRITE_SHEET = "/data/sprites/SpriteAnimation2.png";
+	
+	@Mock private Texture texture1;
+	@Mock private Texture texture2;
 	private ZootAnimationFile anmFile;
 	
 	@Before
 	public void setup() throws ZootException
 	{
-    	textureMock = mock(Texture.class);
+    	MockitoAnnotations.initMocks(this);		
 		String animationFilePath = ZootTestUtils.getResourcePath("testResources/textdata/AnimationFile.txt", this);
     	anmFile = new ZootAnimationFile(new File(animationFilePath));
 	}
 	
 	@Test
-	public void getSpriteSheetFileNameTest() throws ZootException
+	public void getSpriteSheetFileNamesTest() throws ZootException
 	{
-		assertEquals("/data/sprites/SpriteAnimation.png", anmFile.getSpriteSheetFileName());
+		Map<String, String> spriteSheets = anmFile.getSpriteSheets();
+		assertEquals(2, spriteSheets.size());
+		assertEquals(FIRST_SPRITE_SHEET, spriteSheets.get(FIRST_SPRITE_SHEET_NAME));
+		assertEquals(SECOND_SPRITE_SHEET, spriteSheets.get(SECOND_SPRITE_SHEET_NAME));
 	}
 	
 	@Test
 	public void createAnimationsTest()
 	{
-		Map<Integer, ZootAnimation> animations = anmFile.createAnimations(textureMock);
+		//given
+		Map<String, Texture> spriteSheets = new HashMap<String, Texture>();
+		spriteSheets.put(FIRST_SPRITE_SHEET_NAME, texture1);
+		spriteSheets.put(SECOND_SPRITE_SHEET_NAME, texture2);
 		
+		//when
+		Map<Integer, ZootAnimation> animations = anmFile.createAnimations(spriteSheets);
+		
+		//then
 		assertNotNull(animations);
 		assertEquals(2, animations.size());
 		
@@ -49,8 +68,9 @@ public class ZootAnimationFileTest
 		assertEquals(0.0f, anim1.getAnimationTime(), 0.0f);
 		assertEquals(0.1f, anim1.getFrameDuration(), 0.0f);
 		assertEquals(PlayMode.NORMAL, anim1.getPlayMode());
-		assertEquals(anim1.getFrameCount(), anim1.getOffsets().length);
+		assertEquals(texture1, anim1.getKeyFrameTexture());
 		
+		assertEquals(anim1.getFrameCount(), anim1.getOffsets().length);		
 		Vector2 emptyVector = new Vector2();
 		for(int offsetIndex = 0; offsetIndex < anim1.getFrameCount(); ++offsetIndex)
 		{
@@ -65,8 +85,9 @@ public class ZootAnimationFileTest
 		assertEquals(0.0f, anim2.getAnimationTime(), 0.0f);
 		assertEquals(0.25f, anim2.getFrameDuration(), 0.0f);
 		assertEquals(PlayMode.LOOP_PINGPONG, anim2.getPlayMode());
-		assertEquals(5, anim2.getOffsets().length);
+		assertEquals(texture2, anim2.getKeyFrameTexture());
 		
+		assertEquals(5, anim2.getOffsets().length);
 		assertEquals(0.0f, anim2.getOffsets()[0].right.x, 0.0f);
 		assertEquals(1.0f, anim2.getOffsets()[0].right.y, 0.0f);
 		assertEquals(2.0f, anim2.getOffsets()[1].right.x, 0.0f);

@@ -1,5 +1,6 @@
 package com.zootcat.controllers.gfx;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -40,8 +41,10 @@ public class AnimatedSpriteController implements RenderController
 			FileHandle animationFileHandle = Gdx.files.internal(file);			
 			ZootAnimationFile zootAnimationFile = new ZootAnimationFile(animationFileHandle.file()); 
 			
-			Texture spriteSheet = assetManager.get(animationFileHandle.parent().path() + "/" + zootAnimationFile.getSpriteSheetFileName());			
-			animations = zootAnimationFile.createAnimations(spriteSheet); 		
+			Map<String, Texture> spriteSheets = new HashMap<String, Texture>();
+			zootAnimationFile.getSpriteSheets().forEach((k, v) -> spriteSheets.put(k, assetManager.get(animationFileHandle.parent().path() + "/" + v)));
+			
+			animations = zootAnimationFile.createAnimations(spriteSheets); 		
 			setAnimation(startingAnimation);
 			
 			sprite = new Sprite();

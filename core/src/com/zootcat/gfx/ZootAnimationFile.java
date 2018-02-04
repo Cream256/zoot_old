@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -16,27 +17,27 @@ import com.zootcat.textdata.TextDataSection;
 public class ZootAnimationFile
 {
 	private TextDataFile animationFile;
-    private TextDataSection settings;
-    private List<TextDataSection> animationDataX;
+    private TextDataSection spriteSheetData;
+    private List<TextDataSection> animationData;
     
 	public ZootAnimationFile(File file) throws ZootException
 	{
 		animationFile = new TextDataFile(file);
-		settings = animationFile.readSections(":Settings", ":EndSettings").get(0);
-		animationDataX = animationFile.readSections(":StartAnimation", ":EndAnimation");
+		spriteSheetData = animationFile.readSections(":SpriteSheets", ":~SpriteSheets").get(0);
+		animationData = animationFile.readSections(":Animation", ":~Animation");
 	}
 
-	public String getSpriteSheetFileName()
+	public Map<String, String> getSpriteSheets()
 	{        
-		return settings.get("Image");
+		return spriteSheetData.getAllKeys().stream().collect(Collectors.toMap(key -> key, key -> spriteSheetData.get(key)));
 	}
 				
-	public Map<Integer, ZootAnimation> createAnimations(Texture spriteSheet)
-	{
+	public Map<Integer, ZootAnimation> createAnimations(Map<String, Texture> spriteSheets)
+	{		
 		Map<Integer, ZootAnimation> animations = new HashMap<Integer, ZootAnimation>();
-		for(TextDataSection data : animationDataX)
-		{					
-			TextureRegion[] frames = buildFrames(data, spriteSheet);
+		for(TextDataSection data : animationData)
+		{
+			TextureRegion[] frames = buildFrames(data, spriteSheets.get(data.get("sheet")));
 			TextureRegion[] orderedFrames = orderFrames(data, frames);
 			ZootAnimationOffset[] offsets = buildOffsets(data, orderedFrames);
 			
