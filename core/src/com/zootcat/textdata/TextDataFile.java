@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.gdx.math.Vector2;
 import com.zootcat.exceptions.ZootException;
 
 public class TextDataFile
@@ -68,29 +67,5 @@ public class TextDataFile
         {
             throw new ZootException(e.getMessage(), e);
         }
-    }
-    
-	public Vector2[] readVectors(String value) 
-    {
-    	if(value.trim().isEmpty())
-    	{
-    		return new Vector2[0];
-    	}
-    	
-    	String[] pairs = value.split(";");
-    	Vector2[] result = new Vector2[pairs.length];
-    	for(int i = 0; i < pairs.length; ++i)
-    	{
-    		String[] numbers = pairs[i].split(",");
-    		if(numbers.length != 2)
-    		{
-    			continue;
-    		}
-    		int x = Integer.valueOf(numbers[0].trim());
-    		int y = Integer.valueOf(numbers[1].trim());    		
-    		result[i] = new Vector2(x, y);    		
-    	}
-		return result;
-	}
-    
+    }    
 }

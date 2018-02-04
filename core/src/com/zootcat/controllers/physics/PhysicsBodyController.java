@@ -55,6 +55,8 @@ public class PhysicsBodyController implements Controller
 	{
 		body = scene.getPhysics().createBody(createBodyDef(actor));
 		fixtures = scene.getPhysics().createFixtures(body, createFixtureDefs(actor));
+		assignUserData(actor, body, fixtures);
+		
 		body.setActive(false);
 		body.setUserData(actor);
 	}
@@ -254,5 +256,12 @@ public class PhysicsBodyController implements Controller
 	protected float getBodyHeight(ZootActor actor)
 	{
 		return height == 0.0f ? actor.getHeight() : height * scene.getUnitScale();
+	}
+	
+	//TODO add test for this
+	protected void assignUserData(ZootActor actor, Body body, List<Fixture> fixtures)
+	{
+		body.setUserData(actor);
+		fixtures.forEach(fixture -> fixture.setUserData(actor));
 	}
 }

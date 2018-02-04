@@ -1,13 +1,12 @@
 package com.zootcat.game;
 
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.Pools;
 import com.zootcat.camera.ZootCamera;
 import com.zootcat.camera.ZootWindowScrollingStrategy;
+import com.zootcat.controllers.logic.IgnorePlatformsController;
 import com.zootcat.controllers.physics.PhysicsBodyScale;
-import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
+import com.zootcat.events.ZootEvents;
 import com.zootcat.fsm.states.CrouchState;
 import com.zootcat.fsm.states.DownState;
 import com.zootcat.input.ZootBindableInputProcessor;
@@ -18,9 +17,7 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 {	
 	private ZootActor player;
 	private ZootWindowScrollingStrategy scrolling;
-	
-	private Pool<ZootEvent> eventPool = Pools.get(ZootEvent.class);	
-		
+			
 	public GameCharacterInputProcessor(ZootActor player, ZootCamera camera)
 	{
 		setPlayer(player);
@@ -40,8 +37,8 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 		
 		bindDown(Input.Keys.F8, () -> hurt());
 		
-		PhysicsBodyScale crouchingScale = new PhysicsBodyScale(1.0f, 0.4f, 0.75f, false);
-		
+		//states
+		PhysicsBodyScale crouchingScale = new PhysicsBodyScale(1.0f, 0.4f, 0.75f, false);		
 		DownState downState = (DownState)player.getStateMachine().getStateById(DownState.ID);
 		downState.setBodyScaling(crouchingScale);
 		
@@ -59,6 +56,8 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	
 	private boolean up()
 	{
+		System.out.println("set false");
+		player.controllerAction(IgnorePlatformsController.class, ctrl -> ctrl.setActive(false));
 		sendEventToActor(player, ZootEventType.Up);
 		return true;
 	}
@@ -87,11 +86,7 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	
 	private void sendEventToActor(ZootActor actor, ZootEventType eventType, Object userObj)
 	{
-		ZootEvent event = eventPool.obtain();
-		event.setType(eventType);				
-		event.setUserObject(userObj);
-		actor.fire(event);		
-		eventPool.free(event);
+		ZootEvents.fireAndFree(actor, eventType, userObj);
 	}
 	
 	private boolean attack()
@@ -102,6 +97,11 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	
 	private boolean jump()
 	{		
+		if(player.getStateMachine().getCurrentState().getId() == DownState.ID)
+		{
+			player.controllerAction(IgnorePlatformsController.class, ctrl -> ctrl.setActive(true));	
+		}
+		
 		sendEventToActor(player, ZootEventType.Jump);
 		return true;
 	}
@@ -113,8 +113,7 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	}
 	
 	private boolean run(ZootDirection direction)
-	{		
-		//scrolling.setOffset(direction.getHorizontalValue() * CAMERA_OFFSET_X, CAMERA_OFFSET_Y);
+	{
 		sendEventToActor(player, direction == ZootDirection.Right ? ZootEventType.RunRight : ZootEventType.RunLeft);	
 		return true;
 	}
