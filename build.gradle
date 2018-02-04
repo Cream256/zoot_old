@@ -1,24 +1,26 @@
-buildscript {
-    
-
-    repositories {
+buildscript 
+{
+    repositories 
+    {
         mavenLocal()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
     }
-    dependencies {
-        
-
+    
+    dependencies 
+    {
     }
 }
 
-allprojects {
+allprojects 
+{
     apply plugin: "eclipse"
     apply plugin: "idea"
 
     version = '1.0'
-    ext {
+    ext 
+    {
         appName = "zoot"
         gdxVersion = '1.9.8'
         roboVMVersion = '2.3.1'
@@ -27,7 +29,8 @@ allprojects {
         aiVersion = '1.8.0'
     }
 
-    repositories {
+    repositories 
+    {
         mavenLocal()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
@@ -35,27 +38,13 @@ allprojects {
     }
 }
 
-project(":desktop") {
+project(":core") 
+{
     apply plugin: "java"
 
 
-    dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
-    }
-}
-
-project(":core") {
-    apply plugin: "java"
-
-
-    dependencies {
+    dependencies 
+    {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
@@ -75,6 +64,7 @@ project(":core") {
     }
 }
 
-tasks.eclipse.doLast {
+tasks.eclipse.doLast 
+{
     delete ".project"
 }
