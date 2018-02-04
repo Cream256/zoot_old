@@ -1,5 +1,8 @@
 package com.zootcat.controllers.physics;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -21,14 +24,14 @@ public class DetectGroundController extends PhysicsCollisionController
 	public static final float SENSOR_HEIGHT_PERCENT = 0.2f;
 	
 	@CtrlParam private int sensorWidth = 0;		
-	@CtrlParam(global = true) private ZootScene scene;		
-	@CtrlDebug private int contactCount = 0;
+	@CtrlParam(global = true) private ZootScene scene;
 	@CtrlDebug private boolean isOnGround = false;
-		
+	
 	private Fixture feet;
 	private ZootActor actorWithSensor;
 	private PhysicsBodyController physicsCtrl;
-	private boolean contactEnabled = true;
+	private Set<Contact> allContacts = new HashSet<Contact>();
+	private Set<Contact> disabledContacts = new HashSet<Contact>();
 
 	@Override
 	public void onAdd(ZootActor actor)
@@ -42,7 +45,7 @@ public class DetectGroundController extends PhysicsCollisionController
 		
 		//create fixture
 		FixtureDef feetDef = createFeetSensorFixtureDef(physicsCtrl.getBody(), actor, feetShape);		
-		feet = physicsCtrl.addFixture(feetDef);
+		feet = physicsCtrl.addFixture(feetDef, actor);
 		
 		//cleanup
 		feetShape.dispose();
@@ -54,36 +57,39 @@ public class DetectGroundController extends PhysicsCollisionController
 		super.onRemove(actor);
 		physicsCtrl.removeFixture(feet);
 		physicsCtrl = null;
-		contactEnabled = true;
 	}
 
 	@Override
 	public void onUpdate(float delta, ZootActor actor)
 	{
-		boolean nowOnGround = contactCount > 0;		
-		if(nowOnGround && contactEnabled)
+		isOnGround = allContacts.size() > disabledContacts.size();
+		if(isOnGround)
 		{
 			ZootEvents.fireAndFree(actorWithSensor, ZootEventType.Ground);
 		}
-		isOnGround = nowOnGround;
 	}
 	
 	@Override
 	public void beginContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
-		if(isContactWithGroundSensor(actorA, actorB, contact)) ++contactCount;
+		if(isContactWithGroundSensor(actorA, actorB, contact)) allContacts.add(contact);
 	}
 
 	@Override
 	public void endContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{
-		if(isContactWithGroundSensor(actorA, actorB, contact)) --contactCount;
+		if(isContactWithGroundSensor(actorA, actorB, contact)) 
+		{
+			allContacts.remove(contact);
+			disabledContacts.remove(contact);
+		}
 	}
 
 	@Override
 	public void preSolve(ZootActor actorA, ZootActor actorB, Contact contact, Manifold manifold)
 	{
-		contactEnabled = contact.isEnabled();
+		if(!contact.isEnabled()) disabledContacts.add(contact);		
+		else disabledContacts.remove(contact);
 	}
 
 	@Override

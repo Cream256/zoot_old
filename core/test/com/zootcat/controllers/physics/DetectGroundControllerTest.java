@@ -167,6 +167,7 @@ public class DetectGroundControllerTest
 		Fixture fixtureB = mock(Fixture.class);
 		Contact contactMock = mock(Contact.class);
 		when(contactMock.getFixtureB()).thenReturn(fixtureB);
+		when(contactMock.isEnabled()).thenReturn(true);
 		
 		//when
 		groundCtrl.init(actor);
@@ -210,6 +211,7 @@ public class DetectGroundControllerTest
 		when(contactMock.getFixtureB()).thenReturn(fixtureB);
 		Fixture groundSensorFixture = physicsCtrl.getFixtures().get(1);		
 		when(contactMock.getFixtureA()).thenReturn(groundSensorFixture);
+		when(contactMock.isEnabled()).thenReturn(true);
 		
 		//when
 		groundCtrl.beginContact(actor, otherActor, contactMock);
@@ -243,20 +245,28 @@ public class DetectGroundControllerTest
 		//then
 		assertTrue("Ground should be detected", groundCtrl.isOnGround());
 		assertEquals("Event should be sent", 3, eventCounter.getCount());
+		
+		//when contact is disabled
+		when(contactMock.isEnabled()).thenReturn(false);
+		groundCtrl.beginContact(actor, otherActor, contactMock);
+		groundCtrl.preSolve(actor, otherActor, contactMock, mock(Manifold.class));
+		groundCtrl.onUpdate(1.0f, actor);
+		
+		//then
+		assertFalse("Ground should not be detected", groundCtrl.isOnGround());
+		assertEquals("No event should be sent", 3, eventCounter.getCount());
+		
+		//when contact is enabled
+		when(contactMock.isEnabled()).thenReturn(true);
+		groundCtrl.beginContact(actor, otherActor, contactMock);
+		groundCtrl.preSolve(actor, otherActor, contactMock, mock(Manifold.class));
+		groundCtrl.onUpdate(1.0f, actor);
+		
+		//then
+		assertTrue("Ground should be detected", groundCtrl.isOnGround());
+		assertEquals("Event should be sent", 4, eventCounter.getCount());
 	}
-	
-	@Test
-	public void preSolveTest()
-	{
-		ZootActor actorA = mock(ZootActor.class);
-		ZootActor actorB = mock(ZootActor.class);
-		Contact contact =  mock(Contact.class);
-		Manifold manifold = mock(Manifold.class);
-					
-		groundCtrl.preSolve(actorA, actorB, contact, manifold);
-		verifyZeroInteractions(actorA, actorB, contact, manifold);
-	}
-	
+		
 	@Test
 	public void postSolveTest()
 	{
@@ -266,5 +276,82 @@ public class DetectGroundControllerTest
 				
 		groundCtrl.postSolve(actorA, actorB, contactImpulse);
 		verifyZeroInteractions(actorA, actorB, contactImpulse);
+	}
+	
+	@Test
+	public void multipleContactsShouldBeProperlyHandedTest()
+	{
+		//given
+		groundCtrl.init(actor);
+		groundCtrl.onAdd(actor);
+		
+		Fixture fixtureB = mock(Fixture.class);
+		Fixture fixtureC = mock(Fixture.class);
+		Fixture fixtureD = mock(Fixture.class);
+		Fixture groundSensorFixture = physicsCtrl.getFixtures().get(1);
+			
+		Contact contact1 = mock(Contact.class);
+		when(contact1.getFixtureA()).thenReturn(groundSensorFixture);
+		when(contact1.getFixtureB()).thenReturn(fixtureB);
+		when(contact1.isEnabled()).thenReturn(true);
+		
+		Contact contact2 = mock(Contact.class);
+		when(contact2.getFixtureA()).thenReturn(groundSensorFixture);
+		when(contact2.getFixtureB()).thenReturn(fixtureC);
+		when(contact2.isEnabled()).thenReturn(true);
+		
+		Contact contact3 = mock(Contact.class);
+		when(contact3.getFixtureA()).thenReturn(groundSensorFixture);
+		when(contact3.getFixtureB()).thenReturn(fixtureD);
+		when(contact3.isEnabled()).thenReturn(true);
+		
+		//when
+		groundCtrl.beginContact(actor, otherActor, contact1);
+		groundCtrl.beginContact(actor, otherActor, contact2);
+		groundCtrl.beginContact(actor, otherActor, contact3);
+		groundCtrl.preSolve(actor, otherActor, contact1, mock(Manifold.class));
+		groundCtrl.preSolve(actor, otherActor, contact2, mock(Manifold.class));
+		groundCtrl.preSolve(actor, otherActor, contact3, mock(Manifold.class));			
+		groundCtrl.onUpdate(1.0f, actor);
+		
+		//then
+		assertTrue("Ground should be detected", groundCtrl.isOnGround());
+		assertEquals("Event should be sent", 1, eventCounter.getCount());
+		
+		//when only one contact is left enabled
+		when(contact2.isEnabled()).thenReturn(false);
+		when(contact3.isEnabled()).thenReturn(false);
+		groundCtrl.preSolve(actor, otherActor, contact1, mock(Manifold.class));
+		groundCtrl.preSolve(actor, otherActor, contact2, mock(Manifold.class));
+		groundCtrl.preSolve(actor, otherActor, contact3, mock(Manifold.class));			
+
+		//this is required to simulate box2d behaviour, all contacts are reenabled after postsolve
+		when(contact2.isEnabled()).thenReturn(true);
+		when(contact3.isEnabled()).thenReturn(true);
+
+		groundCtrl.onUpdate(1.0f, actor);
+		
+		//then
+		assertTrue("Ground should be detected", groundCtrl.isOnGround());
+		assertEquals("Event should be sent", 2, eventCounter.getCount());
+		
+		//when all contacts are disabled
+		when(contact1.isEnabled()).thenReturn(false);
+		when(contact2.isEnabled()).thenReturn(false);
+		when(contact3.isEnabled()).thenReturn(false);
+		groundCtrl.preSolve(actor, otherActor, contact1, mock(Manifold.class));
+		groundCtrl.preSolve(actor, otherActor, contact2, mock(Manifold.class));
+		groundCtrl.preSolve(actor, otherActor, contact3, mock(Manifold.class));			
+		
+		//this is required to simulate box2d behaviour, all contacts are reenabled after postsolve
+		when(contact1.isEnabled()).thenReturn(true);
+		when(contact2.isEnabled()).thenReturn(true);
+		when(contact3.isEnabled()).thenReturn(true);
+		
+		groundCtrl.onUpdate(1.0f, actor);
+		
+		//then
+		assertFalse("Ground should not be detected", groundCtrl.isOnGround());
+		assertEquals("Event should not be sent", 2, eventCounter.getCount());
 	}
 }

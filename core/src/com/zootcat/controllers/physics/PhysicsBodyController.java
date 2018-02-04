@@ -54,11 +54,10 @@ public class PhysicsBodyController implements Controller
 	public void init(ZootActor actor)
 	{
 		body = scene.getPhysics().createBody(createBodyDef(actor));
+		body.setActive(false);
+		
 		fixtures = scene.getPhysics().createFixtures(body, createFixtureDefs(actor));
 		assignUserData(actor, body, fixtures);
-		
-		body.setActive(false);
-		body.setUserData(actor);
 	}
 	
 	@Override
@@ -118,10 +117,13 @@ public class PhysicsBodyController implements Controller
 		body.setLinearVelocity(setX ? vx : velocity.x, setY ? vy : velocity.y);	
 	}
 	
-	public Fixture addFixture(FixtureDef fixtureDef)
+	//TODO add test for this
+	public Fixture addFixture(FixtureDef fixtureDef, ZootActor actor)
 	{
 		Fixture fixture = body.createFixture(fixtureDef);
-		fixtures.add(fixture);
+		fixture.setUserData(actor);
+		
+		fixtures.add(fixture);		
 		return fixture;
 	}
 	

@@ -5,7 +5,7 @@ import com.zootcat.controllers.factory.CtrlParam;
 
 public class IgnorePlatformsController extends ControllerAdapter
 {
-	@CtrlParam private boolean active = true;
+	@CtrlParam(debug = true) private boolean active = true;
 	
 	public boolean isActive()
 	{
