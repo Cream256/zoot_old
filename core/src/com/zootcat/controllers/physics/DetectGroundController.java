@@ -28,6 +28,7 @@ public class DetectGroundController extends PhysicsCollisionController
 	private Fixture feet;
 	private ZootActor actorWithSensor;
 	private PhysicsBodyController physicsCtrl;
+	private boolean contactEnabled = true;
 
 	@Override
 	public void onAdd(ZootActor actor)
@@ -52,14 +53,15 @@ public class DetectGroundController extends PhysicsCollisionController
 	{
 		super.onRemove(actor);
 		physicsCtrl.removeFixture(feet);
-		physicsCtrl = null;		
+		physicsCtrl = null;
+		contactEnabled = true;
 	}
 
 	@Override
 	public void onUpdate(float delta, ZootActor actor)
 	{
 		boolean nowOnGround = contactCount > 0;		
-		if(nowOnGround)
+		if(nowOnGround && contactEnabled)
 		{
 			ZootEvents.fireAndFree(actorWithSensor, ZootEventType.Ground);
 		}
@@ -81,7 +83,7 @@ public class DetectGroundController extends PhysicsCollisionController
 	@Override
 	public void preSolve(ZootActor actorA, ZootActor actorB, Contact contact, Manifold manifold)
 	{
-		//noop
+		contactEnabled = contact.isEnabled();
 	}
 
 	@Override
@@ -96,7 +98,7 @@ public class DetectGroundController extends PhysicsCollisionController
 	}
 
 	private boolean isContactWithGroundSensor(ZootActor actorA, ZootActor actorB, Contact contact)
-	{
+	{		
 		boolean contactWithFeet = contact.getFixtureA() == feet || contact.getFixtureB() == feet;
 		boolean contactWithActor = actorA == actorWithSensor || actorB == actorWithSensor;
 		boolean notSensors = !contact.getFixtureA().isSensor() || !contact.getFixtureB().isSensor();

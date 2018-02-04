@@ -56,7 +56,6 @@ public class GameCharacterInputProcessor extends ZootBindableInputProcessor
 	
 	private boolean up()
 	{
-		System.out.println("set false");
 		player.controllerAction(IgnorePlatformsController.class, ctrl -> ctrl.setActive(false));
 		sendEventToActor(player, ZootEventType.Up);
 		return true;
