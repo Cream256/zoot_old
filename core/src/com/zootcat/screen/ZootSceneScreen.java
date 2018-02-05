@@ -1,16 +1,10 @@
 package com.zootcat.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.zootcat.camera.ZootCamera;
-import com.zootcat.controllers.input.InputProcessorController;
-import com.zootcat.game.GameCharacterInputProcessor;
 import com.zootcat.hud.ZootDebugHud;
 import com.zootcat.hud.ZootDebugWindowListener;
-import com.zootcat.input.ZootBindableInputProcessor;
 import com.zootcat.input.ZootInputManager;
-import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
 public class ZootSceneScreen implements Screen
@@ -24,6 +18,7 @@ public class ZootSceneScreen implements Screen
 	{
 		this.scene = scene;
 		debugHud = new ZootDebugHud();
+		inputManager = new ZootInputManager();
 	}
 			
 	@Override
@@ -85,54 +80,37 @@ public class ZootSceneScreen implements Screen
     	debugHud.render(delta);
 	}
 	
-	private void reloadScene()
+	public ZootScene getScene()
+	{
+		return scene;
+	}
+	
+	public void reloadScene()
 	{
 		deassignInput();
 		scene.reload();
 		assignInput();
 	}
 	
-	private void assignInput()
+	public ZootInputManager getInputManager()
 	{
-		//debug input
-    	final float camMove = 0.1f;
-    	final float zoom = 0.05f;
-    	ZootCamera camera = scene.getCamera();
-    	ZootBindableInputProcessor debugInputProcessor = new ZootBindableInputProcessor();
-    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_8, () -> { camera.translate(0, camMove, 0); return true; });
-    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_2, () -> { camera.translate(0, -camMove, 0); return true; });
-    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_4, () -> { camera.translate(-camMove, 0, 0); return true; });
-    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_6, () -> { camera.translate(camMove, 0, 0); return true; });
-    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_5, () -> { camera.zoom(-zoom); return true; });
-    	debugInputProcessor.bindDown(Input.Keys.NUMPAD_0, () -> { camera.zoom(zoom); return true; });
-    	debugInputProcessor.bindDown(Input.Keys.PERIOD, () -> { camera.setZoom(1.0f); return true; });    	
-    	debugInputProcessor.bindUp(Input.Keys.F9, () -> 
-    	{ 
-    		scene.setDebugMode(!scene.isDebugMode()); 
-    		debugHud.setWindowVisible(scene.isDebugMode()); 
-    		return true; 
-    	});
-    	debugInputProcessor.bindUp(Input.Keys.F12, () -> { reloadScene(); return true; });
-    	
-    	//character input    	
-    	ZootActor player = scene.getActors((act) -> act.getName().equalsIgnoreCase("Frisker")).get(0);
-    	GameCharacterInputProcessor characterInputProcessor = new GameCharacterInputProcessor(player, camera);    	
-    	player.addController(new InputProcessorController(characterInputProcessor));
-    	scene.setFocusedActor(player);    	
-    	
-    	//input  	
-    	inputManager = new ZootInputManager();    	
-    	inputManager.addProcessor(debugInputProcessor);
-    	inputManager.addProcessor(characterInputProcessor);
-    	inputManager.addProcessor(scene.getInputProcessor());
-    	inputManager.addProcessor(debugHud.getInputProcessor());
-    	Gdx.input.setInputProcessor(inputManager);
-    	
-    	//debug
-		scene.addListener(new ZootDebugWindowListener(debugHud));
+		return inputManager;
 	}
 	
-	private void deassignInput()
+	public ZootDebugHud getDebugHud()
+	{
+		return debugHud;
+	}
+	
+	protected void assignInput()
+	{
+		inputManager.addProcessor(getDebugHud().getInputProcessor());
+		scene.addListener(new ZootDebugWindowListener(debugHud));
+		
+		Gdx.input.setInputProcessor(inputManager);
+	}
+	
+	protected void deassignInput()
 	{
 		Gdx.input.setInputProcessor(null);
 	}

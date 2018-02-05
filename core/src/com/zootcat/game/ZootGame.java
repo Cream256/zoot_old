@@ -1,36 +1,21 @@
 package com.zootcat.game;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.zootcat.assets.ZootAssetManager;
-import com.zootcat.screen.ZootSceneLoadingScreen;
 
-public class ZootGame extends Game
-{	
-	private static final String MAP_FILE = "data/TestBed.tmx";
-	
+public abstract class ZootGame extends Game
+{		
+	private float unitPerTile = 1.0f;
+	private float viewportWidth = 16.0f;
+	private float viewportHeight = 9.0f;
 	private ZootAssetManager assetManager;
-	private float viewportWidth;
-	private float viewportHeight;
-	private float unitPerTile;
 	
-	public ZootGame(float viewportWidth, float viewportHeight, float unitPerTile)
+	public ZootGame()
 	{
-		this.viewportWidth = viewportWidth;
-		this.viewportHeight = viewportHeight;
-		this.unitPerTile = unitPerTile;
-		this.assetManager = new ZootAssetManager();
-		this.assetManager.getLogger().setLevel(Application.LOG_DEBUG);
+		assetManager = new ZootAssetManager();
 	}
-	
-    @Override
-    public void create()
-    {    	
-    	ZootSceneLoadingScreen loadingScreen = new ZootSceneLoadingScreen(this, MAP_FILE); 	
-    	setScreen(loadingScreen);
-    }
-    
+	    
     @Override
     public void dispose()
     {
@@ -45,14 +30,29 @@ public class ZootGame extends Game
     	return assetManager;
     }
     
+    public void setViewportWidth(float width)
+    {
+    	viewportWidth = width;
+    }
+    
     public float getViewportWidth()
     {
     	return viewportWidth;
     }
     
+    public void setViewportHeight(float height)
+    {
+    	viewportHeight = height;
+    }
+    
     public float getViewportHeight()
     {
     	return viewportHeight;
+    }
+    
+    public void setUnitPerTile(float unitPerTile)
+    {
+    	this.unitPerTile = unitPerTile;
     }
     
     public float getUnitPerTile()

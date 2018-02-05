@@ -3,22 +3,29 @@ package com.zootcat.screen;
 import java.util.LinkedList;
 import java.util.function.Consumer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
+import com.zootcat.game.ZootGame;
 
 public class ZootLoadingScreen implements Screen
 {
 	private int allCount;
 	private int finishedCount;
 	private Consumer<AssetManager> task;
+	
+	private ZootGame game;
 	private AssetManager assetManager;
 	private LinkedList<Consumer<AssetManager>> loadTasks = new LinkedList<Consumer<AssetManager>>();
-		
-	public ZootLoadingScreen(AssetManager assetManager)
+	
+	//fields are public so could be used like events
+	public Consumer<ZootGame> onFinishLoading;
+	public Consumer<Float> onRenderWhileLoading;
+	public Consumer<Float> onRenderAfterLoading;
+	
+	public ZootLoadingScreen(ZootGame game)
 	{
-		this.assetManager = assetManager;
+		this.game = game;
+		this.assetManager = game.getAssetManager();
 	}
 	
 	@Override
@@ -38,11 +45,11 @@ public class ZootLoadingScreen implements Screen
 	{				
 		if(task == null && loadTasks.isEmpty())
 		{
-			onRenderAfterLoading(delta);
+			doRenderAfterLoading(delta);
 			return;
 		}
 		
-		onRenderWhileLoading(delta);
+		doRenderWhileLoading(delta);
 		if(task != null)
 		{
 			boolean taskFinished = assetManager.update();
@@ -51,7 +58,7 @@ public class ZootLoadingScreen implements Screen
 				++finishedCount;
 				if(loadTasks.isEmpty())
 				{
-					onFinishLoading();
+					doFinishLoading();
 					task = null;
 					return;
 				}
@@ -106,21 +113,28 @@ public class ZootLoadingScreen implements Screen
 	{
 		//noop
 	}
-	
-	protected void onFinishLoading()
+		
+	private void doFinishLoading()
 	{
-		//noop
+		if(onFinishLoading != null)
+		{
+			onFinishLoading.accept(game);
+		}
 	}
 	
-	protected void onRenderAfterLoading(float delta)
+	private void doRenderAfterLoading(float delta)
 	{
-		Gdx.gl.glClearColor(1, 1, 1, 0);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		if(onRenderAfterLoading != null)
+		{
+			onRenderAfterLoading.accept(delta);
+		}
 	}
 	
-	protected void onRenderWhileLoading(float delta)
+	private void doRenderWhileLoading(float delta)
 	{
-		Gdx.gl.glClearColor(0, 0, 0, 0);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+		if(onRenderWhileLoading != null)
+		{
+			onRenderWhileLoading.accept(delta);
+		}
 	}
 }
