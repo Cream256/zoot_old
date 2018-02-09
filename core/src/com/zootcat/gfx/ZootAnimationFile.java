@@ -37,7 +37,7 @@ public class ZootAnimationFile
 		Map<Integer, ZootAnimation> animations = new HashMap<Integer, ZootAnimation>();
 		for(TextDataSection data : animationData)
 		{
-			TextureRegion[] frames = buildFrames(data, spriteSheets.get(data.get("sheet")));
+			TextureRegion[] frames = buildFrames(data, getSpriteSheet(spriteSheets, data));
 			TextureRegion[] orderedFrames = orderFrames(data, frames);
 			ZootAnimationOffset[] offsets = buildOffsets(data, orderedFrames);
 			
@@ -47,6 +47,13 @@ public class ZootAnimationFile
 			animations.put(animation.getId(), animation);
 		}
 		return animations;
+	}
+
+	//TODO add test
+	private Texture getSpriteSheet(Map<String, Texture> spriteSheets, TextDataSection data)
+	{
+		String sheetName = data.get("sheet");				
+		return spriteSheets.get(sheetName != null ? sheetName : "default");
 	}
 
 	private ZootAnimationOffset[] buildOffsets(TextDataSection data, TextureRegion[] frames)

@@ -133,6 +133,12 @@ public class PhysicsBodyController implements Controller
 		fixtures.remove(fixture);		
 	}
 	
+	public void setGravityScale(float scale)
+	{
+		body.setGravityScale(scale);	
+		body.setAwake(true);
+	}
+	
 	//TODO this is not full working, add tests
 	public void scale(PhysicsBodyScale bodyScale)
 	{

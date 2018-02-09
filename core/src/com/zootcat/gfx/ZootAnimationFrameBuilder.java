@@ -129,8 +129,13 @@ public class ZootAnimationFrameBuilder
 	
 	private void validate(Texture spriteSheet) 
 	{
+		if(spriteSheet == null)
+		{
+			throw new RuntimeZootException("No sprite sheet has been passed to frame builder.");
+		}
+		
 		int validationResult = rows * cols * frameWidth * frameHeight;
-		if(validationResult == 0 || spriteSheet == null)
+		if(validationResult == 0)
 		{
 			throw new RuntimeZootException("Frame builder does not have all required fields set up.");
 		}

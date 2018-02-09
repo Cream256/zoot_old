@@ -81,8 +81,8 @@ public abstract class OnCollideController extends PhysicsCollisionController
 	}
 	
 	private boolean collides(ZootActor actorA, ZootActor actorB, Contact contact)
-	{
-		Fixture otherFixture = getOtherFixture(actorA, actorB, contact);	
+	{		
+		Fixture otherFixture = getOtherFixture(actorA, actorB, contact);		
 		return categoryBits == -1 || otherFixture.getFilterData().categoryBits == categoryBits;
 	}
 }

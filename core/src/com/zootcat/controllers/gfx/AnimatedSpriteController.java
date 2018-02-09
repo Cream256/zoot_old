@@ -25,7 +25,7 @@ public class AnimatedSpriteController implements RenderController
 {
 	@CtrlParam(required = true, debug = true) private String file;
 	@CtrlParam(debug = true) private boolean useActorSize = true;
-	@CtrlParam(debug = true) private String startingAnimation = "";
+	@CtrlParam(debug = true) private String startingAnimation = "IDLE";
 	@CtrlParam(global = true) private ZootScene scene;
 	@CtrlParam(global = true) private AssetManager assetManager;
 	
