@@ -1,5 +1,8 @@
 package com.zootcat.controllers.logic;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -7,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.zootcat.controllers.factory.CtrlDebug;
 import com.zootcat.controllers.factory.CtrlParam;
 import com.zootcat.controllers.physics.PhysicsBodyController;
 import com.zootcat.controllers.physics.PhysicsCollisionController;
@@ -15,16 +17,12 @@ import com.zootcat.math.ZootBoundingBoxFactory;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
-//TODO add tests for several bodies on platform at once: one is droping from platform,
-//so only one should drop not the rest of them, the problem is that the controller
-//is holding state which should only affect body it is connected with!
-
 //Implementation based on: https://www.iforce2d.net/b2dtut/one-way-walls
 public class OneWayPlatformController extends PhysicsCollisionController
 {
 	@CtrlParam(global = true) private ZootScene scene;
-	@CtrlDebug private boolean shouldCollide = true;
-	@CtrlDebug private boolean ignorePlatforms = false;
+	private Set<ZootActor> shouldCollide = new HashSet<ZootActor>();
+	private Set<ZootActor> ignorePlatforms = new HashSet<ZootActor>();
 	
 	private Vector2 tmp;
 	private ZootActor platform;
@@ -38,12 +36,12 @@ public class OneWayPlatformController extends PhysicsCollisionController
 	
 	@Override
 	public void beginContact(ZootActor actorA, ZootActor actorB, Contact contact)
-	{		
-		shouldCollide = true;
+	{
+		shouldCollide.add(getOtherActor(actorA, actorB));
 		
 		//get bodies
 		ZootActor platformActor = actorA == platform ? actorA : actorB; 
-		ZootActor otherActor = actorA == platform ? actorB : actorA;
+		ZootActor otherActor = getOtherActor(actorA, actorB);
 		Body platformBody = platformActor.getController(PhysicsBodyController.class).getBody();
 		Body otherBody = otherActor.getController(PhysicsBodyController.class).getBody();
 		
@@ -76,14 +74,7 @@ public class OneWayPlatformController extends PhysicsCollisionController
 		}
 		
 		//no points are moving downward, contact should not be solid
-		shouldCollide = false;
-	}
-
-	private float getPlatformFixtureFrontFace(ZootActor actorA, ZootActor actorB, Contact contact)
-	{
-		Fixture platformFixture = contact.getFixtureA().getBody().getUserData() == platform ? contact.getFixtureA() : contact.getFixtureB(); 
-		BoundingBox bbox = ZootBoundingBoxFactory.create(platformFixture);
-		return bbox.getHeight() / 2.0f;
+		shouldCollide.remove(otherActor);
 	}
 
 	@Override
@@ -93,24 +84,36 @@ public class OneWayPlatformController extends PhysicsCollisionController
 		//even if the fixtures themselves do not overlap. If the player jumps just high enough to clear the top of the platform,
 		//but not high enough for the AABBs to separate, the contact will remain disabled and he will fall back down again.
 		//https://www.iforce2d.net/b2dtut/one-way-walls		
-		contact.setEnabled(true);
-		ignorePlatforms = false;
+		contact.setEnabled(true);		
+		ignorePlatforms.remove(getOtherActor(actorA, actorB));
 	}
 
 	@Override
 	public void preSolve(ZootActor actorA, ZootActor actorB, Contact contact, Manifold manifold)
 	{
-		ZootActor otherActor = actorA == platform ? actorB : actorA;		
+		ZootActor otherActor = getOtherActor(actorA, actorB);		
 		if(otherActor.controllerCondition(IgnorePlatformsController.class, ctrl -> ctrl.isActive()))
 		{
-			ignorePlatforms = true;	//we should ignore this platform until end contact
+			ignorePlatforms.add(otherActor);	//we should ignore this platform until end contact
 		}
-		contact.setEnabled(shouldCollide && !ignorePlatforms);
+		contact.setEnabled(shouldCollide.contains(otherActor) && !ignorePlatforms.contains(otherActor));
 	}
 		
 	@Override
 	public void postSolve(ZootActor actorA, ZootActor actorB, ContactImpulse contactImpulse)
 	{
 		//noop
+	}
+	
+	private float getPlatformFixtureFrontFace(ZootActor actorA, ZootActor actorB, Contact contact)
+	{
+		Fixture platformFixture = contact.getFixtureA().getBody().getUserData() == platform ? contact.getFixtureA() : contact.getFixtureB(); 
+		BoundingBox bbox = ZootBoundingBoxFactory.create(platformFixture);
+		return bbox.getHeight() / 2.0f;
+	}
+	
+	private ZootActor getOtherActor(ZootActor actorA, ZootActor actorB)
+	{
+		return actorA == platform ? actorB : actorA;
 	}
 }
