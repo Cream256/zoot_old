@@ -1,7 +1,9 @@
 package com.zootcat.controllers.physics;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -158,10 +160,7 @@ public class OnCollideControllerTest
 		Manifold manifold = mock(Manifold.class);
 					
 		ctrl.preSolve(actorA, actorB, contact, manifold);
-		verifyZeroInteractions(actorA);
-		verifyZeroInteractions(actorB);
-		verifyZeroInteractions(contact);
-		verifyZeroInteractions(manifold);		
+		verifyZeroInteractions(actorA, actorB, contact, manifold);
 	}
 	
 	@Test
@@ -172,8 +171,6 @@ public class OnCollideControllerTest
 		ContactImpulse contactImpulse = mock(ContactImpulse.class);
 				
 		ctrl.postSolve(actorA, actorB, contactImpulse);
-		verifyZeroInteractions(actorA);
-		verifyZeroInteractions(actorB);
-		verifyZeroInteractions(contactImpulse);
+		verifyZeroInteractions(actorA, actorB, contactImpulse);
 	}
 }

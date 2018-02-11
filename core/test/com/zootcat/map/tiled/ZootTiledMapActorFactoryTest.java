@@ -197,7 +197,22 @@ public class ZootTiledMapActorFactoryTest
 		assertEquals(ACTOR_WIDTH, actor.getWidth(), 0.0f);
 		assertEquals(ACTOR_HEIGHT, actor.getHeight(), 0.0f);
 		assertEquals(ACTOR_ROTATION, actor.getRotation(), 0.0f);
-	}	
+	}
+	
+	@Test
+	public void createFromMapObjectShouldSetDefaultNameIfNotPresentTest()
+	{
+		//given
+		MapObject mapObject = createDefaultMapObject();
+		
+		//when
+		mapObject.setName(null);
+		ZootActor actor = factory.createFromMapObject(mapObject);
+		
+		//then
+		assertNotNull(actor);
+		assertEquals(ZootTiledMapActorFactory.DEFAULT_NAME, actor.getName());
+	}
 	
 	@Test
 	public void createFromMapCellShouldSetBasicPropertiesTestCellTest()

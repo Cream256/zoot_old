@@ -28,7 +28,12 @@ public class CollectOnCollideTest
 	{
 		MockitoAnnotations.initMocks(this);	
 		onCollectCalled = false;
-		ctrl = new CollectOnCollide();
+		ctrl = new CollectOnCollide(){
+			@Override
+			public void onCollect(ZootActor collectible, ZootActor collector)
+			{
+				onCollectCalled = true;
+			}};
 	}
 	
 	@Test
@@ -40,15 +45,7 @@ public class CollectOnCollideTest
 		
 		ActorEventCounterListener counter = new ActorEventCounterListener();
 		collectible.addListener(counter);
-		
-		ctrl = new CollectOnCollide() {  
-			@Override
-			public void onCollect(ZootActor collectible, ZootActor collector)
-			{
-				onCollectCalled = true;
-			}
-		};
-	
+			
 		//when		
 		ctrl.init(collectible);
 		ctrl.onEnter(collectible, collector, contact);

@@ -20,6 +20,7 @@ import com.zootcat.scene.tiled.ZootTiledScene;
 
 public class ZootTiledMapActorFactory 
 {
+	public static final String DEFAULT_NAME = "";
 	private static final String SCENE_GLOBAL_PARAM = "scene";
 	private static final String ASSET_MANAGER_GLOBAL_PARAM = "assetManager";
 
@@ -82,7 +83,7 @@ public class ZootTiledMapActorFactory
 		
 	protected void setActorBasicProperties(final MapObject mapObject, ZootActor actor) 
 	{
-		actor.setName(mapObject.getName());
+		actor.setName(getNameOrDefault(mapObject));
 		actor.setColor(mapObject.getColor());
 		actor.setVisible(mapObject.isVisible());
 		actor.setOpacity(mapObject.getOpacity());
@@ -108,6 +109,12 @@ public class ZootTiledMapActorFactory
 			float height = Float.valueOf(getPropertyOrThrow(mapObject, "height")) * scale;
 			actor.setBounds(x, y, width, height);
 		}
+	}
+
+	private String getNameOrDefault(final MapObject mapObject)
+	{
+		String name = mapObject.getName();
+		return name != null ? name : DEFAULT_NAME;
 	}
 
 	protected void setActorControllers(final MapProperties actorProperties, ZootActor actor)
@@ -138,7 +145,7 @@ public class ZootTiledMapActorFactory
 	{
 		if(!mapObject.getProperties().containsKey(key))
 		{
-			throw new RuntimeZootException("Object property missing: " + key + " for object with name: " + mapObject.getName());
+			throw new RuntimeZootException("Object property missing: " + key + " for object with name: " + getNameOrDefault(mapObject));
 		}
 		return mapObject.getProperties().get(key).toString();
 	}

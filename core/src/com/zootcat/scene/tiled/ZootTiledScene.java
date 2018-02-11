@@ -42,7 +42,8 @@ public class ZootTiledScene implements ZootScene
 	private AssetManager assetManager;
 	private ZootCamera camera;
 	private ZootTiledMapRender mapRender;
-		
+	private ControllerFactory ctrlFactory;	
+	
 	private float unitScale;
 	private float worldUnitPerTile;
 	private float viewportWidth;
@@ -52,13 +53,14 @@ public class ZootTiledScene implements ZootScene
 	private boolean isDebugMode;
 	private Box2DDebugRenderer debugRender;
 	
-	public ZootTiledScene(ZootTiledMap map, AssetManager assetManager, float viewportWidth, float viewportHeight, float worldUnitPerTile)
+	public ZootTiledScene(ZootTiledMap map, AssetManager assetManager, ControllerFactory factory, float viewportWidth, float viewportHeight, float worldUnitPerTile)
 	{						
     	this.worldUnitPerTile = worldUnitPerTile;
 		this.unitScale = ZootTiledWorldScaleCalculator.calculate(worldUnitPerTile, map.getTileWidth());
     	this.viewportWidth = viewportWidth;
     	this.viewportHeight = viewportHeight;
     	this.assetManager = assetManager;
+    	this.ctrlFactory = factory;
     	this.map = map;    	
     	createScene();
 	}
@@ -238,7 +240,6 @@ public class ZootTiledScene implements ZootScene
 		stage = new Stage(viewport);
 		
 		//cell actors
-		ControllerFactory ctrlFactory = new ControllerFactory();
     	ZootTiledMapActorFactory actorFactory = new ZootTiledMapActorFactory(this, ctrlFactory, assetManager);		
     	TiledMapTileLayer collisionLayer = map.getLayer(ZootTiledMap.COLLISION_LAYER_NAME);
     	

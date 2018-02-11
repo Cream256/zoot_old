@@ -3,6 +3,7 @@ package com.zootcat.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.assets.AssetManager;
 import com.zootcat.assets.ZootAssetManager;
+import com.zootcat.controllers.factory.ControllerFactory;
 
 public abstract class ZootGame extends Game
 {		
@@ -10,10 +11,12 @@ public abstract class ZootGame extends Game
 	private float viewportWidth = 16.0f;
 	private float viewportHeight = 9.0f;
 	private ZootAssetManager assetManager;
+	private ControllerFactory controllerFactory;
 	
 	public ZootGame()
 	{
 		assetManager = new ZootAssetManager();
+		controllerFactory = new ControllerFactory();
 	}
 	    
     @Override
@@ -28,6 +31,11 @@ public abstract class ZootGame extends Game
     public AssetManager getAssetManager()
     {
     	return assetManager;
+    }
+    
+    public ControllerFactory getControllerFactory()
+    {
+    	return controllerFactory;
     }
     
     public void setViewportWidth(float width)
