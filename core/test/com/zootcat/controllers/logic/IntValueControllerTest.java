@@ -1,9 +1,14 @@
 package com.zootcat.controllers.logic;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import com.zootcat.controllers.factory.ControllerAnnotations;
+import com.zootcat.scene.ZootActor;
 
 public class IntValueControllerTest
 {
@@ -13,6 +18,21 @@ public class IntValueControllerTest
 	public void setup()
 	{
 		ctrl = new IntValueController();
+	}
+	
+	@Test
+	public void initShouldFixInvalidParametersTest()
+	{
+		//when
+		ControllerAnnotations.setControllerParameter(ctrl, "minValue", 10);
+		ControllerAnnotations.setControllerParameter(ctrl, "maxValue", -5);
+		ControllerAnnotations.setControllerParameter(ctrl, "value", 500);
+		ctrl.init(mock(ZootActor.class));
+		
+		//then
+		assertEquals(10, ctrl.getMaxValue());
+		assertEquals(-5, ctrl.getMinValue());
+		assertEquals(10, ctrl.getValue());
 	}
 	
 	@Test

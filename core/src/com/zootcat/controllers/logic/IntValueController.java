@@ -3,12 +3,24 @@ package com.zootcat.controllers.logic;
 import com.badlogic.gdx.math.MathUtils;
 import com.zootcat.controllers.ControllerAdapter;
 import com.zootcat.controllers.factory.CtrlParam;
+import com.zootcat.scene.ZootActor;
 
 public class IntValueController extends ControllerAdapter
 {
 	@CtrlParam(debug = true) private int value = 0;
 	@CtrlParam(debug = true) private int maxValue = 0;
 	@CtrlParam(debug = true) private int minValue = 0;
+	
+	@Override
+	public void init(ZootActor actor) 
+	{		
+		int fixedMax = Math.max(minValue, maxValue);
+		int fixedMin = Math.min(minValue, maxValue);
+				
+		maxValue = fixedMax; 
+		minValue = fixedMin;
+		value = MathUtils.clamp(value, minValue, maxValue);
+	}
 	
 	public int getValue()
 	{

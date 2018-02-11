@@ -15,6 +15,8 @@ public class LifeController extends IntValueController
 	@Override
 	public void init(ZootActor actor) 
 	{		
+		super.init(actor);
+		
 		setMinValue(0);
 		if(getMaxValue() == 0) setMaxValue(DEFAULT_LIFE);
 		if(getValue() == 0) setValue(DEFAULT_LIFE);
