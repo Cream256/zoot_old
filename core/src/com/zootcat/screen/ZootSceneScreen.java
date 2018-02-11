@@ -66,23 +66,43 @@ public class ZootSceneScreen implements Screen
 	@Override
 	public void render(float delta)
 	{
-        if(paused || scene == null)
+        if(isPaused() || !hasScene())
         {
         	return;
         }
     	
         //update
-        inputManager.processPressedKeys(delta);
-        scene.update(delta);
-    	
+        onUpdate(delta);
+            	
         //render
-    	scene.render(delta);
-    	debugHud.render(delta);
+        onRender(delta);
 	}
 	
+	public void onRender(float delta)
+	{
+		scene.render(delta);
+    	debugHud.render(delta);
+	}
+
+	public void onUpdate(float delta)
+	{
+        inputManager.processPressedKeys(delta);
+        scene.update(delta);
+	}
+
 	public ZootScene getScene()
 	{
 		return scene;
+	}
+	
+	public boolean hasScene()
+	{
+		return scene != null;
+	}
+	
+	public boolean isPaused()
+	{
+		return paused;
 	}
 	
 	public void reloadScene()

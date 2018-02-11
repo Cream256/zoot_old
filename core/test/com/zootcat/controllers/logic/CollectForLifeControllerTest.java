@@ -33,7 +33,8 @@ public class CollectForLifeControllerTest
 	public void onCollectShouldAddMaxLifeTest()
 	{
 		//given
-		LifeController lifeCtrl = new LifeController();
+		IntValueController lifeCtrl = new LifeController();
+		lifeCtrl.init(collector);
 		
 		//when
 		ControllerAnnotations.setControllerParameter(ctrl, "life", 0);
@@ -42,8 +43,8 @@ public class CollectForLifeControllerTest
 		ctrl.onCollect(collectible, collector);
 		
 		//then
-		assertEquals(LifeController.DEFAULT_LIFE, lifeCtrl.getLife());
-		assertEquals(LifeController.DEFAULT_LIFE + 1, lifeCtrl.getMaxLife());
+		assertEquals(LifeController.DEFAULT_LIFE, lifeCtrl.getValue());
+		assertEquals(LifeController.DEFAULT_LIFE + 1, lifeCtrl.getMaxValue());
 	}
 	
 	@Test
@@ -54,9 +55,9 @@ public class CollectForLifeControllerTest
 		final int maxLife = 100;
 		final int lifeToAdd = 10;
 		
-		LifeController lifeCtrl = new LifeController();
-		lifeCtrl.setMaxLife(maxLife);
-		lifeCtrl.setLife(life);
+		IntValueController lifeCtrl = new LifeController();
+		lifeCtrl.setMaxValue(maxLife);
+		lifeCtrl.setValue(life);
 						
 		//when
 		ControllerAnnotations.setControllerParameter(ctrl, "life", lifeToAdd);
@@ -65,8 +66,8 @@ public class CollectForLifeControllerTest
 		ctrl.onCollect(collectible, collector);
 		
 		//then
-		assertEquals(life + lifeToAdd, lifeCtrl.getLife());
-		assertEquals(maxLife, lifeCtrl.getMaxLife());
+		assertEquals(life + lifeToAdd, lifeCtrl.getValue());
+		assertEquals(maxLife, lifeCtrl.getMaxValue());
 	}
 	
 	@Test
@@ -78,9 +79,9 @@ public class CollectForLifeControllerTest
 		final int lifeToAdd = 10;
 		final int maxLifeToAdd = 10;
 		
-		LifeController lifeCtrl = new LifeController();
-		lifeCtrl.setMaxLife(maxLife);
-		lifeCtrl.setLife(life);
+		IntValueController lifeCtrl = new LifeController();
+		lifeCtrl.setMaxValue(maxLife);
+		lifeCtrl.setValue(life);
 		
 		//when
 		ControllerAnnotations.setControllerParameter(ctrl, "life", lifeToAdd);
@@ -89,7 +90,7 @@ public class CollectForLifeControllerTest
 		ctrl.onCollect(collectible, collector);
 		
 		//then
-		assertEquals(life + lifeToAdd, lifeCtrl.getLife());
-		assertEquals(maxLife + maxLifeToAdd, lifeCtrl.getMaxLife());		
+		assertEquals(life + lifeToAdd, lifeCtrl.getValue());
+		assertEquals(maxLife + maxLifeToAdd, lifeCtrl.getMaxValue());		
 	}
 }

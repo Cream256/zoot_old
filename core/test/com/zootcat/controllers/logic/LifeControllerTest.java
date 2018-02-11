@@ -3,6 +3,7 @@ package com.zootcat.controllers.logic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,102 +18,103 @@ public class LifeControllerTest
 	@Before
 	public void setup()
 	{
-		ctrl = new LifeController();	
+		ctrl = new LifeController();
+		ctrl.init(mock(ZootActor.class));
 	}
 	
 	@Test
 	public void defaultsTest()
 	{
-		assertEquals(LifeController.DEFAULT_LIFE, ctrl.getLife());
-		assertEquals(LifeController.DEFAULT_LIFE, ctrl.getMaxLife());		
+		assertEquals(LifeController.DEFAULT_LIFE, ctrl.getValue());
+		assertEquals(LifeController.DEFAULT_LIFE, ctrl.getMaxValue());		
 	}
 	
 	@Test
 	public void isAliveTest()
 	{
-		ctrl.setLife(3);
+		ctrl.setValue(3);
 		assertTrue(ctrl.isAlive());
 		
-		ctrl.setLife(1);
+		ctrl.setValue(1);
 		assertTrue(ctrl.isAlive());
 		
-		ctrl.setLife(0);
+		ctrl.setValue(0);
 		assertFalse(ctrl.isAlive());
 		
-		ctrl.setLife(-1);
+		ctrl.setValue(-1);
 		assertFalse(ctrl.isAlive());
 	}
 	
 	@Test
 	public void addLifeTest()
 	{
-		ctrl.addLife(-1);
-		assertEquals(2, ctrl.getLife());
+		ctrl.addToValue(-1);
+		assertEquals(2, ctrl.getValue());
 		
-		ctrl.addLife(1);
-		assertEquals(3, ctrl.getLife());
+		ctrl.addToValue(1);
+		assertEquals(3, ctrl.getValue());
 		
-		ctrl.addLife(ctrl.getMaxLife());
-		assertEquals(ctrl.getMaxLife(), ctrl.getLife());
+		ctrl.addToValue(ctrl.getMaxValue());
+		assertEquals(ctrl.getMaxValue(), ctrl.getValue());
 		
-		ctrl.addLife(-Integer.MAX_VALUE);
-		assertEquals(0, ctrl.getLife());
+		ctrl.addToValue(-Integer.MAX_VALUE);
+		assertEquals(0, ctrl.getValue());
 	}
 	
 	@Test
 	public void addMaxLifeTest()
 	{
-		ctrl.addMaxLife(1);
-		assertEquals(4, ctrl.getMaxLife());
+		ctrl.addToMaxValue(1);
+		assertEquals(4, ctrl.getMaxValue());
 		
-		ctrl.addMaxLife(-1);
-		assertEquals(3, ctrl.getMaxLife());
+		ctrl.addToMaxValue(-1);
+		assertEquals(3, ctrl.getMaxValue());
 		
-		ctrl.addMaxLife(0);
-		assertEquals(3, ctrl.getMaxLife());
+		ctrl.addToMaxValue(0);
+		assertEquals(3, ctrl.getMaxValue());
 	}
 	
 	@Test
 	public void setLifeTest()
 	{		
-		ctrl.setLife(0);
-		assertEquals(0, ctrl.getLife());
+		ctrl.setValue(0);
+		assertEquals(0, ctrl.getValue());
 		
-		ctrl.setLife(1);
-		assertEquals(1, ctrl.getLife());
+		ctrl.setValue(1);
+		assertEquals(1, ctrl.getValue());
 		
-		ctrl.setLife(ctrl.getMaxLife());
-		assertEquals(ctrl.getMaxLife(), ctrl.getLife());
+		ctrl.setValue(ctrl.getMaxValue());
+		assertEquals(ctrl.getMaxValue(), ctrl.getValue());
 		
-		ctrl.setLife(ctrl.getMaxLife() + 1);
-		assertEquals("Should not be able to set more than max life", ctrl.getMaxLife(), ctrl.getLife());
+		ctrl.setValue(ctrl.getMaxValue() + 1);
+		assertEquals("Should not be able to set more than max life", ctrl.getMaxValue(), ctrl.getValue());
 		
-		ctrl.setLife(-1);
-		assertEquals("Should not be able to set negative value", 0, ctrl.getLife());
+		ctrl.setValue(-1);
+		assertEquals("Should not be able to set negative value", 0, ctrl.getValue());
 	}
 	
 	@Test
 	public void setMaxLifeTest()
 	{		
-		ctrl.setMaxLife(10);
-		assertEquals(10, ctrl.getMaxLife());
+		ctrl.setMaxValue(10);
+		assertEquals(10, ctrl.getMaxValue());
 		
-		ctrl.setMaxLife(0);
-		assertEquals("Should not be able to set max life below 1", 1, ctrl.getMaxLife());
+		ctrl.setMaxValue(0);
+		assertEquals("Should not be able to set max life below 1", 1, ctrl.getMaxValue());
 		
-		ctrl.setMaxLife(-1);
-		assertEquals("Should not be able to set max life below 1", 1, ctrl.getMaxLife());
+		ctrl.setMaxValue(-1);
+		assertEquals("Should not be able to set max life below 1", 1, ctrl.getMaxValue());
 				
-		ctrl.setMaxLife(10);
-		ctrl.setLife(10);
-		ctrl.setMaxLife(5);
-		assertEquals(5, ctrl.getMaxLife());
-		assertEquals("Life should be clamped to max life vaule", 5, ctrl.getLife());
+		ctrl.setMaxValue(10);
+		ctrl.setValue(10);
+		ctrl.setMaxValue(5);
+		assertEquals(5, ctrl.getMaxValue());
+		assertEquals("Life should be clamped to max life vaule", 5, ctrl.getValue());
 		
-		ctrl.setLife(5);
-		ctrl.setMaxLife(0);
-		assertEquals(1, ctrl.getMaxLife());
-		assertEquals("Life should be clamped to max life vaule", 1, ctrl.getLife());
+		ctrl.setValue(5);
+		ctrl.setMaxValue(0);
+		assertEquals(1, ctrl.getMaxValue());
+		assertEquals("Life should be clamped to max life vaule", 1, ctrl.getValue());
 	}
 	
 	@Test
@@ -132,7 +134,7 @@ public class LifeControllerTest
 		assertEquals(0, counter.getCount());
 		
 		//when
-		ctrl.setLife(0);
+		ctrl.setValue(0);
 		ctrl.onUpdate(1.0f, actor);
 		
 		//then
@@ -145,8 +147,8 @@ public class LifeControllerTest
 		assertEquals("Should not send any event", 1, counter.getCount());
 		
 		//when
-		ctrl.setLife(1);
-		ctrl.setLife(0);
+		ctrl.setValue(1);
+		ctrl.setValue(0);
 		ctrl.onUpdate(1.0f, actor);
 		
 		//then

@@ -12,8 +12,8 @@ public class CollectForLifeController extends CollectOnCollide
 	{
 		collector.controllerAction(LifeController.class, ctrl ->
 		{
-			ctrl.addMaxLife(maxLife);
-			ctrl.addLife(life);
+			ctrl.addToMaxValue(maxLife);
+			ctrl.addToValue(life);
 		});		
 	}
 }
