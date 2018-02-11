@@ -1,8 +1,8 @@
 package com.zootcat.controllers.logic;
 
 import com.zootcat.controllers.factory.CtrlDebug;
-import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
+import com.zootcat.events.ZootEvents;
 import com.zootcat.scene.ZootActor;
 
 public class LifeController extends IntValueController
@@ -11,16 +11,13 @@ public class LifeController extends IntValueController
 	
 	@CtrlDebug boolean sendDeadEvent = false;
 	@CtrlDebug boolean deadEventSend = false;
-	
-	private ZootEvent deadEvent;
-	
+		
 	@Override
 	public void init(ZootActor actor) 
-	{
-		deadEvent = new ZootEvent();
-		setMaxValue(DEFAULT_LIFE);
+	{		
 		setMinValue(0);
-		setValue(DEFAULT_LIFE);
+		if(getMaxValue() == 0) setMaxValue(DEFAULT_LIFE);
+		if(getValue() == 0) setValue(DEFAULT_LIFE);
 	}
 	
 	@Override
@@ -42,9 +39,7 @@ public class LifeController extends IntValueController
 	{
 		if(sendDeadEvent && !deadEventSend)
 		{
-			deadEvent.reset();
-			deadEvent.setType(ZootEventType.Dead);			
-			actor.fire(deadEvent);			
+			ZootEvents.fireAndFree(actor, ZootEventType.Dead);		
 			deadEventSend = true;
 		}		
 	}
