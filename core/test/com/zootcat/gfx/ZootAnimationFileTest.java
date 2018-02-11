@@ -22,11 +22,13 @@ public class ZootAnimationFileTest
 {
 	private static final String FIRST_SPRITE_SHEET_NAME = "image1";
 	private static final String SECOND_SPRITE_SHEET_NAME = "image2";	
+	private static final String DEFAULT_SPRITE_SHEET_NAME = "default";
 	private static final String FIRST_SPRITE_SHEET = "/data/sprites/SpriteAnimation.png";
 	private static final String SECOND_SPRITE_SHEET = "/data/sprites/SpriteAnimation2.png";
-	
+		
 	@Mock private Texture texture1;
 	@Mock private Texture texture2;
+	@Mock private Texture defaultTexture;
 	private ZootAnimationFile anmFile;
 	
 	@Before
@@ -41,7 +43,7 @@ public class ZootAnimationFileTest
 	public void getSpriteSheetFileNamesTest() throws ZootException
 	{
 		Map<String, String> spriteSheets = anmFile.getSpriteSheets();
-		assertEquals(2, spriteSheets.size());
+		assertEquals(3, spriteSheets.size());
 		assertEquals(FIRST_SPRITE_SHEET, spriteSheets.get(FIRST_SPRITE_SHEET_NAME));
 		assertEquals(SECOND_SPRITE_SHEET, spriteSheets.get(SECOND_SPRITE_SHEET_NAME));
 	}
@@ -53,14 +55,16 @@ public class ZootAnimationFileTest
 		Map<String, Texture> spriteSheets = new HashMap<String, Texture>();
 		spriteSheets.put(FIRST_SPRITE_SHEET_NAME, texture1);
 		spriteSheets.put(SECOND_SPRITE_SHEET_NAME, texture2);
+		spriteSheets.put(DEFAULT_SPRITE_SHEET_NAME, defaultTexture);
 		
 		//when
 		Map<Integer, ZootAnimation> animations = anmFile.createAnimations(spriteSheets);
 		
 		//then
 		assertNotNull(animations);
-		assertEquals(2, animations.size());
+		assertEquals(3, animations.size());
 		
+		//first animation
 		ZootAnimation anim1 = animations.get("ANIMATION_1".hashCode());
 		assertNotNull(anim1);
 		assertEquals("ANIMATION_1", anim1.getName());
@@ -78,6 +82,7 @@ public class ZootAnimationFileTest
 			assertEquals(emptyVector, anim1.getOffsets()[offsetIndex].left);
 		}
 		
+		//second animation
 		ZootAnimation anim2 = animations.get("ANIMATION_2".hashCode());
 		assertNotNull(anim2);
 		assertEquals("ANIMATION_2", anim2.getName());
@@ -108,6 +113,12 @@ public class ZootAnimationFileTest
 		assertEquals(16.0f, anim2.getOffsets()[3].left.x, 0.0f);
 		assertEquals(17.0f, anim2.getOffsets()[3].left.y, 0.0f);
 		assertEquals(18.0f, anim2.getOffsets()[4].left.x, 0.0f);
-		assertEquals(19.0f, anim2.getOffsets()[4].left.y, 0.0f);		
+		assertEquals(19.0f, anim2.getOffsets()[4].left.y, 0.0f);
+		
+		//third animation
+		ZootAnimation anim3 = animations.get("ANIMATION_3".hashCode());
+		assertNotNull(anim3);
+		
+		assertEquals(defaultTexture, anim3.getKeyFrameTexture());
 	}
 }

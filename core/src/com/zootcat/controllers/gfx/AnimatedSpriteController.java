@@ -128,10 +128,10 @@ public class AnimatedSpriteController implements RenderController
 		sprite.setTexture(frame.getTexture());
 		sprite.setRegion(frame);				
 		
-		ZootAnimationOffset offset = currentAnimation.getFrameOffset();
+		ZootAnimationOffset offset = currentAnimation.getFrameOffset();		
 		boolean leftOffset = actor.controllerCondition(DirectionController.class, c -> c.getDirection() == ZootDirection.Left);			
 		Vector2 directionOffset = leftOffset ? offset.left : offset.right;
-		
+				
 		float scale = scene.getUnitScale();
 		float x = actor.getX() + directionOffset.x * scale;
 		float y = actor.getY() + directionOffset.y * scale;

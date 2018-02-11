@@ -78,6 +78,20 @@ public class ZootTiledMapTest
 	}
 	
 	@Test
+	public void getMapWidthTest()
+	{
+		tiledMapProperties.put(ZootTiledMap.MAP_WIDTH_PROPERTY, 256);
+		assertEquals(256, map.getMapWidth());
+	}
+	
+	@Test
+	public void getMapHeightTest()
+	{
+		tiledMapProperties.put(ZootTiledMap.MAP_HEIGHT_PROPERTY, 128);
+		assertEquals(128, map.getMapHeight());
+	}
+	
+	@Test
 	public void getBackgroundColorTest()
 	{		
 		tiledMapProperties.put(ZootTiledMap.BACKGROUND_COLOR_PROPERTY, "#FF0000");

@@ -49,7 +49,6 @@ public class ZootAnimationFile
 		return animations;
 	}
 
-	//TODO add test
 	private Texture getSpriteSheet(Map<String, Texture> spriteSheets, TextDataSection data)
 	{
 		String sheetName = data.get("sheet");				

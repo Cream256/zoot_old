@@ -3,6 +3,7 @@
 :SpriteSheets
 	image1 = /data/sprites/SpriteAnimation.png
 	image2 = /data/sprites/SpriteAnimation2.png
+	default = /data/sprites/SpriteAnimation.png
 :~SpriteSheets
 
 :Animation
@@ -34,4 +35,19 @@
 	leftOffsets = 10,11 ; 12,13; 14,15; 16,17; 18,19;
 	frameOrder = 4; 3; 2; 1;
 	sheet = image2
+:~Animation
+
+:Animation
+	type = ANIMATION_3
+	frameWidth = 100
+	frameHeight = 120
+	firstFrameX = 50
+	firstFrameY = 150
+	frames = 12
+	loop = true
+	pingpong = true
+	speed = 250
+	rightOffsets = 0,1 ; 2,3 ; 4,5 ; 6,7 ; 8,9
+	leftOffsets = 10,11 ; 12,13; 14,15; 16,17; 18,19;
+	frameOrder = 4; 3; 2; 1;
 :~Animation

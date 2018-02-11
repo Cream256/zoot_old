@@ -22,6 +22,8 @@ public class ZootTiledMap implements ZootMap
 	public static final String BACKGROUND_COLOR_PROPERTY = "backgroundcolor";
 	public static final String TILE_WIDTH_PROPERTY = "tilewidth";
 	public static final String TILE_HEIGHT_PROPERTY = "tileheight";
+	public static final String MAP_WIDTH_PROPERTY = "width";
+	public static final String MAP_HEIGHT_PROPERTY = "height";
 		
 	private TiledMap tiledMap;
 	
@@ -48,13 +50,11 @@ public class ZootTiledMap implements ZootMap
 		return Color.valueOf(tiledMap.getProperties().get(BACKGROUND_COLOR_PROPERTY, String.class));
 	}
 	
-	//TODO add test
 	public int getMapWidth()
 	{
 		return tiledMap.getProperties().get("width", Integer.class);
 	}
 
-	//TODO add test
 	public int getMapHeight()
 	{
 		return tiledMap.getProperties().get("height", Integer.class);
