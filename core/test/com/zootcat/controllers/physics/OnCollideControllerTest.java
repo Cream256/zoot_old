@@ -31,7 +31,7 @@ public class OnCollideControllerTest
 	@Mock protected Fixture ctrlActorFixture;
 	@Mock protected Fixture otherActorFixture;
 	@Mock protected Contact contact;
-	
+		
 	@Before
 	public void setup()
 	{
@@ -57,10 +57,12 @@ public class OnCollideControllerTest
 		when(contact.getFixtureB()).thenReturn(otherActorFixture);
 		when(ctrlActorFixture.getFilterData()).thenReturn(ctrlActorFilter);
 		when(otherActorFixture.getFilterData()).thenReturn(otherActorFilter);
+		
+		BitMaskConverter.Instance.clear();
 	}
 	
 	@Test
-	public void getControllerActorTest()
+	public void shouldReturnControllerActor()
 	{
 		//when
 		ctrl.init(ctrlActor);
@@ -70,11 +72,14 @@ public class OnCollideControllerTest
 	}
 	
 	@Test
-	public void beginContactDefaultCategoryShouldMatchAllCollisionsTest()
+	public void shouldCollideWithAllWhenMaskIsNotGiven()
 	{
 		//given
 		ctrlActorFilter.categoryBits = 1;
-		otherActorFilter.categoryBits = 2;		
+		otherActorFilter.categoryBits = 2;
+		
+		ControllerAnnotations.setControllerParameter(ctrl, "category", "ABC");
+		ControllerAnnotations.setControllerParameter(ctrl, "mask", null);
 		ctrl.init(ctrlActor);
 		
 		//then
@@ -87,72 +92,103 @@ public class OnCollideControllerTest
 	}
 	
 	@Test
-	public void beginContactCategoriesTest()
+	public void shouldCollideWithCategoriesInMaskTest()
 	{
 		//given
-		short cat1 = BitMaskConverter.Instance.fromString("CAT1");
-		short cat2 = BitMaskConverter.Instance.fromString("CAT2");
+		final short categoryA = BitMaskConverter.Instance.convertMask("A");
+		final short categoryB = BitMaskConverter.Instance.convertMask("B");
+		final short categoryC = BitMaskConverter.Instance.convertMask("C");
+		
+		ControllerAnnotations.setControllerParameter(ctrl, "category", "A");
+		ControllerAnnotations.setControllerParameter(ctrl, "mask", "B | C");
+		ctrl.init(ctrlActor);
 		
 		//when
-		ctrlActorFilter.categoryBits = cat1;
-		otherActorFilter.categoryBits = cat2;
-		ControllerAnnotations.setControllerParameter(ctrl, "category", "CAT2");
+		ctrlActorFilter.categoryBits = categoryA;
+		otherActorFilter.categoryBits = categoryB;
+		
+		//then
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		ctrl.endContact(ctrlActor, otherActor, contact);
+		assertEquals("Should collide on begin contact", 1, enterCount);
+		assertEquals("Should collide on end contact", 1, leaveCount);
+		
+		//when
+		otherActorFilter.categoryBits = categoryC;
+		
+		//then
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		ctrl.endContact(ctrlActor, otherActor, contact);
+		assertEquals("Should collide on begin contact", 2, enterCount);
+		assertEquals("Should collide on end contact", 2, leaveCount);
+	}
+	
+	@Test
+	public void shouldNotCollideWithCategoriesNotInMaskTest()
+	{
+		//given
+		final short categoryA = BitMaskConverter.Instance.convertMask("A");
+		final short categoryB = BitMaskConverter.Instance.convertMask("B");
+		final short categoryC = BitMaskConverter.Instance.convertMask("C");
+		
+		ControllerAnnotations.setControllerParameter(ctrl, "category", "A");
+		ControllerAnnotations.setControllerParameter(ctrl, "mask", "D | F");
 		ctrl.init(ctrlActor);
+		
+		//when
+		ctrlActorFilter.categoryBits = categoryA;
+		otherActorFilter.categoryBits = categoryA;
+		
+		//then
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		ctrl.endContact(ctrlActor, otherActor, contact);
+		assertEquals("Should not collide on begin contact", 0, enterCount);
+		assertEquals("Should not collide on end contact", 0, leaveCount);
+		
+		//when
+		otherActorFilter.categoryBits = categoryB;
+		
+		//then
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		ctrl.endContact(ctrlActor, otherActor, contact);
+		assertEquals("Should not collide on begin contact", 0, enterCount);
+		assertEquals("Should not collide on end contact", 0, leaveCount);
+		
+		//when
+		otherActorFilter.categoryBits = categoryC;
+		
+		//then
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		ctrl.endContact(ctrlActor, otherActor, contact);
+		assertEquals("Should not collide on begin contact", 0, enterCount);
+		assertEquals("Should not collide on end contact", 0, leaveCount);
+	}
+	
+	@Test
+	public void shouldNotCollideIfOtherFixtureDoesNotMaskActorCategoryTest()
+	{
+		//given
+		final short categoryA = BitMaskConverter.Instance.convertMask("A");
+		final short categoryB = BitMaskConverter.Instance.convertMask("B");
+		
+		ControllerAnnotations.setControllerParameter(ctrl, "category", "A");
+		ControllerAnnotations.setControllerParameter(ctrl, "mask", "B");
+		ctrl.init(ctrlActor);
+		
+		//when
+		ctrlActorFilter.categoryBits = categoryA;		
+		otherActorFilter.categoryBits = categoryB;
+		otherActorFilter.maskBits = BitMaskConverter.Instance.convertMask("B | C");
+		
+		//then
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		ctrl.endContact(ctrlActor, otherActor, contact);
+		assertEquals("Should not collide on begin contact", 0, enterCount);
+		assertEquals("Should not collide on end contact", 0, leaveCount);
+	}
 				
-		//then
-		ctrl.beginContact(ctrlActor, otherActor, contact);		
-		assertEquals("Should match collision", 1, enterCount);
-		
-		//when
-		otherActorFilter.categoryBits = cat1;
-
-		//then
-		ctrl.beginContact(ctrlActor, otherActor, contact);		
-		assertEquals("Should not match collision", 1, enterCount);
-	}
-	
 	@Test
-	public void endContactDefaultCategoryShouldMatchAllCollisionsTest()
-	{
-		//given
-		ctrlActorFilter.categoryBits = 1;
-		otherActorFilter.categoryBits = 2;		
-		ctrl.init(ctrlActor);
-		
-		//then
-		ctrl.endContact(ctrlActor, otherActor, contact);		
-		assertEquals("Should match collision", 1, leaveCount);
-
-		//then
-		ctrl.endContact(otherActor, ctrlActor, contact);		
-		assertEquals("Should match collision", 2, leaveCount);		
-	}
-	
-	@Test
-	public void endContactCategoriesTest()
-	{
-		//given
-		short cat1 = BitMaskConverter.Instance.fromString("CAT1");
-		short cat2 = BitMaskConverter.Instance.fromString("CAT2");
-		
-		//when
-		ctrlActorFilter.categoryBits = cat1;
-		otherActorFilter.categoryBits = cat2;
-		ControllerAnnotations.setControllerParameter(ctrl, "category", "CAT2");		
-		ctrl.init(ctrlActor);
-		
-		//then
-		ctrl.endContact(ctrlActor, otherActor, contact);		
-		assertEquals("Should match collision", 1, leaveCount);
-
-		//then
-		otherActorFilter.categoryBits = cat1;
-		ctrl.endContact(ctrlActor, otherActor, contact);		
-		assertEquals("Should not match collision", 1, leaveCount);		
-	}
-	
-	@Test
-	public void preSolveTest()
+	public void shouldDoNothingOnPreSolveTest()
 	{
 		ZootActor actorA = mock(ZootActor.class);
 		ZootActor actorB = mock(ZootActor.class);
@@ -164,7 +200,7 @@ public class OnCollideControllerTest
 	}
 	
 	@Test
-	public void postSolveTest()
+	public void shouldDoNothingOnPostSolveTest()
 	{
 		ZootActor actorA = mock(ZootActor.class);
 		ZootActor actorB = mock(ZootActor.class);

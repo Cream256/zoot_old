@@ -26,40 +26,62 @@ public class BitMaskConverterTest
 	}
 	
 	@Test
-	public void fromStringShouldProduceValidValuesTest()
+	public void shouldProduceValidValuesTest()
 	{
-		assertEquals(0x0001, converter.fromString("first"));
-		assertEquals(0x0002, converter.fromString("second"));
-		assertEquals(0x0004, converter.fromString("third"));
-		assertEquals(0x0008, converter.fromString("fourth"));
+		assertEquals(0x0001, converter.convertMask("first"));
+		assertEquals(0x0002, converter.convertMask("second"));
+		assertEquals(0x0004, converter.convertMask("third"));
+		assertEquals(0x0008, converter.convertMask("fourth"));
 	}
 	
 	@Test
-	public void fromStringShouldGiveTheSameResultForTheSamStringTest()
+	public void shouldGiveTheSameResultForTheSamStringTest()
 	{
-		assertEquals(0x0001, converter.fromString("first"));
-		assertEquals(0x0002, converter.fromString("second"));
-		assertEquals(0x0001, converter.fromString("first"));
-		assertEquals(0x0002, converter.fromString("second"));
-		assertEquals(0x0004, converter.fromString("third"));
-		assertEquals(0x0004, converter.fromString("third"));
+		assertEquals(0x0001, converter.convertMask("first"));
+		assertEquals(0x0002, converter.convertMask("second"));
+		assertEquals(0x0001, converter.convertMask("first"));
+		assertEquals(0x0002, converter.convertMask("second"));
+		assertEquals(0x0004, converter.convertMask("third"));
+		assertEquals(0x0004, converter.convertMask("third"));
 	}
 	
 	@Test
-	public void fromStringShouldBeCaseSensitiveTest()
+	public void shouldBeCaseSensitiveTest()
 	{
-		assertEquals(0x0001, converter.fromString("text"));
-		assertEquals(0x0002, converter.fromString("TEXT"));
-		assertEquals(0x0004, converter.fromString("TexT"));
+		assertEquals(0x0001, converter.convertMask("text"));
+		assertEquals(0x0002, converter.convertMask("TEXT"));
+		assertEquals(0x0004, converter.convertMask("TexT"));
 	}
 	
 	@Test(expected = RuntimeZootException.class)
-	public void fromStringShouldThrowWhenCalculatedValueIsGreaterThanShortMaxValueTest()
+	public void shouldThrowWhenCalculatedValueIsGreaterThanShortMaxValueTest()
 	{
 		for(int i = 0; i < 15; ++i)
 		{
-			assertTrue(Short.MAX_VALUE > converter.fromString(String.valueOf(i)));
+			assertTrue(Short.MAX_VALUE > converter.convertMask(String.valueOf(i)));
 		}
-		converter.fromString("this should throw");
+		converter.convertMask("this should throw");
+	}
+	
+	@Test
+	public void shouldConvertToMaskContainingMultiplyValuesTest()
+	{
+		//given
+		short mask1 = converter.convertMask("A");		
+		short mask2 = converter.convertMask("B");
+		short mask3 = converter.convertMask("C");
+		
+		//when
+		short mask4 = converter.convertMask("A | B | C");
+		
+		//then
+		assertEquals(mask1 | mask2 | mask3, mask4);
+	}
+	
+	@Test
+	public void shouldReturnMaskThatCollidesWithAllWhenNoParamsAreGivenTest()
+	{
+		assertEquals(BitMaskConverter.MASK_COLLIDE_WITH_ALL, converter.convertMask(null));
+		assertEquals(BitMaskConverter.MASK_COLLIDE_WITH_ALL, converter.convertMask(""));
 	}
 }

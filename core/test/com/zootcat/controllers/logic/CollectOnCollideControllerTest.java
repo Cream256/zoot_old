@@ -15,12 +15,12 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.testing.ActorEventCounterListener;
 
-public class CollectOnCollideTest
+public class CollectOnCollideControllerTest
 {
 	@Mock private Contact contact;
 	@Mock private ZootActor collector;
 	@Mock private ZootActor collectible;
-	private CollectOnCollide ctrl;
+	private CollectOnCollideController ctrl;
 	private boolean onCollectCalled;
 	
 	@Before
@@ -28,7 +28,7 @@ public class CollectOnCollideTest
 	{
 		MockitoAnnotations.initMocks(this);	
 		onCollectCalled = false;
-		ctrl = new CollectOnCollide(){
+		ctrl = new CollectOnCollideController(){
 			@Override
 			public void onCollect(ZootActor collectible, ZootActor collector)
 			{

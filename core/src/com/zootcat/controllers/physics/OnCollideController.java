@@ -2,30 +2,35 @@ package com.zootcat.controllers.physics;
 
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
-import com.zootcat.controllers.factory.CtrlDebug;
 import com.zootcat.controllers.factory.CtrlParam;
+import com.zootcat.physics.ZootDefaultContactFilter;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.utils.BitMaskConverter;
 
 public abstract class OnCollideController extends PhysicsCollisionController
 {
-	@CtrlParam private String category = null;
-	@CtrlDebug private int categoryBits = -1;
+	@CtrlParam(debug = true) private String category = null;
+	@CtrlParam(debug = true) private String mask = null;
 	
+	private Filter filter;
 	private ZootActor controllerActor;
-	
+		
 	@Override
 	public void init(ZootActor actor)
-	{
-		this.controllerActor = actor;
+	{		
+		controllerActor = actor;						
+		
+		filter = new Filter();		
+		filter.maskBits = BitMaskConverter.Instance.convertMask(mask);
 		if(category != null && !category.isEmpty())
 		{
-			categoryBits = BitMaskConverter.Instance.fromString(category);
+			filter.categoryBits = BitMaskConverter.Instance.convertMask(category);
 		}
 	}
-	
+		
 	@Override
 	public void beginContact(ZootActor actorA, ZootActor actorB, Contact contact)
 	{				
@@ -81,8 +86,8 @@ public abstract class OnCollideController extends PhysicsCollisionController
 	}
 	
 	private boolean collides(ZootActor actorA, ZootActor actorB, Contact contact)
-	{		
-		Fixture otherFixture = getOtherFixture(actorA, actorB, contact);		
-		return categoryBits == -1 || otherFixture.getFilterData().categoryBits == categoryBits;
+	{				
+		Fixture otherFixture = getOtherFixture(actorA, actorB, contact);
+		return ZootDefaultContactFilter.shouldCollide(filter, otherFixture.getFilterData());
 	}
 }

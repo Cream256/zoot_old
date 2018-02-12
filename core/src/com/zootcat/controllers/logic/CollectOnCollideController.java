@@ -7,7 +7,7 @@ import com.zootcat.events.ZootEventType;
 import com.zootcat.events.ZootEvents;
 import com.zootcat.scene.ZootActor;
 
-public abstract class CollectOnCollide extends OnCollideController
+public abstract class CollectOnCollideController extends OnCollideController
 {
 	@Override
 	public void onEnter(ZootActor actorA, ZootActor actorB, Contact contact)

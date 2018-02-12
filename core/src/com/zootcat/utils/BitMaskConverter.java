@@ -7,6 +7,9 @@ import com.zootcat.exceptions.RuntimeZootException;
 
 public class BitMaskConverter
 {	
+	public static final int MASK_COLLIDE_WITH_ALL = -1;
+	public static final int MASK_COLLIDE_WITH_NONE = 0;
+	
 	public static final BitMaskConverter Instance = new BitMaskConverter();
 	
 	private Map<String, Short> values = new HashMap<String, Short>();
@@ -15,8 +18,29 @@ public class BitMaskConverter
 	{
 		//use instance
 	}
+			
+	public short convertMask(String mask)
+	{				
+		if(mask == null || mask.isEmpty())
+		{
+			return MASK_COLLIDE_WITH_ALL;
+		}
 		
-	public short fromString(String str)
+		short bitMask = MASK_COLLIDE_WITH_NONE;			
+		for(String category : mask.split("\\|"))
+		{
+			short categoryBit = convert(category.trim());
+			bitMask |= categoryBit;
+		}
+		return bitMask;
+	}
+	
+	public void clear()
+	{
+		values.clear();
+	}
+	
+	private short convert(String str)
 	{
 		if(!values.containsKey(str))
 		{
@@ -28,10 +52,5 @@ public class BitMaskConverter
 			values.put(str, (short) ZootUtils.trunc(value));				
 		}		
 		return values.get(str);
-	}
-	
-	public void clear()
-	{
-		values.clear();
 	}
 }

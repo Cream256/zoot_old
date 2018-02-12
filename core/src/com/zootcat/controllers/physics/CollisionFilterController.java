@@ -8,9 +8,6 @@ import com.zootcat.utils.BitMaskConverter;
 
 public class CollisionFilterController extends ControllerAdapter
 {
-	private static final int MASK_COLLIDE_WITH_ALL = -1;
-	private static final int MASK_COLLIDE_WITH_NONE = 0;
-	
 	@CtrlParam(required = true) private String category = "";
 	@CtrlParam private String mask = "";
 		
@@ -18,25 +15,8 @@ public class CollisionFilterController extends ControllerAdapter
 	public void onAdd(ZootActor actor)
 	{
 		Filter collisionFilter = new Filter();
-		collisionFilter.categoryBits = BitMaskConverter.Instance.fromString(category);
-		collisionFilter.maskBits = convertMaskBits(mask);		
+		collisionFilter.categoryBits = BitMaskConverter.Instance.convertMask(category);
+		collisionFilter.maskBits = BitMaskConverter.Instance.convertMask(mask);
 		actor.getController(PhysicsBodyController.class).setCollisionFilter(collisionFilter);		
-	}
-
-	private short convertMaskBits(String mask) 
-	{		
-		if(mask.isEmpty())
-		{
-			return MASK_COLLIDE_WITH_ALL;
-		}
-		
-		short bitMask = MASK_COLLIDE_WITH_NONE;			
-		for(String category : mask.split("\\|"))
-		{
-			short categoryBit = BitMaskConverter.Instance.fromString(category.trim());
-			bitMask |= categoryBit;
-		}		
-		return bitMask;
-	}
-	
+	}	
 }
