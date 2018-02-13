@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Manifold;
@@ -14,11 +15,21 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.zootcat.controllers.factory.CtrlDebug;
 import com.zootcat.controllers.factory.CtrlParam;
+import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
 import com.zootcat.events.ZootEvents;
 import com.zootcat.scene.ZootActor;
 import com.zootcat.scene.ZootScene;
 
+/**
+ * DetectGround controller - Creates a feet sensor, that is detecting if
+ * the actor is in contact with the ground. When he is, the controller 
+ * emits Ground {@link ZootEvent}.
+ * 
+ * @ctrlParam sensorWidth - feet sensor width. If not set, actor width will be used.
+ * @author Cream
+ *
+ */
 public class DetectGroundController extends PhysicsCollisionController
 {
 	public static final float SENSOR_HEIGHT_PERCENT = 0.2f;
@@ -107,7 +118,7 @@ public class DetectGroundController extends PhysicsCollisionController
 	{		
 		boolean contactWithFeet = contact.getFixtureA() == feet || contact.getFixtureB() == feet;
 		boolean contactWithActor = actorA == actorWithSensor || actorB == actorWithSensor;
-		boolean notSensors = !contact.getFixtureA().isSensor() || !contact.getFixtureB().isSensor();
+		boolean notSensors = !contact.getFixtureA().isSensor() || !contact.getFixtureB().isSensor();		
 		return contactWithFeet && contactWithActor && notSensors;
 	}
 
@@ -137,7 +148,16 @@ public class DetectGroundController extends PhysicsCollisionController
 		FixtureDef def = new FixtureDef();
 		def.isSensor = true;
 		def.friction = 0.0f;		
-		def.shape = feetShape;		
+		def.shape = feetShape;
+		
+		CollisionFilterController filterCtrl = actor.tryGetController(CollisionFilterController.class);
+		if(filterCtrl != null)
+		{
+			Filter existingFilter = filterCtrl.getCollisionFilter();			
+			def.filter.categoryBits = existingFilter.categoryBits;
+			def.filter.maskBits = existingFilter.maskBits;
+			def.filter.groupIndex = existingFilter.groupIndex;
+		}
 		return def;
 	}
 }

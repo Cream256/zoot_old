@@ -53,10 +53,10 @@ public abstract class OnCollideController extends PhysicsCollisionController
 		collidingActors.clear();
 		
 		filter = new Filter();	
-		filter.maskBits = BitMaskConverter.Instance.convertMask(mask);
+		filter.maskBits = BitMaskConverter.Instance.fromString(mask);
 		if(category != null && !category.isEmpty())
 		{
-			filter.categoryBits = BitMaskConverter.Instance.convertMask(category);
+			filter.categoryBits = BitMaskConverter.Instance.fromString(category);
 		}
 	}
 		

@@ -124,9 +124,9 @@ public class OnCollideControllerTest
 	public void shouldCollideWithCategoriesInMask()
 	{
 		//given
-		final short categoryA = BitMaskConverter.Instance.convertMask("A");
-		final short categoryB = BitMaskConverter.Instance.convertMask("B");
-		final short categoryC = BitMaskConverter.Instance.convertMask("C");
+		final short categoryA = BitMaskConverter.Instance.fromString("A");
+		final short categoryB = BitMaskConverter.Instance.fromString("B");
+		final short categoryC = BitMaskConverter.Instance.fromString("C");
 		
 		ControllerAnnotations.setControllerParameter(ctrl, "category", "A");
 		ControllerAnnotations.setControllerParameter(ctrl, "mask", "B | C");
@@ -156,9 +156,9 @@ public class OnCollideControllerTest
 	public void shouldNotCollideWithCategoriesNotInMask()
 	{
 		//given
-		final short categoryA = BitMaskConverter.Instance.convertMask("A");
-		final short categoryB = BitMaskConverter.Instance.convertMask("B");
-		final short categoryC = BitMaskConverter.Instance.convertMask("C");
+		final short categoryA = BitMaskConverter.Instance.fromString("A");
+		final short categoryB = BitMaskConverter.Instance.fromString("B");
+		final short categoryC = BitMaskConverter.Instance.fromString("C");
 		
 		ControllerAnnotations.setControllerParameter(ctrl, "category", "A");
 		ControllerAnnotations.setControllerParameter(ctrl, "mask", "D | F");
@@ -197,8 +197,8 @@ public class OnCollideControllerTest
 	public void shouldNotCollideIfOtherFixtureDoesNotMaskActorCategory()
 	{
 		//given
-		final short categoryA = BitMaskConverter.Instance.convertMask("A");
-		final short categoryB = BitMaskConverter.Instance.convertMask("B");
+		final short categoryA = BitMaskConverter.Instance.fromString("A");
+		final short categoryB = BitMaskConverter.Instance.fromString("B");
 		
 		ControllerAnnotations.setControllerParameter(ctrl, "category", "A");
 		ControllerAnnotations.setControllerParameter(ctrl, "mask", "B");
@@ -207,7 +207,7 @@ public class OnCollideControllerTest
 		//when
 		ctrlActorFilter.categoryBits = categoryA;		
 		otherActorFilter.categoryBits = categoryB;
-		otherActorFilter.maskBits = BitMaskConverter.Instance.convertMask("B | C");
+		otherActorFilter.maskBits = BitMaskConverter.Instance.fromString("B | C");
 		
 		//then
 		ctrl.beginContact(ctrlActor, otherActor, contact);

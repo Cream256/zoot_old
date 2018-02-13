@@ -2,7 +2,8 @@ package com.zootcat.controllers.physics;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +12,7 @@ import org.junit.Test;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -82,9 +84,9 @@ public class DetectGroundControllerTest
 		physics.dispose();
 		physics = null;
 	}
-	
+		
 	@Test
-	public void onAddTest()
+	public void shouldAddFeetFixture()
 	{
 		//given
 		assertEquals("Should have only body fixture", 1, physicsCtrl.getFixtures().size());
@@ -105,7 +107,7 @@ public class DetectGroundControllerTest
 	}
 	
 	@Test
-	public void onAddWithCustomWidthShouldCreateFixtureUsingCustomWidthTest()
+	public void shouldCreateFixtureUsingCustomWidth()
 	{
 		//when
 		final int customWidth = 128;
@@ -128,7 +130,7 @@ public class DetectGroundControllerTest
 	}
 	
 	@Test
-	public void onAddWithZeroWidthShouldCreateFixtureUsingActorWidthTest()
+	public void shouldCreateFixtureUsingActorWidthWhenWidthIsSetToZero()
 	{
 		//when
 		groundCtrl.init(actor);
@@ -148,7 +150,7 @@ public class DetectGroundControllerTest
 	}
 	
 	@Test
-	public void onRemoveTest()
+	public void shouldRemoveFeetFixture()
 	{
 		//when
 		groundCtrl.init(actor);
@@ -161,7 +163,7 @@ public class DetectGroundControllerTest
 	}
 	
 	@Test
-	public void onUpdateTest()
+	public void shouldProperlyDetectContacts()
 	{
 		//given
 		Fixture fixtureB = mock(Fixture.class);
@@ -196,7 +198,7 @@ public class DetectGroundControllerTest
 	}
 		
 	@Test
-	public void isOnGroundTest()
+	public void shouldProperlyReturnOnGroundProperty()
 	{
 		//given
 		groundCtrl.init(actor);
@@ -268,7 +270,7 @@ public class DetectGroundControllerTest
 	}
 		
 	@Test
-	public void postSolveTest()
+	public void shouldDoNothingOnPostSolve()
 	{
 		ZootActor actorA = mock(ZootActor.class);
 		ZootActor actorB = mock(ZootActor.class);
@@ -279,7 +281,7 @@ public class DetectGroundControllerTest
 	}
 	
 	@Test
-	public void multipleContactsShouldBeProperlyHandedTest()
+	public void multipleContactsShouldBeProperlyHandled()
 	{
 		//given
 		groundCtrl.init(actor);
@@ -353,5 +355,30 @@ public class DetectGroundControllerTest
 		//then
 		assertFalse("Ground should not be detected", groundCtrl.isOnGround());
 		assertEquals("Event should not be sent", 2, eventCounter.getCount());
+	}
+	
+	@Test
+	public void feetFixtureShouldHaveTheSameCollisionFilterAsActor()
+	{
+		//given
+		Filter expectedFilter = mock(Filter.class);
+		expectedFilter.categoryBits = 1;
+		expectedFilter.maskBits = 2;
+		expectedFilter.groupIndex = 3;
+		
+		CollisionFilterController filterCtrl = mock(CollisionFilterController.class);
+		when(filterCtrl.getCollisionFilter()).thenReturn(expectedFilter);
+		
+		//when
+		actor.addController(filterCtrl);
+		groundCtrl.init(actor);
+		groundCtrl.onAdd(actor);
+		
+		//then		
+		Filter feetFilter = physicsCtrl.getFixtures().get(1).getFilterData();
+		assertNotNull(feetFilter);
+		assertEquals(expectedFilter.categoryBits, feetFilter.categoryBits);
+		assertEquals(expectedFilter.maskBits, feetFilter.maskBits);
+		assertEquals(expectedFilter.groupIndex, feetFilter.groupIndex);
 	}
 }

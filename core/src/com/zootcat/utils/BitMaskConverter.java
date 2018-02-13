@@ -19,7 +19,7 @@ public class BitMaskConverter
 		//use instance
 	}
 			
-	public short convertMask(String mask)
+	public short fromString(String mask)
 	{				
 		if(mask == null || mask.isEmpty())
 		{
