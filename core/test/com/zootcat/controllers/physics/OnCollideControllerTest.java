@@ -30,6 +30,7 @@ public class OnCollideControllerTest
 	@Mock protected ZootActor otherActor;
 	@Mock protected Fixture ctrlActorFixture;
 	@Mock protected Fixture otherActorFixture;
+	@Mock protected Fixture otherActorFixture2;
 	@Mock protected Contact contact;
 		
 	@Before
@@ -57,6 +58,7 @@ public class OnCollideControllerTest
 		when(contact.getFixtureB()).thenReturn(otherActorFixture);
 		when(ctrlActorFixture.getFilterData()).thenReturn(ctrlActorFilter);
 		when(otherActorFixture.getFilterData()).thenReturn(otherActorFilter);
+		when(otherActorFixture2.getFilterData()).thenReturn(otherActorFilter);
 		
 		BitMaskConverter.Instance.clear();
 	}
@@ -82,17 +84,44 @@ public class OnCollideControllerTest
 		ControllerAnnotations.setControllerParameter(ctrl, "mask", null);
 		ctrl.init(ctrlActor);
 		
-		//then
+		//when
 		ctrl.beginContact(ctrlActor, otherActor, contact);		
-		assertEquals("Should match collision", 1, enterCount);
-
+		
 		//then
-		ctrl.beginContact(otherActor, ctrlActor, contact);		
-		assertEquals("Should match collision", 2, enterCount);
+		assertEquals("Should match collision", 1, enterCount);
 	}
 	
 	@Test
-	public void shouldCollideWithCategoriesInMaskTest()
+	public void shouldBeginAndEndCollisionOnlyOncePerActorEvenIfActorBodyHasMultiplyFixtures()
+	{
+		//given
+		ctrl.init(ctrlActor);
+		
+		//when
+		when(contact.getFixtureA()).thenReturn(ctrlActorFixture);
+		when(contact.getFixtureB()).thenReturn(otherActorFixture);
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		
+		//then
+		assertEquals("Collision should begin", 1, enterCount);
+		
+		//when
+		when(contact.getFixtureB()).thenReturn(otherActorFixture2);
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		
+		//then
+		assertEquals("Collision with already colliding actor should not be matched twice", 1, enterCount);
+		
+		//when
+		when(contact.getFixtureB()).thenReturn(otherActorFixture);
+		ctrl.endContact(ctrlActor, otherActor, contact);
+		
+		//then
+		assertEquals("Collision should end", 1, leaveCount);
+	}
+		
+	@Test
+	public void shouldCollideWithCategoriesInMask()
 	{
 		//given
 		final short categoryA = BitMaskConverter.Instance.convertMask("A");
@@ -124,7 +153,7 @@ public class OnCollideControllerTest
 	}
 	
 	@Test
-	public void shouldNotCollideWithCategoriesNotInMaskTest()
+	public void shouldNotCollideWithCategoriesNotInMask()
 	{
 		//given
 		final short categoryA = BitMaskConverter.Instance.convertMask("A");
@@ -165,7 +194,7 @@ public class OnCollideControllerTest
 	}
 	
 	@Test
-	public void shouldNotCollideIfOtherFixtureDoesNotMaskActorCategoryTest()
+	public void shouldNotCollideIfOtherFixtureDoesNotMaskActorCategory()
 	{
 		//given
 		final short categoryA = BitMaskConverter.Instance.convertMask("A");
@@ -186,9 +215,43 @@ public class OnCollideControllerTest
 		assertEquals("Should not collide on begin contact", 0, enterCount);
 		assertEquals("Should not collide on end contact", 0, leaveCount);
 	}
+	
+	@Test
+	public void shouldNotCollideWithSensors()
+	{
+		//given
+		ControllerAnnotations.setControllerParameter(ctrl, "collideWithSensors", false);
+		ctrl.init(ctrlActor);
+		
+		//when
+		when(otherActorFixture.isSensor()).thenReturn(true);
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		ctrl.endContact(ctrlActor, otherActor, contact);
+		
+		//then
+		assertEquals("Should not begin collision with sensor fixture", 0, enterCount);
+		assertEquals("Should not end collision with sensor fixture", 0, leaveCount);
+	}
+	
+	@Test
+	public void shouldCollideWithSensors()
+	{
+		//given
+		ControllerAnnotations.setControllerParameter(ctrl, "collideWithSensors", true);
+		ctrl.init(ctrlActor);
+		
+		//when
+		when(otherActorFixture.isSensor()).thenReturn(true);
+		ctrl.beginContact(ctrlActor, otherActor, contact);
+		ctrl.endContact(ctrlActor, otherActor, contact);
+		
+		//then
+		assertEquals("Should begin collision with sensor fixture", 1, enterCount);
+		assertEquals("Should end collision with sensor fixture", 1, leaveCount);
+	}
 				
 	@Test
-	public void shouldDoNothingOnPreSolveTest()
+	public void shouldDoNothingOnPreSolve()
 	{
 		ZootActor actorA = mock(ZootActor.class);
 		ZootActor actorB = mock(ZootActor.class);
@@ -200,7 +263,7 @@ public class OnCollideControllerTest
 	}
 	
 	@Test
-	public void shouldDoNothingOnPostSolveTest()
+	public void shouldDoNothingOnPostSolve()
 	{
 		ZootActor actorA = mock(ZootActor.class);
 		ZootActor actorB = mock(ZootActor.class);
