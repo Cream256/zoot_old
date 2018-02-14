@@ -103,6 +103,13 @@ public class IdleStateTest extends ZootStateTestCase
 	}
 	
 	@Test
+	public void handleInAirEventTest()
+	{
+		assertTrue(idleState.handle(createEvent(ZootEventType.InAir)));
+		assertEquals(FallState.ID, actor.getStateMachine().getCurrentState().getId());
+	}
+	
+	@Test
 	public void handleAttackEventTest()
 	{
 		assertTrue(idleState.handle(createEvent(ZootEventType.Attack)));

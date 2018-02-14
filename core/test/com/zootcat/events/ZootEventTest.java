@@ -11,13 +11,13 @@ import com.zootcat.scene.ZootActor;
 public class ZootEventTest
 {
 	@Test
-	public void defaultCtorTest()
+	public void defaultCtorShouldSetDefaultValues()
 	{
 		assertEquals(ZootEventType.None, new ZootEvent().getType());		
 	}
 	
 	@Test
-	public void typeCtorTest()
+	public void typeCtorShouldSetType()
 	{
 		assertEquals(ZootEventType.Attack, new ZootEvent(ZootEventType.Attack).getType());
 		assertEquals(ZootEventType.Dead, new ZootEvent(ZootEventType.Dead).getType());
@@ -25,7 +25,25 @@ public class ZootEventTest
 	}
 	
 	@Test
-	public void setTypeTest()
+	public void copyCtorShuoldCreateProperCopy()
+	{
+		//given
+		ZootEventType type = ZootEventType.Dead;
+		String userObj = "user object";
+		
+		ZootEvent e = new ZootEvent(type);
+		e.setUserObject(userObj);
+		
+		//when
+		ZootEvent copy = new ZootEvent(e);
+		
+		//then
+		assertEquals(type, copy.getType());
+		assertEquals(userObj, copy.getUserObject(String.class));
+	}
+	
+	@Test
+	public void shouldSetType()
 	{
 		ZootEvent event = new ZootEvent();
 		
@@ -37,7 +55,7 @@ public class ZootEventTest
 	}
 	
 	@Test
-	public void toStringTest()
+	public void toStringShouldProvideEventTypeName()
 	{
 		assertEquals(ZootEventType.Attack.toString(), new ZootEvent(ZootEventType.Attack).toString());
 		assertEquals(ZootEventType.Dead.toString(), new ZootEvent(ZootEventType.Dead).toString());
@@ -45,7 +63,7 @@ public class ZootEventTest
 	}
 	
 	@Test
-	public void resetTest()
+	public void shouldResetEvent()
 	{
 		ZootEvent event = new ZootEvent(ZootEventType.Attack);
 		event.setUserObject("UserObj");
@@ -56,7 +74,7 @@ public class ZootEventTest
 	}
 	
 	@Test
-	public void getTargetZootActorTest()
+	public void shouldReturnTargetZootActor()
 	{
 		ZootEvent event = new ZootEvent();		
 		assertEquals(null, event.getTargetZootActor());
@@ -70,7 +88,7 @@ public class ZootEventTest
 	}
 	
 	@Test
-	public void setUserObjectTest()
+	public void shouldSetUserObject()
 	{
 		ZootEvent event = new ZootEvent();
 		assertNull("Should return null if nothing was set", event.getUserObject(String.class));

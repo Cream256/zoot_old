@@ -21,6 +21,12 @@ public class ZootEvent extends Event
 		this.userObject = null;
 	}
 		
+	public ZootEvent(ZootEvent event)
+	{
+		this.type = event.type;
+		this.userObject = event.userObject;		
+	}
+		
 	public ZootEventType getType()
 	{
 		return type;

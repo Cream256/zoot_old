@@ -42,7 +42,7 @@ public class IdleState extends BasicState
 		{		
 			changeState(event, JumpState.ID);
 		}
-		else if(event.getType() == ZootEventType.Fall)
+		else if(event.getType() == ZootEventType.Fall || event.getType() == ZootEventType.InAir)
 		{
 			changeState(event, FallState.ID);
 		}

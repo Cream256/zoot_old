@@ -3,8 +3,8 @@ package com.zootcat.controllers.physics;
 import com.zootcat.controllers.Controller;
 import com.zootcat.controllers.factory.CtrlDebug;
 import com.zootcat.controllers.factory.CtrlParam;
-import com.zootcat.events.ZootEvent;
 import com.zootcat.events.ZootEventType;
+import com.zootcat.events.ZootEvents;
 import com.zootcat.scene.ZootActor;
 
 public class DetectFallController implements Controller
@@ -12,14 +12,12 @@ public class DetectFallController implements Controller
 	@CtrlDebug private boolean falling;
 	@CtrlParam(debug = true) private float threshold = -0.5f;
 	
-	private ZootEvent fallEvent;
 	private DetectGroundController groundCtrl;	
 		
 	@Override
 	public void init(ZootActor actor)
 	{
-		falling = false;
-		fallEvent = new ZootEvent();	
+		falling = false;	
 	}
 
 	@Override
@@ -42,9 +40,7 @@ public class DetectFallController implements Controller
 		
 		if(fallingNow && !onGround)
 		{
-			fallEvent.reset();
-			fallEvent.setType(ZootEventType.Fall);
-			actor.fire(fallEvent);
+			ZootEvents.fireAndFree(actor, ZootEventType.Fall);
 		}
 		falling = fallingNow && !onGround;
 	}

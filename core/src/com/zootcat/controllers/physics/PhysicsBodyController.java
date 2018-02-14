@@ -139,6 +139,13 @@ public class PhysicsBodyController implements Controller
 		body.setAwake(true);
 	}
 	
+	public void applyImpulse(float vx, float vy)
+	{
+		float cx = body.getPosition().x;
+		float cy = body.getPosition().x;		
+		body.applyLinearImpulse(vx, vy, cx, cy, true);
+	}
+	
 	//TODO this is not full working, add tests
 	public void scale(PhysicsBodyScale bodyScale)
 	{
